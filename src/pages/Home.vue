@@ -19,7 +19,7 @@
                 <h2 v-html="errorMsg"></h2>
             </div>
             <!-- <div class="flex flex-row flex-wrap place-content-around"> -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:py-6">
+            <div class="grid gap-4 grid-cols-1 md:gap-8 md:py-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                 <VideoDetails v-for="vidDetail in vidDetails" :vidDetail="vidDetail" :key="vidDetail.id"/>
             </div>
         </div>

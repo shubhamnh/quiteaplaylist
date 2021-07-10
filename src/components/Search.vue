@@ -1,19 +1,24 @@
 <template>
     <div>
-      <input
-        class="rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
-        text-base outline-none text-gray-700 px-3 mx-2 leading-8 transition-colors duration-200 ease-in-out"
-        @keyup.enter="detectUrl(this.inputUrl)"
-        v-model="inputUrl"
-        type="text"
-        placeholder="Enter URL"
-      />
+      <!-- <div class=""> -->
+        <input class="flex flex-row items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
+        text-base outline-none text-gray-700 px-3 mx-2 leading-8 transition-colors duration-200 ease-in-out w-9/12 max-w-md"
+          @keyup.enter="detectUrl(this.inputUrl)"
+          v-model="inputUrl"
+          type="text"
+          placeholder="Enter Playlist or Video URL"
+        />
+        <!-- <span class="flex items-center">
+          <button class="p-1 focus:outline-none focus:shadow-outline" @click="pasteClipboard">
+            <img src="@/assets/icons/clipboard.svg" alt="Paste">
+          </button>
+        </span> -->
+      <!-- </div> -->
+      
       <button class="rounded-full h-10 w-10 
         bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
         @click="detectUrl(this.inputUrl)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="blue-500">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
-        </svg>
+          <img src="@/assets/icons/arrow-right.svg" alt="Submit">
       </button>
     </div>
 </template>
