@@ -1,9 +1,9 @@
 <template>
     <div>
       <!-- <div class=""> -->
-        <input class="flex flex-row items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
-        text-base outline-none text-gray-700 px-3 mx-2 leading-8 transition-colors duration-200 ease-in-out w-9/12 max-w-md"
-          @keyup.enter="detectUrl(this.inputUrl)"
+        <input class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
+        text-base outline-none text-gray-700 px-3 mx-2 leading-8 transition-colors duration-200 ease-in-out max-w-lg"
+          @keyup.enter="detectUrl(inputUrl)"
           v-model="inputUrl"
           type="text"
           placeholder="Enter Playlist or Video URL"
@@ -17,9 +17,11 @@
       
       <button class="rounded-full h-10 w-10 
         bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
-        @click="detectUrl(this.inputUrl)">
+        @click="detectUrl(inputUrl)">
           <img src="@/assets/icons/arrow-right.svg" alt="Submit">
       </button>
+
+
     </div>
 </template>
 
@@ -60,8 +62,10 @@ export default defineComponent({
       console.log(vidId, plId)
 
       if (vidId && vidId.length === 11) {
+        this.$emit('setSearchResult',true)
         this.getUrlDetails(vidId)
       } else if (plId) {
+        this.$emit('setSearchResult',true)
         this.getPlDetails(plId)
       } else {
         this.$emit('setError', 'Could not detect Video or Playlist URL')
@@ -75,6 +79,8 @@ export default defineComponent({
       let url, status
       let delCount = 0
       this.$emit('resetVidDetails')
+      this.$emit('setNoRemovedVideoFound', false)
+
 
       // TODO: Checks for empty Playlist
       // Get all playlist items
@@ -97,16 +103,19 @@ export default defineComponent({
         // Create sequential empty video details
         url = this.ytVidPrefix + playlistItem.contentDetails.videoId
         status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
-        this.$emit('addToVidDetails', this.VideoDetails(delCount, false, false, url, status))
+        this.$emit('addToVidDetails', this.VideoDetails(delCount, false, false, url, status, playlistItem.snippet.position + 1))
 
         delPl.push(playlistItem)
         delCount++
       }
 
       console.log(delPl)
-
-      for (const [index, playlistItem] of delPl.entries()) {
-        this.processPlItem(index, playlistItem)
+      if (delPl.length) {
+        for (const [index, playlistItem] of delPl.entries()) {
+          this.processPlItem(index, playlistItem)
+        }
+      } else {
+        this.$emit('setNoRemovedVideoFound', true)
       }
     },
 
@@ -116,10 +125,9 @@ export default defineComponent({
       const snapshots = await this.getSnapshots(url)
 
       // No data found on Wayback
-      if (!snapshots.length) {
+      if ((snapshots === undefined) || (!snapshots.length)) {
         this.$emit('assignToVidDetails', {index : index, vidData: {fetchStatus: true, resultStatus: false, title: 'No data found'}})  
       } else {
-
         for (const [i, snapshot] of snapshots.entries()) {
           const vidDetail = await this.getVideoDetails(snapshot)
 
@@ -140,20 +148,24 @@ export default defineComponent({
       const snapshots = await this.getSnapshots(url)
       this.$emit('addToVidDetails', this.VideoDetails(0, false, false, url, status))
       
-      // Sequential execution of async code
-      for (const snapshot of snapshots) {
-        const vidDetail = await this.getVideoDetails(snapshot)
-        
-          // Found details of a video
-          if (vidDetail.title && vidDetail.channelName) {
-            this.$emit('assignToVidDetails', {index : 0, vidData: vidDetail})
-            break
-          }
+      if ((snapshots === undefined) || (!snapshots.length)) {
+        this.$emit('assignToVidDetails', {index : 0, vidData: {fetchStatus: true, resultStatus: false, title: 'No data found'}})  
+      } else {
+        // Sequential execution of async code
+        for (const snapshot of snapshots) {
+          const vidDetail = await this.getVideoDetails(snapshot)
+          
+            // Found details of a video
+            if (vidDetail.title && vidDetail.channelName) {
+              this.$emit('assignToVidDetails', {index : 0, vidData: vidDetail})
+              break
+            }
+        }
       }
     },
 
     async getPlPageItems (plId: string, nextPageToken ?: string) {
-      const res = await fetch(this.ytapi + this.ytapipart + this.ytapipgresults + this.ytapipl + plId + this.ytapinxt + nextPageToken + this.ytapikey)
+      const res = await fetch(this.ytCorsProxy + this.ytapi + this.ytapipart + this.ytapipgresults + this.ytapipl + plId + this.ytapinxt + nextPageToken)
       const resjson = await res.json()
       const playlistItems : PlaylistItem[] = resjson.items
       const nPageToken = resjson.nextPageToken
@@ -161,23 +173,38 @@ export default defineComponent({
       return { playlistItems, nPageToken };
     },
 
-    async getSnapshots (url:string) {
-      const res = await fetch(this.cdx + url + this.cdxSuffix)
+    async getSnapshots (url:string) : Promise<UrlSnapshot[]> {
+      const res = await fetch(this.wbCorsProxy + this.cdx + url + this.cdxSuffix)
+      console.log(res)
       if (res.status !== 200) {
           this.$emit('setError','Error fetching details from Wayback m/c')
-          return
+          return []
       }
       const snapshots = await res.json()
-
       // Remove first format object
       snapshots.shift()
-      return snapshots
+
+      const urlSnapshots : UrlSnapshot[] = new Array<UrlSnapshot>()
+      snapshots.forEach( (snapshot : string[]) => {
+        urlSnapshots.push({ 
+          urlKey: snapshot[0], 
+          timestamp: snapshot[1], 
+          original: snapshot[2], 
+          mimeType: snapshot[3], 
+          statusCode: snapshot[4], 
+          digest: snapshot[5], 
+          length: snapshot[6]
+         } as UrlSnapshot)
+      });
+
+      return urlSnapshots
     },
 
-    async getVideoDetails(snapshot: Array<UrlSnapshot>) {
-      const waybackUrl = this.waybackurl + snapshot[1] + this.waybackopt + snapshot[2]
-      const snapTime = Number(snapshot[1])
-      const snapDate = (snapshot[1]).slice(6,8) + '/' + snapshot[1].slice(4,6) + '/' + snapshot[1].slice(0,4)
+    async getVideoDetails(snapshot: UrlSnapshot) {
+      // console.log(snapshot)
+      const waybackUrl = this.wbCorsProxy + this.waybackurl + snapshot.timestamp + this.waybackopt + snapshot.original
+      const snapTime = Number(snapshot.timestamp)
+      const snapDate = snapshot.timestamp.slice(6,8) + '/' + snapshot.timestamp.slice(4,6) + '/' + snapshot.timestamp.slice(0,4)
 
       const res = await fetch(waybackUrl)
 
@@ -390,6 +417,7 @@ export default defineComponent({
       resultStatus = false,
       url : string,
       status : string,
+      playlistPosition ?: number,
       title?: string,
       snapshotTime?: string,
       channelName?: string,
@@ -411,7 +439,8 @@ export default defineComponent({
         duration: duration,
         status: status,
         waybackUrl: waybackUrl,
-        snapshotTime: snapshotTime
+        snapshotTime: snapshotTime,
+        playlistPosition: playlistPosition
       } as VideoDetails;
     }
   },
@@ -425,16 +454,17 @@ export default defineComponent({
       cdx: 'http://web.archive.org/cdx/search/cdx?url=',
       // cdxSuffix: '&output=json&filter=statuscode:200&limit=5&collapse=timestamp:8',
       cdxSuffix: '&output=json&filter=statuscode:200&from=2010&collapse=timestamp:6',
-      corsProxy: 'https://yt-recover.shubhamnh.workers.dev/?',
+      
       waybackurl: 'https://web.archive.org/web/',
       waybackopt: 'id_/',
+      wbCorsProxy: 'https://wb.shubhamnh.workers.dev/?',
 
       ytapi: 'https://youtube.googleapis.com/youtube/v3/playlistItems',
       ytapipart: '?part=contentDetails%2C%20status%2C%20id%2C%20snippet',
       ytapipgresults: '&maxResults=50', // 0 - 50
       ytapipl:'&playlistId=',
       ytapinxt: '&pageToken=',
-      ytapikey:'&key=AIzaSyDDtYRJuhM_Emci_ylriahxsAVfw-bs05k',
+      ytCorsProxy: 'https://yt-recover.shubhamnh.workers.dev/?',
     }
   },
 

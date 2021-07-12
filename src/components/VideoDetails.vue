@@ -1,60 +1,73 @@
 <template>
-    <div id="vidDetail" class="rounded-lg p-5 h-48 w-full bg-white shadow-lg border-gray-400">
+    <div id="vidDetail" class="relative h-auto w-full p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
+
+        <span class="absolute flex items-center justify-center -top-2 -left-2 rounded-full w-7 h-7 text-xs bg-blue-gray-100 text-gray-900">
+            {{vidDetail.playlistPosition}}
+        </span>
+
         <div v-if="vidDetail.fetchStatus">
 
             <div v-if="vidDetail.resultStatus">
-                <div class="flex flex-row gap-4">
-                    <h2 class="grow text-gray-800 font-bold">{{ vidDetail.title }}</h2>
-                    <p class="ml-auto">
-                        <a :href="this.vidDetail.waybackUrl" target="_blank">
-                            {{vidDetail.snapshotTime}}
-                        </a>
-                    </p>
+                <span class="absolute bottom-0 right-0 rounded-tl-lg text-xs p-1.5 bg-gray-200">
+                    <a :href="vidDetail.waybackUrl" target="_blank">
+                        {{vidDetail.snapshotTime}}
+                    </a>
+                </span>
+
+                <div class="flex flex-row">
+                    <h2 class="line-clamp-1 text-gray-800 font-bold">{{ vidDetail.title }}</h2>
                 </div>
                 
-                <div class="flex flex-row flex-wrap gap-1">
+                <div class="flex flex-row flex-wrap gap-1 text-sm">
                     <div>
-                        <a href="this.vidDetail.channelUrl">
+                        <a :href="vidDetail.channelUrl">
                             <img src="@/assets/icons/user.svg" alt="User">
                         </a>
                     </div>
                     <div>
-                        <a class="text-gray-600 font-normal" href="this.vidDetail.channelUrl">
-                            <span> {{ vidDetail.channelName }} </span>
+                        <a class="" :href="vidDetail.channelUrl" target="_blank">
+                            <span class="line-clamp-1"> {{ vidDetail.channelName }} </span>
                         </a>
                     </div>
                 </div>
 
-                <p v-html="vidDetail.published"></p>
-                <p class="line-clamp-2" v-html="vidDetail.description"></p>
+                <p class="text-sm" v-html="vidDetail.published"></p>
+
+                <p class="hidden md:line-clamp-2 my-2" v-html="vidDetail.description"></p>
+
                 <div class="flex flex-row flex-nowrap gap-2">
-                    <p>Search:</p>
+                    <p>Find similar:</p>
                     <a :href="ytTitleSearch" target="_blank">
                         <img src="@/assets/icons/youtube.svg" alt="YouTube">
                     </a>
                 </div>
             </div>
 
-            <div v-else class="justify-items-center">
-                <h2>Oops! Your playlist seems to be having some gems!<br>Will have to do some more digging!</h2>
-                <h3>Try searching on:</h3>
-                <div class="flex flex-row gap-2 items-center">
-                    <div>
-                        <a :href="braveUrlSearch" target="_blank">
-                            <img src="@/assets/icons/brave.svg" alt="Brave">
-                        </a>
+            <div v-else class="flex flex-row flex-nowrap items-stretch text-center">
+                <div class="flex flex-col w-3/5 items-center">
+                    <!-- <h2 class="text-xl">Oops!</h2> -->
+                    <div class=" p-2">
+                        <img src="@/assets/gem.png" alt="Gem of a Video!">
                     </div>
-                    <div>
-                        <a :href="googleUrlSearch" target="_blank">
-                            <img src="@/assets/icons/google.svg" alt="Google">
+                    <!-- <p class="text-xs">Looks like we have a gem in here!<br>Need to do some more digging!</p> -->
+                    <p class="text-xs">Need to do some more digging to find this gem!</p>
+                </div>
+                <div class="flex flex-col w-2/5">
+                    <h3>Try searching on:</h3>
+                    <div class="flex flex-grow items-stretch p-3">
+                        <a class="flex flex-grow items-center justify-center" :href="braveUrlSearch" target="_blank"> 
+                                <img class="object-contain" src="@/assets/icons/brave.svg" alt="Brave">
+                        </a>
+                        <a class="flex flex-grow items-center justify-center" :href="googleUrlSearch" target="_blank">
+                                <img class="object-contain" src="@/assets/icons/google.svg" alt="Google">
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div v-else>
-            <h3 class="justify-self center font-extrabold text-gray-800">Loading...</h3>
+        <div v-else class="flex h-full items-center justify-center">
+            <h3 class="justify-self center font-extrabold text-gray-800 animate-pulse">Loading...</h3>
         </div>
 
     </div>

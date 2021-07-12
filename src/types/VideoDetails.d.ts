@@ -12,4 +12,5 @@ interface VideoDetails {
   status?: 'Deleted' | 'Private' | 'Unlisted' | 'Public'
   waybackUrl: string
   snapshotTime?: string
+  playlistPosition?: number
 }
