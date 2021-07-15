@@ -28,7 +28,7 @@
                 <h2> {{ errorMsg }} </h2>
             </div>
             <!-- <div class="flex flex-row flex-wrap place-content-around"> -->
-            <div class="grid gap-4 grid-cols-1 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            <div class="grid gap-5 grid-cols-1 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                 <VideoDetails v-for="vidDetail in vidDetails" :vidDetail="vidDetail" :key="vidDetail.id"/>
             </div>
         </div>
@@ -62,7 +62,6 @@ export default defineComponent({
             this.vidDetails.push(vidDetail)
         },
         assignToVidDetails ({index, vidData} : {index:number, vidData:any}) {
-            console.log(index,vidData)
             Object.assign( this.vidDetails[index] , vidData)
         },
         setError (error : string) {
