@@ -69,7 +69,7 @@
                     <div class="flex flex-col w-3/5 justify-evenly">
                         <div>
                             <p class="hidden sm:block text-sm">Looks like we have a gem here.<br>Need to do some more digging to find it!</p>
-                            <p class="sm:hidden text-sm px-2">Looks like it's a rare gem.<br>Dig more!</p>
+                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Dig more!</p>
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
@@ -85,10 +85,13 @@
             </div>
         </div>
 
-        <div v-else class="flex h-full items-center justify-center">
-            <h3 class="justify-self center font-extrabold text-gray-800 animate-pulse">Loading...</h3>
+        <div v-else class="flex h-20 sm:h-40 w-auto items-center justify-center">
+            <div class="multi-ripple h-12 w-12">
+                <div></div>
+                <div></div>
+            </div>
+            <!-- <h3 class="justify-self center font-extrabold text-gray-800 animate-pulse">Loading...</h3> -->
         </div>
-
     </div>
 </template>
 

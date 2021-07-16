@@ -1,25 +1,38 @@
 <template>
     <div>
-        <!-- <div class=""> -->
-            <input class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
-            text-base outline-none text-gray-700 px-3 mx-2 leading-8 transition-colors duration-200 ease-in-out max-w-lg"
-                @keyup.enter="detectUrl(inputUrl)"
-                v-model="inputUrl"
-                type="text"
-                placeholder="Enter Playlist or Video URL"
-            />
-            <!-- <span class="flex items-center">
-                <button class="p-1 focus:outline-none focus:shadow-outline" @click="pasteClipboard">
-                    <img src="@/assets/icons/clipboard.svg" alt="Paste">
-                </button>
-            </span> -->
-        <!-- </div> -->
-        
-        <button class="rounded-full h-10 w-10 
-            bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
-            @click="detectUrl(inputUrl)" title="Search">
-                <img src="@/assets/icons/arrow-right.svg" alt="Submit">
-        </button>
+        <div class="flex flex-row place-content-center my-4">
+            <div class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
+                text-base text-gray-700 mx-2 leading-8 transition-colors duration-200 ease-in-out max-w-lg">
+                <input class="outline-none w-full mx-3"
+                    @keyup.enter="detectUrl(inputUrl)"
+                    v-model="inputUrl"
+                    type="text"
+                    placeholder="Enter Playlist or Video URL"
+                />
+
+                <span v-if="inputUrl" class="flex items-center rounded-full p-1 mr-1 bg-white">
+                    <button class="rounded-full bg-gray-200 p-1 focus:outline-none focus:shadow-outline" @click="resetInputUrl" title="Clear Search">
+                        <img src="@/assets/icons/x.svg" alt="Clear">
+                    </button>
+                </span>
+                <!-- <span class="flex items-center">
+                    <button class="p-1 focus:outline-none focus:shadow-outline" @click="pasteClipboard">
+                        <img src="@/assets/icons/clipboard.svg" alt="Paste">
+                    </button>
+                </span> -->
+            </div>
+            
+            <button class="rounded-full h-10 w-10 
+                bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
+                @click="detectUrl(inputUrl)" title="Search">
+                    <img src="@/assets/icons/arrow-right.svg" alt="Submit">
+            </button>
+        </div>
+
+        <div>
+            <h2> {{ searchError }} </h2>
+        </div>
+
     </div>
 </template>
 
@@ -41,9 +54,12 @@ export default defineComponent({
             const vidIdMatch = inputUrl.match(vidRegex)
             const plIdMatch = inputUrl.match(plRegex)
             let vidId, plId
+            this.setSearchError('')
             this.$emit('resetVidDetails')
             this.$emit('setNoRemovedVideoFound', false)
-            this.$emit('setError','')
+            this.$emit('setNotFound', false)
+            this.$emit('setPlaylistError', false)
+
 
             if (vidIdMatch) {
                 if (vidIdMatch[1]) {
@@ -56,19 +72,21 @@ export default defineComponent({
             if (plIdMatch && plIdMatch[1]) {
                 plId = plIdMatch[1]
             }
-        
+
             console.log(vidIdMatch)
             console.log(plIdMatch)
             console.log(vidId, plId)
 
             if (vidId && vidId.length === 11) {
-                this.$emit('setSearchResult',true)
+                this.$emit('setSearchTriggered', true)
+                this.$emit('setSearchLoading', true)
                 this.getUrlDetails(vidId)
             } else if (plId) {
-                this.$emit('setSearchResult',true)
+                this.$emit('setSearchTriggered', true)
+                this.$emit('setSearchLoading', true)
                 this.getPlaylistDetails(plId)
             } else {
-                this.$emit('setError', 'Could not detect Video or Playlist URL')
+                this.setSearchError('Could not detect Video or Playlist URL')
             }
         },
 
@@ -82,13 +100,18 @@ export default defineComponent({
             // TODO: Checks for empty Playlist
             // Get all playlist items
             do {
-                let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken);
+                let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
+                if (playlistItems === undefined) {
+                    this.$emit('setSearchLoading', false)
+                    return
+                }
                 playlist.push(...playlistItems)
                 nextPageToken = nPageToken
             } while (nextPageToken)
 
             console.log(playlist)
 
+            this.$emit('setSearchLoading', false)
             // get deleted/private videos
             for (const playlistItem of playlist) {
                 // Skip Public and Unlisted Videos
@@ -114,6 +137,33 @@ export default defineComponent({
             } else {
                 this.$emit('setNoRemovedVideoFound', true)
             }
+        },
+
+        async getPlPageItems (plId: string, nextPageToken ?: string) {
+            let res
+
+            // TODO: Simplify
+            if (import.meta.env.PROD) {
+                res = await fetch(this.ytCorsProxy + this.ytapi + this.ytapipart + this.ytapipgresults + this.ytapipl + plId + this.ytapinxt + nextPageToken)
+            } else {
+                res = await fetch(this.ytapi + this.ytapipart + this.ytapipgresults + this.ytapipl + plId + this.ytapinxt + nextPageToken + this.ytapikey + import.meta.env.VITE_YT_API_KEY)
+            }
+
+            if (res.status !== 200) {
+                if (res.status === 404) {
+                    this.$emit('setNotFound', true)
+                }
+                else {
+                    this.$emit('setPlaylistError', true)
+                }
+                return { undefined }
+            }
+            
+            const resjson = await res.json()
+            const playlistItems : PlaylistItem[] = resjson.items
+            const nPageToken = resjson.nextPageToken
+
+            return { playlistItems, nPageToken }
         },
 
         async processPlaylistItem(index: number, playlistItem: PlaylistItem) {
@@ -143,37 +193,24 @@ export default defineComponent({
             const vidUrl = this.ytVidPrefix + url
             console.log(vidUrl)
             const snapshots = await this.getSnapshots(vidUrl)
+            this.$emit('setSearchLoading', false)
             this.$emit('addToVidDetails', this.VideoDetails(0, false, false, vidUrl, status))
             
             if ((snapshots === undefined) || (!snapshots.length)) {
                 this.$emit('assignToVidDetails', {index : 0, vidData: {fetchStatus: true, resultStatus: false, title: 'No data found'}})  
             } else {
+
                 // Sequential execution of async code
                 for (const snapshot of snapshots) {
                     const vidDetail = await this.getVideoDetails(snapshot)
                     
-                        // Found details of a video
-                        if (vidDetail.title && vidDetail.channelName) {
-                            this.$emit('assignToVidDetails', {index : 0, vidData: vidDetail})
-                            break
-                        }
+                    // Found details of a video
+                    if (vidDetail.title && vidDetail.channelName) {
+                        this.$emit('assignToVidDetails', {index : 0, vidData: vidDetail})
+                        break
+                    }
                 }
             }
-        },
-
-        async getPlPageItems (plId: string, nextPageToken ?: string) {
-            let res
-            if (import.meta.env.PROD) {
-                res = await fetch(this.ytCorsProxy + this.ytapi + this.ytapipart + this.ytapipgresults + this.ytapipl + plId + this.ytapinxt + nextPageToken)
-            } else {
-                res = await fetch(this.ytapi + this.ytapipart + this.ytapipgresults + this.ytapipl + plId + this.ytapinxt + nextPageToken + this.ytapikey + import.meta.env.VITE_YT_API_KEY)
-            }
-            
-            const resjson = await res.json()
-            const playlistItems : PlaylistItem[] = resjson.items
-            const nPageToken = resjson.nextPageToken
-
-            return { playlistItems, nPageToken };
         },
 
         async getSnapshots (url:string) : Promise<UrlSnapshot[]> {
@@ -184,9 +221,11 @@ export default defineComponent({
                 res = await fetch(this.cdx + url + this.cdxSuffix)
             }
             console.log(res)
+
+            // TODO: Set error inside video card
             if (res.status !== 200) {
-                    this.$emit('setError','Error fetching details from Wayback m/c')
-                    return []
+                this.setSearchError('Error fetching details from Wayback m/c. Try again?')
+                return []
             }
             const snapshots = await res.json()
             // Remove first format object
@@ -224,12 +263,15 @@ export default defineComponent({
             
             const res = await fetch(waybackFetchUrl)
 
-            if (res.status == 503) {
-                console.log(res.status)
-                console.log('Wayback Machine seems to be down! Check Twitter!')
-                this.$emit('setError',`Wayback Machine seems to be down.<br/><br/>Please check <a href="https://twitter.com/internetarchive/">Twitter</a>!`)
-            } else {
-                this.$emit('setError','')
+            // TODO: Error inside video details
+            if (res.status !== 200) {
+                if (res.status === 503) {
+                    console.log(res.status)
+                    console.log('Wayback Machine seems to be down! Check Twitter!')
+                    this.setSearchError(`Wayback Machine seems to be down.<br/><br/>Please check <a href="https://twitter.com/internetarchive/">Twitter</a>!`)
+                } else {
+                    this.setSearchError('There was a problem getting the video details....Reach out to me if this persists!')
+                }
             }
 
             const rawhtml = await res.text()
@@ -354,7 +396,7 @@ export default defineComponent({
                         const errorMessage = videoMeta.playabilityStatus.errorScreen.playerErrorMessageRenderer
                         const reason = errorMessage.reason.simpleText
                         const subReason = errorMessage.subreason.simpleText ? errorMessage.subreason.simpleText : this.getSubreason(errorMessage)
-                        const errorReason = videoMeta.playabilityStatus.errorScreen ? `${reason} : ${subReason}` : undefined;
+                        const errorReason = videoMeta.playabilityStatus.errorScreen ? `${reason} : ${subReason}` : undefined
                         
                         console.log(subReason)
                         return {
@@ -412,18 +454,18 @@ export default defineComponent({
 
         formatDuration(time : number) : string {   
                 // Hours, minutes and seconds
-                const hrs = ~~(time / 3600);
-                const mins = ~~((time % 3600) / 60);
-                const secs = ~~time % 60;
+                const hrs = ~~(time / 3600)
+                const mins = ~~((time % 3600) / 60)
+                const secs = ~~time % 60
 
                 // Output like "1:01" or "4:03:59" or "123:03:59"
-                let ret = '';
+                let ret = ''
                 if (hrs > 0) {
-                        ret += '' + hrs + ':' + (mins < 10 ? '0' : '');
+                        ret += '' + hrs + ':' + (mins < 10 ? '0' : '')
                 }
-                ret += '' + mins + ':' + (secs < 10 ? '0' : '');
-                ret += '' + secs;
-                return ret;
+                ret += '' + mins + ':' + (secs < 10 ? '0' : '')
+                ret += '' + secs
+                return ret
         },
 
         VideoDetails: (
@@ -456,13 +498,22 @@ export default defineComponent({
                 waybackUrl: waybackUrl,
                 snapshotTime: snapshotTime,
                 playlistPosition: playlistPosition
-            } as VideoDetails;
+            } as VideoDetails
+        },
+
+        resetInputUrl () {
+            this.inputUrl = ''
+        },
+
+        setSearchError (error: string) {
+            this.searchError = error
         }
     },
 
     data () {
         return {
             inputUrl: '',
+            searchError: '',
             ytPrefix: 'https://www.youtube.com/',
             ytVidPrefix: 'https://www.youtube.com/watch?v=',
 
