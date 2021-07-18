@@ -5,10 +5,10 @@
             {{vidDetail.playlistPosition}}
         </span>
 
-        <div class="h-full" v-if="vidDetail.fetchStatus">
+        <div class="h-full" v-if="vidDetail.searchStatus">
 
             <!-- Video Found -->
-            <div v-if="vidDetail.resultStatus" class="flex flex-col h-full">
+            <div v-if="vidDetail.searchStatus === 200" class="flex flex-col h-full">
                 <!-- <span class="absolute bottom-0 left-0 rounded-tr-lg text-xs p-1.5 bg-gray-200">
                     <a :href="vidDetail.waybackUrl" target="_blank" title="Internet Archive Snapshot">
                         {{vidDetail.snapshotTime}}
@@ -55,6 +55,26 @@
                         <img class="h-5 sm:h-auto" src="@/assets/icons/youtube.svg" alt="YouTube Logo">
                     </a>
                 <!-- </div> -->
+            </div>
+
+            <div v-else-if="vidDetail.searchStatus === 503 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
+                <div class="flex flex-row flex-grow">
+                    <div class="flex flex-col w-full justify-evenly">
+                        <div>
+                            <p v-html="vidDetail.title"></p>
+                            <p>Meanwhile, try search on:</p>
+                        </div>
+                        <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
+                            <!-- <span class="text-sm">Search On :</span> -->
+                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch" target="_blank" title="Brave Search"> 
+                                <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
+                            </a>
+                            <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch" target="_blank" title="Google Search">
+                                <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Video Not Found -->

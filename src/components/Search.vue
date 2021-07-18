@@ -56,10 +56,9 @@ export default defineComponent({
             let vidId, plId
             this.setSearchError('')
             this.$emit('resetVidDetails')
-            this.$emit('setNoRemovedVideoFound', false)
-            this.$emit('setNotFound', false)
-            this.$emit('setPlaylistError', false)
-
+            // this.$emit('setNoRemovedVideoFound', false)
+            // this.$emit('setNotFound', false)
+            // this.$emit('setPlaylistError', false)
 
             if (vidIdMatch) {
                 if (vidIdMatch[1]) {
@@ -78,12 +77,10 @@ export default defineComponent({
             console.log(vidId, plId)
 
             if (vidId && vidId.length === 11) {
-                this.$emit('setSearchTriggered', true)
-                this.$emit('setSearchLoading', true)
+                this.$emit('setSearchStatus', 102)
                 this.getUrlDetails(vidId)
             } else if (plId) {
-                this.$emit('setSearchTriggered', true)
-                this.$emit('setSearchLoading', true)
+                this.$emit('setSearchStatus', 102)
                 this.getPlaylistDetails(plId)
             } else {
                 this.setSearchError('Could not detect Video or Playlist URL')
@@ -94,49 +91,55 @@ export default defineComponent({
             let nextPageToken = ''
             let playlist = []
             let delPl = []
-            let url, status
+            let url, status : VideoDetails["status"]
             let delCount = 0
 
-            // TODO: Checks for empty Playlist
             // Get all playlist items
             do {
                 let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
                 if (playlistItems === undefined) {
-                    this.$emit('setSearchLoading', false)
+                    // this.$emit('setSearchLoading', false)
                     return
                 }
                 playlist.push(...playlistItems)
                 nextPageToken = nPageToken
             } while (nextPageToken)
+            this.$emit('setSearchStatus', 200)
 
             console.log(playlist)
 
-            this.$emit('setSearchLoading', false)
-            // get deleted/private videos
-            for (const playlistItem of playlist) {
-                // Skip Public and Unlisted Videos
-                if (playlistItem.status.privacyStatus === 'public' || playlistItem.status.privacyStatus === 'unlisted') {
-                    continue
+            if (playlist.length) {
+
+                // get deleted/private videos
+                for (const playlistItem of playlist) {
+                    // Skip Public and Unlisted Videos
+                    if (playlistItem.status.privacyStatus === 'public' || playlistItem.status.privacyStatus === 'unlisted') {
+                        continue
+                    }
+
+                    // Consider 'private' and 'privacyStatusUnspecified' (deleted) videos
+                    // Create sequential empty video details
+                    url = this.ytVidPrefix + playlistItem.contentDetails.videoId
+                    status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
+                    this.$emit('addToVidDetails', this.VideoDetails(delCount, 0, url, status, playlistItem.snippet.position + 1))
+
+                    delPl.push(playlistItem)
+                    delCount++
                 }
 
-                // Consider 'private' and 'privacyStatusUnspecified' (deleted) videos
-                // Create sequential empty video details
-                url = this.ytVidPrefix + playlistItem.contentDetails.videoId
-                status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
-                this.$emit('addToVidDetails', this.VideoDetails(delCount, false, false, url, status, playlistItem.snippet.position + 1))
-
-                delPl.push(playlistItem)
-                delCount++
-            }
-
-            console.log(delPl)
-            if (delPl.length) {
-                for (const [index, playlistItem] of delPl.entries()) {
-                    this.processPlaylistItem(index, playlistItem)
-                }
+                console.log(delPl)
+                if (delPl.length) {
+                    for (const [index, playlistItem] of delPl.entries()) {
+                        this.processPlaylistItem(index, playlistItem)
+                    }
+                } else {
+                    this.$emit('setSearchStatus', 204)
+                }   
+                
             } else {
-                this.$emit('setNoRemovedVideoFound', true)
+                this.$emit('setSearchStatus', 206)
             }
+           
         },
 
         async getPlPageItems (plId: string, nextPageToken ?: string) {
@@ -151,10 +154,10 @@ export default defineComponent({
 
             if (res.status !== 200) {
                 if (res.status === 404) {
-                    this.$emit('setNotFound', true)
+                    this.$emit('setSearchStatus', 404)
                 }
                 else {
-                    this.$emit('setPlaylistError', true)
+                    this.$emit('setSearchStatus', 500)
                 }
                 return { undefined }
             }
@@ -173,7 +176,7 @@ export default defineComponent({
 
             // No data found on Wayback
             if ((snapshots === undefined) || (!snapshots.length)) {
-                this.$emit('assignToVidDetails', {index : index, vidData: {fetchStatus: true, resultStatus: false, title: 'No data found'}})  
+                this.$emit('assignToVidDetails', {index : index, vidData: {searchStatus: 404, title: 'No data found'}})
             } else {
                 for (const [i, snapshot] of snapshots.entries()) {
                     const vidDetail = await this.getVideoDetails(snapshot)
@@ -191,13 +194,12 @@ export default defineComponent({
 
         async getUrlDetails(url: string) {
             const vidUrl = this.ytVidPrefix + url
-            console.log(vidUrl)
             const snapshots = await this.getSnapshots(vidUrl)
-            this.$emit('setSearchLoading', false)
-            this.$emit('addToVidDetails', this.VideoDetails(0, false, false, vidUrl, status))
+            this.$emit('setSearchStatus', 200)
+            this.$emit('addToVidDetails', this.VideoDetails(0, 0, vidUrl))
             
             if ((snapshots === undefined) || (!snapshots.length)) {
-                this.$emit('assignToVidDetails', {index : 0, vidData: {fetchStatus: true, resultStatus: false, title: 'No data found'}})  
+                this.$emit('assignToVidDetails', {index : 0, vidData: {searchStatus: 404, title: 'No data found'}})  
             } else {
 
                 // Sequential execution of async code
@@ -248,7 +250,7 @@ export default defineComponent({
         },
 
         async getVideoDetails(snapshot: UrlSnapshot) {
-            
+            // TODO: Common return for all types os snapshots
             const waybackUrl = this.waybackurl + snapshot.timestamp + this.waybackopt + snapshot.original
 
             let waybackFetchUrl
@@ -264,20 +266,29 @@ export default defineComponent({
             const res = await fetch(waybackFetchUrl)
 
             // TODO: Error inside video details
+            // Error getting single snapshot from wayback
             if (res.status !== 200) {
+                let searchStatus : VideoDetails["searchStatus"]
+                let title
                 if (res.status === 503) {
                     console.log(res.status)
-                    console.log('Wayback Machine seems to be down! Check Twitter!')
-                    this.setSearchError(`Wayback Machine seems to be down.<br/><br/>Please check <a href="https://twitter.com/internetarchive/">Twitter</a>!`)
+                    console.error('Wayback Machine seems to be down! Check Twitter!')
+                    title = `Wayback Machine seems to be down.<br/><br/>Please check <a href="https://twitter.com/internetarchive/">Twitter</a>!`
+                    searchStatus = 503
+                    
                 } else {
-                    this.setSearchError('There was a problem getting the video details....Reach out to me if this persists!')
+                    title = 'There was a problem getting the video details....Reach out to me if this persists!'
+                    searchStatus = 500
+                }
+                return {
+                    searchStatus: searchStatus,
+                    title: title,
+                    snapshotTime: snapDate,
+                    waybackUrl: waybackUrl
                 }
             }
 
             const rawhtml = await res.text()
-            // console.log(snapshot[1])
-            // console.log(snapshot[2])
-            // console.log(rawhtml)
             const parser = new DOMParser()
             const parsedhtml = parser.parseFromString(rawhtml, 'text/html')
 
@@ -289,8 +300,7 @@ export default defineComponent({
                 const published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
                 
                 return {
-                    fetchStatus: true,
-                    resultStatus: title ? true : false,
+                    searchStatus: title ? 200 : 404,
                     title: title ? title : 'Could not find details',
                     channelName: channelName,
                     snapshotTime: snapDate,
@@ -308,8 +318,7 @@ export default defineComponent({
                 const published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
                 
                 return {
-                    fetchStatus: true,
-                    resultStatus: title ? true : false,
+                    searchStatus: title ? 200 : 404,
                     title: title ? title : 'Could not find details',
                     channelName: channelName,
                     snapshotTime: snapDate,
@@ -328,8 +337,7 @@ export default defineComponent({
                 const published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
                 
                 return {
-                    fetchStatus: true,
-                    resultStatus: title ? true : false,
+                    searchStatus: title ? 200 : 404,
                     title: title ? title : 'Could not find details',
                     channelName: channelName,
                     snapshotTime: snapDate,
@@ -348,8 +356,7 @@ export default defineComponent({
                 const published = parsedhtml.querySelector('.watch-video-date')?.innerHTML
                 
                 return {
-                    fetchStatus: true,
-                    resultStatus: title ? true : false,
+                    searchStatus: title ? 200 : 404,
                     title: title ? title : 'Could not find details',
                     channelName: channelName,
                     snapshotTime: snapDate,
@@ -367,8 +374,7 @@ export default defineComponent({
                 const published = parsedhtml.querySelector('#watch-uploader-info')?.firstElementChild?.innerHTML ? parsedhtml.querySelector('#watch-uploader-info')?.firstElementChild?.innerHTML : ''
                 
                 return {
-                    fetchStatus: true,
-                    resultStatus: title ? true : false,
+                    searchStatus: title ? 200 : 404,
                     title: title ? title : 'Could not find details',
                     channelName: channelName,
                     snapshotTime: snapDate,
@@ -393,24 +399,19 @@ export default defineComponent({
 
                     // Deleted video snapshot in Wayback
                     if (videoMeta.microformat === undefined) {
-                        const errorMessage = videoMeta.playabilityStatus.errorScreen.playerErrorMessageRenderer
-                        const reason = errorMessage.reason.simpleText
-                        const subReason = errorMessage.subreason.simpleText ? errorMessage.subreason.simpleText : this.getSubreason(errorMessage)
-                        const errorReason = videoMeta.playabilityStatus.errorScreen ? `${reason} : ${subReason}` : undefined
+                        const reason : string = this.getReason(videoMeta)
                         
-                        console.log(subReason)
+                        console.log(reason)
                         return {
-                            fetchStatus: true,
-                            resultStatus: false,
-                            title: errorReason,
+                            searchStatus: 206,
+                            title: reason,
                             snapshotTime: snapDate,
                             waybackUrl: waybackUrl
                         }
                     }
                 } else {
                     return {
-                        fetchStatus: true,
-                        resultStatus: false,
+                        searchStatus: 204,
                         title: 'Could not find details, Player Response not found',
                         snapshotTime: snapDate,
                         waybackUrl: waybackUrl
@@ -425,8 +426,7 @@ export default defineComponent({
                 const published = videoMeta.microformat.playerMicroformatRenderer.publishDate
 
                 return {
-                    fetchStatus: true,
-                    resultStatus: true,
+                    searchStatus: title ? 200 : 404,
                     title: title,
                     snapshotTime: snapDate,
                     channelName: channelName,
@@ -436,20 +436,32 @@ export default defineComponent({
                     waybackUrl: waybackUrl,
                     duration: duration
                 }
-
             }
         },
 
-        getSubreason(errorMessage : any) : string {
-            let runText = ''
-            if (errorMessage.subreason.runs) {
-                console.log(errorMessage.subreason.runs.entries())
-                for (const obj of errorMessage.subreason.runs){
-                    console.log(obj.text)
-                    runText += obj.text
+        getReason(videoMeta : any) : string {
+            
+            if (videoMeta.playabilityStatus.errorScreen) {
+                const errorMessage = videoMeta.playabilityStatus.errorScreen.playerErrorMessageRenderer
+                if (errorMessage.subreason) {
+                    if (errorMessage.subreason.runs) {
+                        console.log(errorMessage.subreason.runs.entries())
+                        let runText = ''
+                        for (const obj of errorMessage.subreason.runs){
+                            console.log(obj.text)
+                            runText += obj.text
+                        }
+                        return runText
+                    } else if (errorMessage.subreason.simpleText) {
+                        return errorMessage.subreason.simpleText
+                    }
+
+                } else if ( errorMessage.reason.simpleText ) {
+                    return errorMessage.reason.simpleText
                 }
             }
-            return runText
+            return 'Error getting Video Details'
+            
         },
 
         formatDuration(time : number) : string {   
@@ -470,10 +482,9 @@ export default defineComponent({
 
         VideoDetails: (
             id: number,
-            fetchStatus = false,
-            resultStatus = false,
+            searchStatus : VideoDetails["searchStatus"],
             url : string,
-            status : string,
+            status?: VideoDetails["status"],
             playlistPosition ?: number,
             title?: string,
             snapshotTime?: string,
@@ -485,8 +496,7 @@ export default defineComponent({
             duration?: string) : VideoDetails => {
             return {
                 id: id,
-                fetchStatus: fetchStatus,
-                resultStatus: resultStatus,
+                searchStatus : searchStatus,
                 url : url,
                 title: title,
                 channelName: channelName,
