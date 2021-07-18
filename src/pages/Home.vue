@@ -84,7 +84,7 @@ export default defineComponent({
         addToVidDetails (vidDetail: VideoDetails) {
             this.vidDetails.push(vidDetail)
         },
-        assignToVidDetails ({index, vidData} : {index:number, vidData:any}) {
+        assignToVidDetails ({index, vidData} : {index:number, vidData: VideoDetails}) {
             Object.assign( this.vidDetails[index] , vidData)
         },
         setSearchStatus (status : number) {

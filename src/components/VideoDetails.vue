@@ -57,12 +57,13 @@
                 <!-- </div> -->
             </div>
 
+            <!-- Server Error -->
             <div v-else-if="vidDetail.searchStatus === 503 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
                 <div class="flex flex-row flex-grow">
                     <div class="flex flex-col w-full justify-evenly">
                         <div>
                             <p v-html="vidDetail.title"></p>
-                            <p>Meanwhile, try search on:</p>
+                            <p>Meanwhile, try searching here:</p>
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
@@ -88,8 +89,8 @@
                     </div>
                     <div class="flex flex-col w-3/5 justify-evenly">
                         <div>
-                            <p class="hidden sm:block text-sm">Looks like we have a gem here.<br>Need to do some more digging to find it!</p>
-                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Dig more!</p>
+                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Need to do some more digging to find it...</p>
+                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Gotta dig more...</p>
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
