@@ -24,7 +24,6 @@ pnpm-debug.log*
 *.sw?
 
 # Hosting
-firebase.json
 .firebaserc
 .firebase
 

@@ -13,4 +13,5 @@ interface VideoDetails {
   waybackUrl: string
   snapshotTime?: string
   playlistPosition?: number
+  snapshots?: number
 }

@@ -1,14 +1,19 @@
 <template>
-    <div id="vidDetail" class="relative h-auto w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
+    <div id="vidDetail" :class="{ hidden: isHidden }" class="relative h-auto w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
 
         <span v-if="vidDetail.playlistPosition" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{vidDetail.playlistPosition}}
         </span>
 
+        <!-- Number of Snapshots found (Dev only) -->
+        <span v-if="checkDev" class="absolute flex items-center justify-center -top-3 -right-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
+            {{vidDetail.snapshots}}
+        </span>
+
         <div class="h-full" v-if="vidDetail.searchStatus">
 
             <!-- Video Found -->
-            <div v-if="vidDetail.searchStatus === 200" class="flex flex-col h-full">
+            <div v-if="vidDetail.searchStatus === 200" class="flex flex-col h-full text-left">
                 <!-- <span class="absolute bottom-0 left-0 rounded-tr-lg text-xs p-1.5 bg-gray-200">
                     <a :href="vidDetail.waybackUrl" target="_blank" title="Internet Archive Snapshot">
                         {{vidDetail.snapshotTime}}
@@ -126,28 +131,50 @@ export default defineComponent({
             type: Object as PropType<VideoDetails>,
             required: true,
         },
+        viewMode: {
+            type: Number,
+            required: true
+        },
+        mode: {
+            type: String,
+            required: true
+        }
     },
     computed: {
-        ytTitleSearch (this) {
+        ytTitleSearch () :string {
             return "https://www.youtube.com/results?search_query=" + encodeURIComponent(this.vidDetail.title)
         },
-        googleUrlSearch (this) {
+        googleUrlSearch () :string {
             return "https://www.google.com/search?q=" + this.vidDetail.url
         },
-        braveUrlSearch (this) {
+        braveUrlSearch () :string {
             return "https://search.brave.com/search?q=" + this.vidDetail.url
+        },
+        checkDev () {
+            return import.meta.env.DEV
+        },
+        isHidden () {
+            if (this.mode === 'playlist') {
+                if (this.viewMode === 2) {
+                    // Show Not Found
+                    if (this.vidDetail.searchStatus === 200) {
+                        return true
+                    } else return false
+                }
+                else if (this.viewMode === 1) {
+                    // Show Found
+                    if (this.vidDetail.searchStatus === 200) {
+                        return false
+                    } else return true
+                } else {
+                    return false
+                }
+            } else {
+                // Show All
+                return false
+            }
         }
-    }
+
+    },
 })
 </script>
-
-<style lang="css">
-#vidDetail {
-    text-align: left;
-}
-
-p {
-    white-space: pre-wrap;
-}
-
-</style>

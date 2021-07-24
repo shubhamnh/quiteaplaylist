@@ -55,6 +55,7 @@ export default defineComponent({
             const plIdMatch = inputUrl.match(plRegex)
             let vidId, plId
             this.setSearchError('')
+            this.$emit('setMode', '')
             this.$emit('resetVidDetails')
 
             if (vidIdMatch) {
@@ -73,42 +74,56 @@ export default defineComponent({
             console.log(plIdMatch)
             console.log(vidId, plId)
 
-            if (vidId && vidId.length === 11) {
+            if (plId) {
                 this.$emit('setSearchStatus', 102)
-                this.processVideo(vidId)
-            } else if (plId) {
-                this.$emit('setSearchStatus', 102)
+                this.$emit('setMode', 'playlist')
                 this.processPlaylist(plId)
+            } else if (vidId && vidId.length === 11) {
+                this.$emit('setSearchStatus', 102)
+                this.$emit('setMode', 'video')
+                this.processVideo(vidId)
             } else {
                 this.setSearchError('Could not detect Video or Playlist URL')
             }
         },
 
         async processPlaylist(plId: string) {
-            let nextPageToken = ''
-            let playlist = []
-            let delPl = []
-            let url, status : VideoDetails["status"], snapshots : UrlSnapshot[]
+            let playlistres, nextPageToken = ''
+            let plItems = []
+            let absentVideos = []
+            let url, status : VideoDetails["status"]
             let delCount = 0
+
+            // Get Playlist Name
+            if (import.meta.env.PROD) {
+                playlistres =  await fetch(this.ytCorsProxy + this.ytPApi + this.ytPApiPart + this.ytPApiId + plId)
+            } else {
+                playlistres =  await fetch(this.ytPApi + this.ytPApiPart + this.ytPApiId + plId + this.ytApiKey + import.meta.env.VITE_YT_API_KEY)
+            }
+            const playlistList : PlaylistList = await playlistres.json()
+            // TODO : Error handling playlistres not found
+            this.$emit('setPlaylist', playlistList.items[0])
 
             // Get all playlist items
             do {
                 let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
                 if (playlistItems === undefined) {
+                    // 
                     // this.$emit('setSearchLoading', false)
                     return
                 }
-                playlist.push(...playlistItems)
+                plItems.push(...playlistItems)
                 nextPageToken = nPageToken
             } while (nextPageToken)
 
             this.$emit('setSearchStatus', 200)
-            console.log(playlist)
+            console.log(plItems)
 
-            if (playlist.length) {
+            if (plItems.length) {
 
                 // get deleted/private videos
-                for (const playlistItem of playlist) {
+                for (const playlistItem of plItems) {
+
                     // Skip Public and Unlisted Videos
                     if (playlistItem.status.privacyStatus === 'public' || playlistItem.status.privacyStatus === 'unlisted') {
                         continue
@@ -120,17 +135,17 @@ export default defineComponent({
                     status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
                     this.$emit('addToVidDetails', this.VideoDetails(delCount, 0, url, status, playlistItem.snippet.position + 1))
 
-                    delPl.push(playlistItem)
+                    absentVideos.push(playlistItem)
                     delCount++
                 }
 
-                console.log(delPl)
-                if (delPl.length) {
+                console.log(absentVideos)
+
+                if (absentVideos.length) {
                     // Get and process Snapshots of Videos
-                    for (const [index, playlistItem] of delPl.entries()) {
+                    for (const [index, playlistItem] of absentVideos.entries()) {
                         url = this.ytVidPrefix + playlistItem.contentDetails.videoId
-                        snapshots = await this.getSnapshots(url)
-                        this.processSnapshots(snapshots, index)
+                        this.getAndProcessPlaylistSnapshots(url, index)
                     }
                 } else {
                     this.$emit('setSearchStatus', 204)
@@ -138,12 +153,12 @@ export default defineComponent({
                 
             } else {
                 this.$emit('setSearchStatus', 206)
-            }        
+            }
         },
 
         async getPlPageItems (plId: string, nextPageToken ?: string) {
             let res
-            const nextPageUrl = this.ytApi + this.ytApiPart + this.ytApiPgResults + this.ytApiPlId + plId + this.ytApiPgToken + nextPageToken
+            const nextPageUrl = this.ytPIApi + this.ytPIApiPart + this.ytPIApiMax + this.ytPIApiId + plId + this.ytPIApiPg + nextPageToken
 
             if (import.meta.env.PROD) {
                 res = await fetch(this.ytCorsProxy + nextPageUrl)
@@ -166,6 +181,11 @@ export default defineComponent({
             const nPageToken = resjson.nextPageToken
 
             return { playlistItems, nPageToken }
+        },
+
+        async getAndProcessPlaylistSnapshots (url : string, index : number) {
+            const snapshots : UrlSnapshot[] = await this.getSnapshots(url)
+            this.processSnapshots(snapshots, index)
         },
 
         async processVideo(vidId: string) {
@@ -213,7 +233,8 @@ export default defineComponent({
         async processSnapshots (snapshots : UrlSnapshot[], index = 0) {
              // No data found on Wayback
             if ((snapshots === undefined) || (!snapshots.length)) {
-                this.$emit('assignToVidDetails', {index : index, vidData: {searchStatus: 404, title: 'No data found'}})
+                this.$emit('assignToVidDetails', {index : index, vidData: {searchStatus: 404, title: 'No data found', snapshots: 0}})
+
             } else {
 
                 for (const [i, snapshot] of snapshots.entries()) {
@@ -221,9 +242,12 @@ export default defineComponent({
 
                     // Found details of a video OR Last snapshot
                     if (vidDetail.title && vidDetail.channelName) {
+                        Object.assign(vidDetail, {snapshots : snapshots.length})
                         this.$emit('assignToVidDetails', {index : index, vidData: vidDetail})
                         break
                     } else if (i === (snapshots.length - 1)) {
+                        // TODO : Saving details if Title only found in previous snapshots
+                        Object.assign(vidDetail, {snapshots : snapshots.length})
                         this.$emit('assignToVidDetails', {index : index, vidData: vidDetail})
                     }
                 }
@@ -255,6 +279,9 @@ export default defineComponent({
                     title = `Wayback Machine seems to be down.<br>Please check <a href="https://twitter.com/internetarchive/">Twitter</a> if there's any downtime.`
                     searchStatus = 503
                     
+                } else if (res.status === 404) {
+                    title = 'No Details Found for this snapshot'
+                    searchStatus = 404
                 } else {
                     title = 'A problem occured while getting details. Reach out to me if this persists!'
                     searchStatus = 500
@@ -272,47 +299,73 @@ export default defineComponent({
             const parser = new DOMParser()
             const parsedhtml = parser.parseFromString(rawhtml, 'text/html')
             
+
+            // English Publish date only
+            // console.log(parsedhtml.querySelector('html')?.getAttribute('lang'))
+            // if (parsedhtml.querySelector('html')?.getAttribute('lang') !== 'en')
+            //     return {
+            //         searchStatus: 404,
+            //         title: 'Language not English',
+            //         snapshotTime: snapDate,
+            //         waybackUrl: waybackUrl
+            //     }
+
+            // if (snapTime < 20100400000000) {
+            //     channelName = parsedhtml.querySelector('.contributor')?.innerHTML
+            //     channelUrl = parsedhtml.querySelector('.contributor')?.getAttribute('href')
+            // }
+
             if (snapTime < 20100700000000) {
-                title = parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title') ? parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title') : ''
+                title = parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title')    
                 channelName = parsedhtml.querySelector('#watch-username > strong:nth-child(1)')?.innerHTML
-                channelUrl = parsedhtml.querySelector('#watch-username')?.getAttribute('href')
+                if (!channelName) {
+                    channelName = parsedhtml.querySelector('.watch-description-username > strong:nth-child(1)')?.innerHTML
+                    channelUrl = parsedhtml.querySelector('.watch-description-username')?.getAttribute('href')
+                } else {
+                    channelUrl = parsedhtml.querySelector('#watch-username')?.getAttribute('href')
+                }
                 channelUrl = channelUrl ? (this.ytPrefix + channelUrl) : ''
-                description = parsedhtml.querySelector('#watch-description-body > span:nth-child(4)')?.innerHTML ? parsedhtml.querySelector('#watch-description-body > span:nth-child(4)')?.innerHTML : ''
+                description = parsedhtml.querySelector('#watch-description-body > span:nth-child(4)')?.innerHTML || ''
                 published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
 
             } else if (snapTime < 20110300000000) {
-                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title') ? parsedhtml.querySelector('#eow-title')?.getAttribute('title') : ''
+                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title')
                 channelName = parsedhtml.querySelector('#watch-username > strong:nth-child(1)')?.innerHTML
-                channelUrl = parsedhtml.querySelector('#watch-username')?.getAttribute('href')
+                if (!channelName) {
+                    channelName = parsedhtml.querySelector('.watch-description-username > strong:nth-child(1)')?.innerHTML
+                    channelUrl = parsedhtml.querySelector('.watch-description-username')?.getAttribute('href')
+                } else {
+                    channelUrl = parsedhtml.querySelector('#watch-username')?.getAttribute('href')
+                }
                 channelUrl = channelUrl ? (this.ytPrefix + channelUrl) : ''
-                description = parsedhtml.querySelector('#eow-description')?.innerHTML ? parsedhtml.querySelector('#eow-description')?.innerHTML : ''
+                description = parsedhtml.querySelector('#eow-description')?.innerHTML || ''
                 published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
 
             } else if (snapTime < 20130100000000) {
                 //shorten
-                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title') ? parsedhtml.querySelector('#eow-title')?.getAttribute('title') : ''
-                channelName = parsedhtml.querySelector('#watch-uploader-info > a:nth-child(1)')?.innerHTML ? parsedhtml.querySelector('#watch-uploader-info > a:nth-child(1)')?.innerHTML : ''
+                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title')
+                channelName = parsedhtml.querySelector('#watch-uploader-info > a:nth-child(1)')?.innerHTML || ''
                 channelUrl = parsedhtml.querySelector('#watch-uploader-info > a:nth-child(1)')?.getAttribute('href')
                 channelUrl = channelUrl ? (this.ytPrefix + channelUrl) : ''
-                description = parsedhtml.querySelector('#eow-description')?.innerHTML ? parsedhtml.querySelector('#eow-description')?.innerHTML : ''
+                description = parsedhtml.querySelector('#eow-description')?.innerHTML || ''
                 published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
 
             } else if (snapTime < 20140700000000) {
                 //shorten
-                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title') ? parsedhtml.querySelector('#eow-title')?.getAttribute('title') : (parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title') ? parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title') : '')
+                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title') || parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title') || ''
                 channelName = parsedhtml.querySelector('#watch7-user-header .yt-user-name')?.innerHTML
                 channelUrl = parsedhtml.querySelector('#watch7-user-header .yt-user-name')?.getAttribute('href')
                 channelUrl = channelUrl ? (this.ytPrefix + channelUrl) : ''
-                description = parsedhtml.querySelector('#eow-description')?.innerHTML ? parsedhtml.querySelector('#eow-description')?.innerHTML : ''
+                description = parsedhtml.querySelector('#eow-description')?.innerHTML || ''
                 published = parsedhtml.querySelector('.watch-video-date')?.innerHTML
 
             } else if (snapTime < 20200702000000) {
-                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title') ? parsedhtml.querySelector('#eow-title')?.getAttribute('title') : ''
+                title = parsedhtml.querySelector('#eow-title')?.getAttribute('title')
                 channelName = parsedhtml.querySelector('.yt-user-info > a:nth-child(1)')?.innerHTML
                 channelUrl = parsedhtml.querySelector('.yt-user-info > a:nth-child(1)')?.getAttribute('href')
                 channelUrl = channelUrl ? (this.ytPrefix + channelUrl) : ''
-                description = parsedhtml.querySelector('#eow-description')?.innerHTML ? parsedhtml.querySelector('#eow-description')?.innerHTML : ''
-                published = parsedhtml.querySelector('#watch-uploader-info')?.firstElementChild?.innerHTML ? parsedhtml.querySelector('#watch-uploader-info')?.firstElementChild?.innerHTML : ''
+                description = parsedhtml.querySelector('#eow-description')?.innerHTML || ''
+                published = parsedhtml.querySelector('#watch-uploader-info')?.firstElementChild?.innerHTML || ''
 
             } else {
                 const window_regex = /\bwindow\["ytInitialPlayerResponse"\]\s*=\s*(\{.*?\})\s*;/
@@ -358,8 +411,8 @@ export default defineComponent({
             }
 
             return {
-                searchStatus: title ? 200 : 404,
-                title: title ? title : 'Could not find details',
+                searchStatus: (title && channelName) ? 200 : 404,
+                title: title || 'Could not find details',
                 channelName: channelName,
                 snapshotTime: snapDate,
                 channelUrl: channelUrl,
@@ -455,20 +508,26 @@ export default defineComponent({
             searchError: '',
             ytPrefix: 'https://www.youtube.com/',
             ytVidPrefix: 'https://www.youtube.com/watch?v=',
-
+            
+            // 
             cdx: 'http://web.archive.org/cdx/search/cdx?url=',
             // cdxSuffix: '&output=json&filter=statuscode:200&limit=5&collapse=timestamp:8', //
-            cdxSuffix: '&output=json&filter=statuscode:200&from=2010&collapse=timestamp:6', // 
+            cdxSuffix: '&output=json&filter=statuscode:200&limit=20&from=201004&collapse=timestamp:7', // 
             
+            // Help : https://en.wikipedia.org/wiki/Help:Using_the_Wayback_Machine
             waybackPrefix: 'https://web.archive.org/web/',
             waybackOpt: 'id_/', // id_ (original links) or if_ (wayback archive links)
             wbCorsProxy: 'https://wb.shubhamnh.workers.dev/?',
 
-            ytApi: 'https://youtube.googleapis.com/youtube/v3/playlistItems',
-            ytApiPart: '?part=contentDetails%2C%20status%2C%20id%2C%20snippet',
-            ytApiPgResults: '&maxResults=50', // 0 - 50
-            ytApiPlId:'&playlistId=',
-            ytApiPgToken: '&pageToken=',
+            ytPApi: 'https://youtube.googleapis.com/youtube/v3/playlists?',
+            ytPApiPart: 'part=snippet%2CcontentDetails%2Cstatus',
+            ytPApiId: '&id=',
+
+            ytPIApi: 'https://youtube.googleapis.com/youtube/v3/playlistItems?',
+            ytPIApiPart: 'part=contentDetails%2C%20status%2C%20id%2C%20snippet',
+            ytPIApiMax: '&maxResults=50', // 0 - 50
+            ytPIApiId:'&playlistId=',
+            ytPIApiPg: '&pageToken=',
             ytApiKey: '&key=',
             ytCorsProxy: 'https://yt-recover.shubhamnh.workers.dev/?',
         }
