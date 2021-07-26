@@ -1,92 +1,115 @@
 <template>
-    <div>
-        <div class="flex flex-row place-content-center my-4">
-            <div class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200 
-                text-base text-gray-700 mx-2 leading-8 transition-colors duration-200 ease-in-out max-w-lg">
-                <input class="outline-none w-full mx-3"
-                    @keyup.enter="detectUrl(inputUrl)"
-                    v-model="inputUrl"
-                    type="text"
-                    placeholder="Enter Playlist or Video URL"
-                />
-
-                <span v-if="inputUrl" class="flex items-center rounded-full p-1 mr-1 bg-white">
-                    <button class="rounded-full bg-gray-200 p-1 focus:outline-none focus:shadow-outline" @click="resetInputUrl" title="Clear Search">
-                        <img src="@/assets/icons/x.svg" alt="Clear">
-                    </button>
-                </span>
-                <!-- <span class="flex items-center">
-                    <button class="p-1 focus:outline-none focus:shadow-outline" @click="pasteClipboard">
-                        <img src="@/assets/icons/clipboard.svg" alt="Paste">
-                    </button>
-                </span> -->
+    <div class="flex flex-col flex-grow px-4 md:px-8 py-5 text-center">
+        <SearchBar class="flex flex-col"
+            @processPlaylist="processPlaylist($event)"
+            @processVideo="processVideo($event)"
+            @resetVidDetails="resetVidDetails()"
+            @setSearchStatus="setSearchStatus($event)"
+            @setMode="setMode($event)"
+            :searchUrl="searchUrl"
+        />
+        <div v-if="searchStatus === 102" class="flex flex-col flex-grow items-center justify-center">
+            <div class="multi-ripple h-28 w-28">
+                <div></div>
+                <div></div>
             </div>
-            
-            <button class="rounded-full h-10 w-10 
-                bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
-                @click="detectUrl(inputUrl)" title="Search">
-                    <img src="@/assets/icons/arrow-right.svg" alt="Submit">
-            </button>
         </div>
-
-        <div>
-            <h2> {{ searchError }} </h2>
+        <div v-else-if="searchStatus === 204" class="flex flex-col flex-grow items-center justify-center">
+            <p>Looks like you're having a lucky day!<br>All your playlist videos are visible!</p>
         </div>
-
+        <div v-else-if="searchStatus === 206" class="flex flex-col flex-grow items-center justify-center">
+            <p>Looks like your playlist is empty!<br>Coudn't find any videos in there!</p>
+        </div>
+        <div v-else-if="searchStatus === 404" class="flex flex-col flex-grow items-center justify-center">
+            <p>Could not find the Playlist mentioned.<br>Make sure the playlist is public or unlisted and try again!</p>
+        </div>
+        <div v-else-if="searchStatus === 500" class="flex flex-col flex-grow items-center justify-center">
+            <p>Error getting playlist details :(<br>Bug me on Twitter!</p>
+        </div>
+        <div v-if="searchStatus === 200 && mode === 'playlist'" class="flex flex-row justify-between items-center pt-2 pb-4">
+            <div class="text-left">
+                <p class="text-lg"> {{playlistName}} </p>
+                <p class="text-sm">Found {{foundCount}} of {{vidDetails.length}} unavailable videos</p>
+            </div>
+            <div class="text-xs place-self-end">
+                <button @click="viewMode = 0" :class="{'active': viewMode===0}" class="rounded-l-lg p-2 bg-blue-gray-100 border-r-2 border-blue-gray-200 active:bg-blue-gray-200">
+                    <span>ALL</span>
+                </button>
+                <button @click="viewMode = 1" :class="{'active': viewMode===1}" class="p-2 bg-blue-gray-100 border-r-2 border-blue-gray-200 active:bg-blue-gray-200">
+                    <span>FOUND</span>
+                </button>
+                <button @click="viewMode = 2" :class="{'active': viewMode===2}" class="rounded-r-lg p-2 bg-blue-gray-100 active:bg-blue-gray-200">
+                    <span>NOT FOUND</span>
+                </button>
+            </div>
+        </div>
+        <!-- <div class="flex flex-row flex-wrap place-content-around"> -->
+        <div class="grid gap-5 grid-cols-1 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            <VideoDetails v-for="vidDetail in vidDetails" :vidDetail="vidDetail" :viewMode="viewMode" :mode="mode" :key="vidDetail.id"/>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import VideoDetails from './VideoDetails.vue'
+import { defineComponent } from 'vue'
+import SearchBar from "@/components/SearchBar.vue"
+import VideoDetails from "@/components/VideoDetails.vue"
 
 export default defineComponent({
     name: 'Search',
-    components: {
-        VideoDetails,
+    components: { SearchBar, VideoDetails },
+    props: {
+        url : String
     },
+    data () {
+        return {
+            vidDetails : new Array<VideoDetails>(),
+            playlistName : '',
+            searchUrl : '',
+            viewMode : 0,
+            foundCount : 0,
+            searchStatus: 0,
+            mode: '',
+            // 0 notTriggered
+            // 102 Running / Loading
+            // 200 Playlists Fetched
+            // 206 Partial Content - No Removed Video Found
+            // 204 NoContent - Empty Playlist
+            // 404 Playlist not found
+            // 500 Internal Server Error = Server Error - YT API Cloudflare (TODO: Elaborate errors)
 
+            ytPrefix: 'https://www.youtube.com/',
+            ytVidPrefix: 'https://www.youtube.com/watch?v=',
+            
+            cdx: 'http://web.archive.org/cdx/search/cdx?url=',
+            // cdxSuffix: '&output=json&filter=statuscode:200&limit=5&collapse=timestamp:8', //
+            cdxSuffix: '&output=json&filter=statuscode:200&limit=20&from=201004&collapse=timestamp:7', // 
+            
+            // Help : https://en.wikipedia.org/wiki/Help:Using_the_Wayback_Machine
+            waybackPrefix: 'https://web.archive.org/web/',
+            waybackOpt: 'id_/', // id_ (original links) or if_ (wayback archive links)
+            wbCorsProxy: 'https://wb.shubhamnh.workers.dev/?',
+
+            ytPApi: 'https://youtube.googleapis.com/youtube/v3/playlists?',
+            ytPApiPart: 'part=snippet%2CcontentDetails%2Cstatus',
+            ytPApiId: '&id=',
+
+            ytPIApi: 'https://youtube.googleapis.com/youtube/v3/playlistItems?',
+            ytPIApiPart: 'part=contentDetails%2C%20status%2C%20id%2C%20snippet',
+            ytPIApiMax: '&maxResults=50', // 0 - 50
+            ytPIApiId:'&playlistId=',
+            ytPIApiPg: '&pageToken=',
+            ytApiKey: '&key=',
+            ytCorsProxy: 'https://yt-recover.shubhamnh.workers.dev/?',
+        }
+    },
+    created () {
+        if(this.$route.query.url) {
+            this.searchUrl = this.$route.query.url
+        }
+    },
     methods: {
-
-        detectUrl(inputUrl : string) {
-            const vidRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?v=([^&\s]+).*)|(?:v\/(.*))))?)|(?:youtu\.be\/(.*)?))/i
-            const plRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:playlist\?.*?list=([^&\s]+).*)))?)|(?:youtu\.be\/(.*)?))/i
-            const vidIdMatch = inputUrl.match(vidRegex)
-            const plIdMatch = inputUrl.match(plRegex)
-            let vidId, plId
-            this.setSearchError('')
-            this.$emit('setMode', '')
-            this.$emit('resetVidDetails')
-
-            if (vidIdMatch) {
-                if (vidIdMatch[1]) {
-                    vidId = vidIdMatch[1]
-                } else if (vidIdMatch[2]) {
-                    vidId = vidIdMatch[2]
-                } else vidId = vidIdMatch[3]
-            }
-
-            if (plIdMatch && plIdMatch[1]) {
-                plId = plIdMatch[1]
-            }
-
-            console.log(vidIdMatch)
-            console.log(plIdMatch)
-            console.log(vidId, plId)
-
-            if (plId) {
-                this.$emit('setSearchStatus', 102)
-                this.$emit('setMode', 'playlist')
-                this.processPlaylist(plId)
-            } else if (vidId && vidId.length === 11) {
-                this.$emit('setSearchStatus', 102)
-                this.$emit('setMode', 'video')
-                this.processVideo(vidId)
-            } else {
-                this.setSearchError('Could not detect Video or Playlist URL')
-            }
-        },
-
+                
         async processPlaylist(plId: string) {
             let playlistres, nextPageToken = ''
             let plItems = []
@@ -102,21 +125,19 @@ export default defineComponent({
             }
             const playlistList : PlaylistList = await playlistres.json()
             // TODO : Error handling playlistres not found
-            this.$emit('setPlaylist', playlistList.items[0])
+            this.setPlaylist(playlistList.items[0])
 
             // Get all playlist items
             do {
                 let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
                 if (playlistItems === undefined) {
-                    // 
-                    // this.$emit('setSearchLoading', false)
                     return
                 }
                 plItems.push(...playlistItems)
                 nextPageToken = nPageToken
             } while (nextPageToken)
 
-            this.$emit('setSearchStatus', 200)
+            this.setSearchStatus(200)
             console.log(plItems)
 
             if (plItems.length) {
@@ -133,7 +154,7 @@ export default defineComponent({
                     // Create sequential empty video details
                     url = this.ytVidPrefix + playlistItem.contentDetails.videoId
                     status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
-                    this.$emit('addToVidDetails', this.VideoDetails(delCount, 0, url, status, playlistItem.snippet.position + 1))
+                    this.addToVidDetails(this.VideoDetails(delCount, 0, url, status, playlistItem.snippet.position + 1))
 
                     absentVideos.push(playlistItem)
                     delCount++
@@ -148,11 +169,11 @@ export default defineComponent({
                         this.getAndProcessPlaylistSnapshots(url, index)
                     }
                 } else {
-                    this.$emit('setSearchStatus', 204)
+                    this.setSearchStatus(204)
                 }   
                 
             } else {
-                this.$emit('setSearchStatus', 206)
+                this.setSearchStatus(206)
             }
         },
 
@@ -168,10 +189,10 @@ export default defineComponent({
 
             if (res.status !== 200) {
                 if (res.status === 404) {
-                    this.$emit('setSearchStatus', 404)
+                    this.setSearchStatus(404)
                 }
                 else {
-                    this.$emit('setSearchStatus', 500)
+                    this.setSearchStatus(500)
                 }
                 return { undefined }
             }
@@ -191,8 +212,8 @@ export default defineComponent({
         async processVideo(vidId: string) {
             const vidUrl = this.ytVidPrefix + vidId
             const snapshots = await this.getSnapshots(vidUrl)
-            this.$emit('setSearchStatus', 200)
-            this.$emit('addToVidDetails', this.VideoDetails(0, 0, vidUrl))
+            this.setSearchStatus(200)
+            this.addToVidDetails(this.VideoDetails(0, 0, vidUrl))
             this.processSnapshots(snapshots)
         },
 
@@ -207,7 +228,7 @@ export default defineComponent({
 
             // TODO: Set error inside video card
             if (res.status !== 200) {
-                this.setSearchError('Error fetching details from Wayback m/c. Try again?')
+                // this.setSearchError('Error fetching details from Wayback m/c. Try again?')
                 return []
             }
             const snapshots = await res.json()
@@ -233,7 +254,7 @@ export default defineComponent({
         async processSnapshots (snapshots : UrlSnapshot[], index = 0) {
              // No data found on Wayback
             if ((snapshots === undefined) || (!snapshots.length)) {
-                this.$emit('assignToVidDetails', {index : index, vidData: {searchStatus: 404, title: 'No data found', snapshots: 0}})
+                this.assignToVidDetails({index : index, vidData: {searchStatus: 404, title: 'No data found', snapshots: 0}})
 
             } else {
 
@@ -243,12 +264,12 @@ export default defineComponent({
                     // Found details of a video OR Last snapshot
                     if (vidDetail.title && vidDetail.channelName) {
                         Object.assign(vidDetail, {snapshots : snapshots.length})
-                        this.$emit('assignToVidDetails', {index : index, vidData: vidDetail})
+                        this.assignToVidDetails({index : index, vidData: vidDetail})
                         break
                     } else if (i === (snapshots.length - 1)) {
                         // TODO : Saving details if Title only found in previous snapshots
                         Object.assign(vidDetail, {snapshots : snapshots.length})
-                        this.$emit('assignToVidDetails', {index : index, vidData: vidDetail})
+                        this.assignToVidDetails({index : index, vidData: vidDetail})
                     }
                 }
             }
@@ -493,45 +514,29 @@ export default defineComponent({
             } as VideoDetails
         },
 
-        resetInputUrl () {
-            this.inputUrl = ''
+        resetVidDetails () {
+            this.vidDetails = new Array<VideoDetails>()
+            this.playlistName = ''
+            this.foundCount = 0
+            this.viewMode = 0
         },
-
-        setSearchError (error: string) {
-            this.searchError = error
+        addToVidDetails (vidDetail: VideoDetails) {
+            this.vidDetails.push(vidDetail)
+        },
+        assignToVidDetails ({index, vidData} : {index:number, vidData: any}) {
+            Object.assign( this.vidDetails[index] , vidData)
+            if (vidData.searchStatus && vidData.searchStatus === 200)
+                this.foundCount++
+        },
+        setPlaylist (playlist: Playlist) {
+            this.playlistName = playlist.snippet.title
+        },
+        setSearchStatus (status : number) {
+            this.searchStatus = status
+        },
+        setMode (mode : '' | 'video' | 'playlist') {
+            this.mode = mode
         }
     },
-
-    data () {
-        return {
-            inputUrl: '',
-            searchError: '',
-            ytPrefix: 'https://www.youtube.com/',
-            ytVidPrefix: 'https://www.youtube.com/watch?v=',
-            
-            // 
-            cdx: 'http://web.archive.org/cdx/search/cdx?url=',
-            // cdxSuffix: '&output=json&filter=statuscode:200&limit=5&collapse=timestamp:8', //
-            cdxSuffix: '&output=json&filter=statuscode:200&limit=20&from=201004&collapse=timestamp:7', // 
-            
-            // Help : https://en.wikipedia.org/wiki/Help:Using_the_Wayback_Machine
-            waybackPrefix: 'https://web.archive.org/web/',
-            waybackOpt: 'id_/', // id_ (original links) or if_ (wayback archive links)
-            wbCorsProxy: 'https://wb.shubhamnh.workers.dev/?',
-
-            ytPApi: 'https://youtube.googleapis.com/youtube/v3/playlists?',
-            ytPApiPart: 'part=snippet%2CcontentDetails%2Cstatus',
-            ytPApiId: '&id=',
-
-            ytPIApi: 'https://youtube.googleapis.com/youtube/v3/playlistItems?',
-            ytPIApiPart: 'part=contentDetails%2C%20status%2C%20id%2C%20snippet',
-            ytPIApiMax: '&maxResults=50', // 0 - 50
-            ytPIApiId:'&playlistId=',
-            ytPIApiPg: '&pageToken=',
-            ytApiKey: '&key=',
-            ytCorsProxy: 'https://yt-recover.shubhamnh.workers.dev/?',
-        }
-    },
-
-});
+})
 </script>

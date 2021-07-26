@@ -1,5 +1,5 @@
 <template>
-    <div id="vidDetail" :class="{ hidden: isHidden }" class="relative h-auto w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
+    <div id="vidDetail" v-show="isVisible" class="relative h-auto w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
 
         <span v-if="vidDetail.playlistPosition" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{vidDetail.playlistPosition}}
@@ -153,25 +153,25 @@ export default defineComponent({
         checkDev () {
             return import.meta.env.DEV
         },
-        isHidden () {
+        isVisible () {
             if (this.mode === 'playlist') {
                 if (this.viewMode === 2) {
                     // Show Not Found
                     if (this.vidDetail.searchStatus === 200) {
-                        return true
-                    } else return false
+                        return false
+                    } else return true
                 }
                 else if (this.viewMode === 1) {
                     // Show Found
                     if (this.vidDetail.searchStatus === 200) {
-                        return false
-                    } else return true
+                        return true
+                    } else return false
                 } else {
-                    return false
+                    return true
                 }
             } else {
                 // Show All
-                return false
+                return true
             }
         }
 

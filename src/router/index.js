@@ -1,6 +1,7 @@
 // import { createMemoryHistory, createRouter as _createRouter, createWebHistory } from 'vue-router'
 import {createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
+import Search from '@/pages/Search.vue'
 import About from '@/pages/About.vue'
 import NotFound from '@/pages/NotFound.vue'
 
@@ -9,6 +10,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search
   },
   {
     path: '/about',

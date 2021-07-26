@@ -1,13 +1,24 @@
 <template>
-    <div class="flex flex-col min-h-screen bg-blue-gray-050">
+    <div class="flex flex-col min-h-screen bg-blue-gray-050 text-gray-800">
         <div class="flex flex-row items-center">
-            <ul class="flex flex-row flex-grow justify-between items-center m-5">
-                <li><router-link to="/">Home</router-link></li>
+            <ul class="flex flex-row flex-grow justify-between items-center mx-5 my-3">
+                <li><router-link to="/">WhatVideo?</router-link></li>
                 <li><router-link to="/about">About</router-link></li>
             </ul>
         </div>
 
-        <router-view></router-view>
+        
+        <!-- https://next.router.vuejs.org/api/#router-view-s-v-slot -->
+        <!-- Component: VNodes to be passed to a <component>'s is prop -->
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component" :key="$route.name + ($route.query.url || '')"/>
+            </keep-alive>
+        </router-view>
+
+        <!-- <keep-alive>
+            <router-view :key="$route.query.url"></router-view>
+        </keep-alive> -->
 
         <div class="py-3 text-center text-sm text-gray-600">
             <p>Powered by <a href="https://archive.org/" target="_blank" title="Internet Archive">Internet Archive</a></p>
@@ -18,8 +29,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import VLink from '@/components/VLink.vue'
-// import routes from './routes'
 
 export default defineComponent({
     name: 'App',
