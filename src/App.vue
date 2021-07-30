@@ -6,13 +6,12 @@
                 <li><router-link to="/about">About</router-link></li>
             </ul>
         </div>
-
         
         <!-- https://next.router.vuejs.org/api/#router-view-s-v-slot -->
         <!-- Component: VNodes to be passed to a <component>'s is prop -->
         <router-view v-slot="{ Component }">
-            <keep-alive>
-                <component :is="Component" :key="$route.name + ($route.query.url || '')"/>
+            <keep-alive exclude="Search">
+                <component :is="Component" :key="$route.path"/>
             </keep-alive>
         </router-view>
 
@@ -34,14 +33,3 @@ export default defineComponent({
     name: 'App',
 })
 </script>
-
-<style>
-/* #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-} */
-</style>

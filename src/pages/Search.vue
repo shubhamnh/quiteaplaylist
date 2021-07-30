@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col flex-grow px-4 md:px-8 py-5 text-center">
-        <SearchBar class="flex flex-col"
+        <SearchBar ref="search" class="flex flex-col"
             @processPlaylist="processPlaylist($event)"
             @processVideo="processVideo($event)"
             @resetVidDetails="resetVidDetails()"
@@ -104,12 +104,20 @@ export default defineComponent({
         }
     },
     created () {
+        // From Home / Created first time
         if(this.$route.query.url) {
-            this.searchUrl = this.$route.query.url
+            console.log('Created: '+this.$route.query.url)
+            this.searchUrl = (this.$route.query?.url)?.toString() || ''
+        }
+    },
+    watch: {
+        // Watch URL on Search page
+        $route(to,from) {
+            this.searchUrl = (to.query?.url)?.toString() || ''
         }
     },
     methods: {
-                
+
         async processPlaylist(plId: string) {
             let playlistres, nextPageToken = ''
             let plItems = []
@@ -123,9 +131,20 @@ export default defineComponent({
             } else {
                 playlistres =  await fetch(this.ytPApi + this.ytPApiPart + this.ytPApiId + plId + this.ytApiKey + import.meta.env.VITE_YT_API_KEY)
             }
-            const playlistList : PlaylistList = await playlistres.json()
-            // TODO : Error handling playlistres not found
-            this.setPlaylist(playlistList.items[0])
+
+            if (playlistres.status !== 200) {
+                this.setSearchStatus(500)
+                return
+            } else {
+                const playlistList : PlaylistList = await playlistres.json()
+                if (playlistList.items[0]) {
+                    this.setPlaylist(playlistList.items[0])
+                } else {
+                    this.setSearchStatus(404)
+                    return
+                }
+            }
+
 
             // Get all playlist items
             do {
@@ -138,7 +157,7 @@ export default defineComponent({
             } while (nextPageToken)
 
             this.setSearchStatus(200)
-            console.log(plItems)
+            // console.log(plItems)
 
             if (plItems.length) {
 
@@ -206,6 +225,8 @@ export default defineComponent({
 
         async getAndProcessPlaylistSnapshots (url : string, index : number) {
             const snapshots : UrlSnapshot[] = await this.getSnapshots(url)
+            // TODO : Remove assigning from processSnapshots
+            // Object.assign(vidDetail, {snapshots : snapshots.length})
             this.processSnapshots(snapshots, index)
         },
 
@@ -219,12 +240,13 @@ export default defineComponent({
 
         async getSnapshots (url:string) : Promise<UrlSnapshot[]> {
             let res
+
             if (import.meta.env.PROD) {
                 res = await fetch(this.wbCorsProxy + this.cdx + url + this.cdxSuffix)
             } else {
                 res = await fetch(this.cdx + url + this.cdxSuffix)
             }
-            console.log(res)
+            // console.log(res)
 
             // TODO: Set error inside video card
             if (res.status !== 200) {
@@ -252,22 +274,40 @@ export default defineComponent({
         },
 
         async processSnapshots (snapshots : UrlSnapshot[], index = 0) {
+             // TODO: Search Engine search refactor
              // No data found on Wayback
             if ((snapshots === undefined) || (!snapshots.length)) {
-                this.assignToVidDetails({index : index, vidData: {searchStatus: 404, title: 'No data found', snapshots: 0}})
+                // const SEVidDetail = await this.searchEngineSearch(this.vidDetails[index].url)
+                // if (SEVidDetail.searchStatus === 200) {
+                //     Object.assign(SEVidDetail, {snapshots : snapshots.length})
+                //     this.assignToVidDetails({index : index, vidData: SEVidDetail})
+                // } else {
+                //     this.assignToVidDetails({index : index, vidData: {searchStatus: 404, title: 'No data found', snapshots: 0}})
+                // }
 
+                this.assignToVidDetails({index : index, vidData: {searchStatus: 404, title: 'No data found', snapshots: 0}})
             } else {
 
                 for (const [i, snapshot] of snapshots.entries()) {
                     const vidDetail = await this.extractVideoDetails(snapshot)
 
                     // Found details of a video OR Last snapshot
-                    if (vidDetail.title && vidDetail.channelName) {
+                    if (vidDetail.searchStatus === 200) {
                         Object.assign(vidDetail, {snapshots : snapshots.length})
                         this.assignToVidDetails({index : index, vidData: vidDetail})
                         break
                     } else if (i === (snapshots.length - 1)) {
                         // TODO : Saving details if Title only found in previous snapshots
+
+                        // const SEVidDetail = await this.searchEngineSearch(this.vidDetails[index].url)
+                        // if (SEVidDetail.searchStatus === 200) {
+                        //     Object.assign(SEVidDetail, {snapshots : snapshots.length})
+                        //     this.assignToVidDetails({index : index, vidData: SEVidDetail})
+                        // } else {
+                        //     Object.assign(vidDetail, {snapshots : snapshots.length})
+                        //     this.assignToVidDetails({index : index, vidData: vidDetail})
+                        // }
+
                         Object.assign(vidDetail, {snapshots : snapshots.length})
                         this.assignToVidDetails({index : index, vidData: vidDetail})
                     }
@@ -275,27 +315,29 @@ export default defineComponent({
             }
         },
 
-        async extractVideoDetails(snapshot: UrlSnapshot) {
-            const waybackUrl = this.waybackPrefix + snapshot.timestamp + this.waybackOpt + snapshot.original
+        async extractVideoDetails(snapshot: UrlSnapshot) : Promise<any> {
+            let waybackUrl, waybackFetchUrl
 
-            let waybackFetchUrl
+            // TODO: Snapshot timestamp when redirects (302)
+            const snapTime = Number(snapshot.timestamp)
+            const snapDate = snapshot.timestamp.slice(6,8) + '/' + snapshot.timestamp.slice(4,6) + '/' + snapshot.timestamp.slice(0,4)
+
+            waybackUrl = this.waybackPrefix + snapshot.timestamp + this.waybackOpt + snapshot.original
+            
             if (import.meta.env.PROD) {
                 waybackFetchUrl = this.wbCorsProxy + waybackUrl
             } else {
                 waybackFetchUrl = waybackUrl
             }
 
-            const snapTime = Number(snapshot.timestamp)
-            const snapDate = snapshot.timestamp.slice(6,8) + '/' + snapshot.timestamp.slice(4,6) + '/' + snapshot.timestamp.slice(0,4)
-            
             const res = await fetch(waybackFetchUrl)
 
             // Error getting single snapshot from wayback
             if (res.status !== 200) {
                 let searchStatus : VideoDetails["searchStatus"]
                 let title
+
                 if (res.status === 503) {
-                    console.log(res.status)
                     console.error('Wayback Machine seems to be down! Check Twitter!')
                     title = `Wayback Machine seems to be down.<br>Please check <a href="https://twitter.com/internetarchive/">Twitter</a> if there's any downtime.`
                     searchStatus = 503
@@ -307,6 +349,7 @@ export default defineComponent({
                     title = 'A problem occured while getting details. Reach out to me if this persists!'
                     searchStatus = 500
                 }
+                
                 return {
                     searchStatus: searchStatus,
                     title: title,
@@ -337,7 +380,7 @@ export default defineComponent({
             // }
 
             if (snapTime < 20100700000000) {
-                title = parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title')    
+                title = parsedhtml.querySelector('#watch-headline-title > span')?.getAttribute('title')
                 channelName = parsedhtml.querySelector('#watch-username > strong:nth-child(1)')?.innerHTML
                 if (!channelName) {
                     channelName = parsedhtml.querySelector('.watch-description-username > strong:nth-child(1)')?.innerHTML
@@ -397,9 +440,9 @@ export default defineComponent({
                 // No match for regex
                 if (extract !== null && extract !== undefined && extract.length !== 0) {
                     videoMeta = JSON.parse(extract[1])
-                    console.log(extract)
-                    console.log(videoMeta)
-                    console.log(videoMeta.microformat)
+                    // console.log(extract)
+                    // console.log(videoMeta)
+                    // console.log(videoMeta.microformat)
 
                     // Deleted video snapshot in Wayback
                     if (videoMeta.microformat === undefined) {
@@ -431,6 +474,7 @@ export default defineComponent({
 
             }
 
+            // TODO : Check if undefined getting returned
             return {
                 searchStatus: (title && channelName) ? 200 : 404,
                 title: title || 'Could not find details',
@@ -442,6 +486,35 @@ export default defineComponent({
                 waybackUrl: waybackUrl,
                 duration: duration
             }
+        },
+
+        async searchEngineSearch(url: string) {
+            // Avoid Brave Response denied
+            const res = await fetch('https://search.brave.com/search?q='+url.replace('https://www.',''))
+
+            if (res.status !== 200) {
+                return {
+                    searchStatus: res.status,
+                }
+            }
+
+            const rawhtml = await res.text()
+            const parser = new DOMParser()
+            const parsedhtml = parser.parseFromString(rawhtml, 'text/html')
+            
+
+            const searchResultUrl = parsedhtml.querySelector('.result-header')?.getAttribute('href')
+            if (searchResultUrl === url) {
+                const title = parsedhtml.querySelector('.snippet-title')?.textContent?.replace(' - YouTube', '')
+                return {
+                    title : title,
+                    searchStatus : 200
+                }
+            }
+            return {
+                searchStatus : 304
+            }
+            
         },
 
         getReason(videoMeta : any) : string {       
@@ -514,7 +587,7 @@ export default defineComponent({
             } as VideoDetails
         },
 
-        resetVidDetails () {
+        resetVidDetails() {
             this.vidDetails = new Array<VideoDetails>()
             this.playlistName = ''
             this.foundCount = 0

@@ -6,7 +6,7 @@
         </span>
 
         <!-- Number of Snapshots found (Dev only) -->
-        <span v-if="checkDev" class="absolute flex items-center justify-center -top-3 -right-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
+        <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 -right-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{vidDetail.snapshots}}
         </span>
 
@@ -29,7 +29,7 @@
 
                     <p class="text-sm" v-html="vidDetail.published"></p>
 
-                    <div class="my-1.5">
+                    <div v-if="vidDetail.channelName" class="my-1.5">
                         <div class="rounded-full w-max px-2 hover:bg-gray-200">
                             <a :href="vidDetail.channelUrl" target="_blank" title="YouTube Channel">
                                 <img class="float-left py-1" src="@/assets/icons/user.svg" alt="User">
@@ -72,10 +72,10 @@
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch" target="_blank" title="Brave Search"> 
+                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
                                 <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
                             </a>
-                            <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch" target="_blank" title="Google Search">
+                            <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
                                 <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
                             </a>
                         </div>
@@ -99,10 +99,10 @@
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch" target="_blank" title="Brave Search"> 
+                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
                                 <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
                             </a>
-                            <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch" target="_blank" title="Google Search">
+                            <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
                                 <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
                             </a>
                         </div>
@@ -140,18 +140,20 @@ export default defineComponent({
             required: true
         }
     },
-    computed: {
-        ytTitleSearch () :string {
-            return "https://www.youtube.com/results?search_query=" + encodeURIComponent(this.vidDetail.title)
-        },
+    methods: {
         googleUrlSearch () :string {
             return "https://www.google.com/search?q=" + this.vidDetail.url
         },
         braveUrlSearch () :string {
-            return "https://search.brave.com/search?q=" + this.vidDetail.url
+            return "https://search.brave.com/search?q=" + this.vidDetail.url.replace('https://www.','')
         },
         checkDev () {
             return import.meta.env.DEV
+        },
+    },
+    computed: {
+        ytTitleSearch () :string {
+            return "https://www.youtube.com/results?search_query=" + encodeURIComponent(this.vidDetail.title)
         },
         isVisible () {
             if (this.mode === 'playlist') {

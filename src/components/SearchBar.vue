@@ -37,7 +37,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
+// import router from '../router'
 
 export default defineComponent({
     name: 'SearchBar',
@@ -46,6 +47,7 @@ export default defineComponent({
     },
     methods: {
         detectUrl(inputUrl : string) {
+
             const vidRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?v=([^&\s]+).*)|(?:v\/(.*))))?)|(?:youtu\.be\/(.*)?))/i
             const plRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:playlist\?.*?list=([^&\s]+).*)))?)|(?:youtu\.be\/(.*)?))/i
             const vidIdMatch = inputUrl.match(vidRegex)
@@ -71,16 +73,26 @@ export default defineComponent({
             console.log(vidId, plId)
 
             if (plId || (vidId && vidId.length === 11)) {
+                const routeName = this.$route.name
                 this.$emit('setSearchStatus', 102)
 
                 // Home
-                if (this.$route.name === 'Home') {
+                if (routeName === 'Home') {
                     this.$router.push({path:'search', query : {url: inputUrl}})
 
-                } else if (this.$route.name === 'Search') {
-                    // this.$emit('setMode', '')
-                    this.$emit('resetVidDetails')
+                } else if (routeName === 'Search') {
                     
+                    const queryUrl = (this.$route.query?.url)?.toString()
+
+                    // New Search on Search page => update path
+                    if (queryUrl !== inputUrl) {
+                        console.log('New Search page')
+                        this.$router.push({path:'search', query : {url: inputUrl}})
+                        return
+                    }
+
+                    // Reset Video details and process
+                    this.$emit('resetVidDetails')
                     if (plId) {
                         this.$emit('setMode', 'playlist')
                         this.$emit('processPlaylist', plId)
@@ -93,6 +105,7 @@ export default defineComponent({
             }
              else {
                 this.setSearchError('Could not detect Video or Playlist URL')
+
             }
         },
 
@@ -107,10 +120,24 @@ export default defineComponent({
             searchError: '',  
         }
     },
+
+    // From Home / First Created
     created () {
+        console.log(this.searchUrl)
         if (this.searchUrl) {
             this.inputUrl = this.searchUrl
             this.detectUrl(this.inputUrl)
+        }
+    },
+
+    // Any change on Search Page Url
+    watch: {
+        searchUrl(newUrl, oldUrl) {
+            console.log(newUrl)
+            if (newUrl) {
+                this.inputUrl = newUrl
+                this.detectUrl(newUrl)
+            }
         }
     }
 

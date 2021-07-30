@@ -6,6 +6,7 @@ import About from '@/pages/About.vue'
 import NotFound from '@/pages/NotFound.vue'
 
 const routes = [
+  {path: '/home', redirect: '/'},
   {
     path: '/',
     name: 'Home',
