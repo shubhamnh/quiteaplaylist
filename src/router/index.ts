@@ -2,8 +2,6 @@
 import {createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
 import Search from '@/pages/Search.vue'
-import About from '@/pages/About.vue'
-import NotFound from '@/pages/NotFound.vue'
 
 const routes = [
   {path: '/home', redirect: '/'},
@@ -24,11 +22,11 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     // component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    component: About
+    component: () => import('../pages/About.vue')
   },
   {
       path: '/:pathMatch(.*)',
-      component: NotFound
+      component: () => import('../pages/NotFound.vue')
   }
 ]
   

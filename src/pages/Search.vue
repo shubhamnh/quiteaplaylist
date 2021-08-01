@@ -26,26 +26,42 @@
         <div v-else-if="searchStatus === 500" class="flex flex-col flex-grow items-center justify-center">
             <p>Error getting playlist details :(<br>Bug me on Twitter!</p>
         </div>
-        <div v-if="searchStatus === 200 && mode === 'playlist'" class="flex flex-row justify-between items-center pt-2 pb-4">
-            <div class="text-left">
-                <p class="text-lg"> {{playlistName}} </p>
-                <p class="text-sm">Found {{foundCount}} of {{vidDetails.length}} unavailable videos</p>
+        <div v-if="searchStatus === 200 && searchMode === 'playlist'" class="flex flex-row justify-between items-center pt-2 pb-4">
+            <div class="w-2/3 text-left">
+                <p class="text-base lg:text-lg line-clamp-2"> {{playlistName}} </p>
+                <p class="text-sm lg:text-base">Found {{foundCount}} of {{vidDetails.length}}</p>
             </div>
-            <div class="text-xs place-self-end">
-                <button @click="viewMode = 0" :class="{'active': viewMode===0}" class="rounded-l-lg p-2 bg-blue-gray-100 border-r-2 border-blue-gray-200 active:bg-blue-gray-200">
-                    <span>ALL</span>
-                </button>
-                <button @click="viewMode = 1" :class="{'active': viewMode===1}" class="p-2 bg-blue-gray-100 border-r-2 border-blue-gray-200 active:bg-blue-gray-200">
-                    <span>FOUND</span>
-                </button>
-                <button @click="viewMode = 2" :class="{'active': viewMode===2}" class="rounded-r-lg p-2 bg-blue-gray-100 active:bg-blue-gray-200">
-                    <span>NOT FOUND</span>
-                </button>
+            <div class="w-1/3 place-self-end">
+                <div class="relative inline-block text-left">
+                    <div>
+                        <button type="button" @click="toggleMenu()" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-magenta-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                        {{ viewModes[activeViewMode] }}
+                        <!-- Heroicon name: solid/chevron-down -->
+                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        </button>
+
+                        <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                            <div v-show="menuMode" ref="dropdown" @blur="menuMode = false" class="origin-top-right absolute right-0 mt-2 w-28 lg:w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+                                <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+                                <div v-for="(viewMode, index) in viewModes" :key="index" class="py-1">
+                                    <button @click="activeViewMode = index; menuMode = false" class="w-full text-gray-700 block px-4 py-2 text-left text-sm hover:bg-gray-100">
+                                        {{ viewMode }}
+                                    </button>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+
+
+                </div>
+
             </div>
         </div>
         <!-- <div class="flex flex-row flex-wrap place-content-around"> -->
         <div class="grid gap-5 grid-cols-1 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            <VideoDetails v-for="vidDetail in vidDetails" :vidDetail="vidDetail" :viewMode="viewMode" :mode="mode" :key="vidDetail.id"/>
+            <VideoDetails v-for="vidDetail in vidDetails" :vidDetail="vidDetail" :activeViewMode="activeViewMode" :searchMode="searchMode" :key="vidDetail.id"/>
         </div>
     </div>
 </template>
@@ -66,10 +82,12 @@ export default defineComponent({
             vidDetails : new Array<VideoDetails>(),
             playlistName : '',
             searchUrl : '',
-            viewMode : 0,
+            activeViewMode : 0,
+            viewModes: ['All','Found','Gems 💎'],
             foundCount : 0,
+            searchMode: '',
+            menuMode: false,
             searchStatus: 0,
-            mode: '',
             // 0 notTriggered
             // 102 Running / Loading
             // 200 Playlists Fetched
@@ -406,7 +424,6 @@ export default defineComponent({
                 published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
 
             } else if (snapTime < 20130100000000) {
-                //shorten
                 title = parsedhtml.querySelector('#eow-title')?.getAttribute('title')
                 channelName = parsedhtml.querySelector('#watch-uploader-info > a:nth-child(1)')?.innerHTML || ''
                 channelUrl = parsedhtml.querySelector('#watch-uploader-info > a:nth-child(1)')?.getAttribute('href')
@@ -415,13 +432,12 @@ export default defineComponent({
                 published = parsedhtml.querySelector('.watch-video-date')?.innerHTML.trim()
 
             } else if (snapTime < 20140700000000) {
-                //shorten
                 title = parsedhtml.querySelector('#eow-title')?.getAttribute('title') || parsedhtml.querySelector('#watch-headline-title > span:nth-child(1)')?.getAttribute('title') || ''
                 channelName = parsedhtml.querySelector('#watch7-user-header .yt-user-name')?.innerHTML
                 channelUrl = parsedhtml.querySelector('#watch7-user-header .yt-user-name')?.getAttribute('href')
                 channelUrl = channelUrl ? (this.ytPrefix + channelUrl) : ''
                 description = parsedhtml.querySelector('#eow-description')?.innerHTML || ''
-                published = parsedhtml.querySelector('.watch-video-date')?.innerHTML
+                published = parsedhtml.querySelector('.watch-video-date')?.innerHTML || parsedhtml.querySelector('#watch-uploader-info')?.textContent?.trim()
 
             } else if (snapTime < 20200702000000) {
                 title = parsedhtml.querySelector('#eow-title')?.getAttribute('title')
@@ -591,7 +607,7 @@ export default defineComponent({
             this.vidDetails = new Array<VideoDetails>()
             this.playlistName = ''
             this.foundCount = 0
-            this.viewMode = 0
+            this.activeViewMode = 0
         },
         addToVidDetails (vidDetail: VideoDetails) {
             this.vidDetails.push(vidDetail)
@@ -608,7 +624,13 @@ export default defineComponent({
             this.searchStatus = status
         },
         setMode (mode : '' | 'video' | 'playlist') {
-            this.mode = mode
+            this.searchMode = mode
+        },
+        toggleMenu () {
+            // if(!this.menuMode) {
+            //     this.$refs.dropdown.focus()
+            // }
+            this.menuMode = !this.menuMode
         }
     },
 })

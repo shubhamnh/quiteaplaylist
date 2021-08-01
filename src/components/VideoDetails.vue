@@ -23,7 +23,7 @@
                 <!-- <div> -->
                     <div class="flex flex-row">
                         <a :href="vidDetail.url" target="_blank" title="YouTube Video">
-                            <h2 class="line-clamp-2 text-gray-800 font-bold">{{ vidDetail.title }}</h2>
+                            <h2 class="line-clamp-2 text-gray-800 font-bold" v-html="vidDetail.title"></h2>
                         </a>
                     </div>
 
@@ -131,11 +131,11 @@ export default defineComponent({
             type: Object as PropType<VideoDetails>,
             required: true,
         },
-        viewMode: {
+        activeViewMode: {
             type: Number,
             required: true
         },
-        mode: {
+        searchMode: {
             type: String,
             required: true
         }
@@ -156,14 +156,14 @@ export default defineComponent({
             return "https://www.youtube.com/results?search_query=" + encodeURIComponent(this.vidDetail.title)
         },
         isVisible () {
-            if (this.mode === 'playlist') {
-                if (this.viewMode === 2) {
+            if (this.searchMode === 'playlist') {
+                if (this.activeViewMode === 2) {
                     // Show Not Found
                     if (this.vidDetail.searchStatus === 200) {
                         return false
                     } else return true
                 }
-                else if (this.viewMode === 1) {
+                else if (this.activeViewMode === 1) {
                     // Show Found
                     if (this.vidDetail.searchStatus === 200) {
                         return true
@@ -176,7 +176,6 @@ export default defineComponent({
                 return true
             }
         }
-
     },
 })
 </script>
