@@ -249,6 +249,11 @@ export default defineComponent({
         },
 
         async processVideo(vidId: string) {
+            this.addToVidDetails(this.VideoDetails(0, 0, this.ytVidPrefix + vidId))
+            this.setSearchStatus(200)
+            const vidDetails = await fetch(this.wbCorsProxy + 'v=' + vidId)
+            
+
             const vidUrl = this.ytVidPrefix + vidId
             const snapshots = await this.getSnapshots(vidUrl)
             this.setSearchStatus(200)
