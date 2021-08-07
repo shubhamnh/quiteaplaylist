@@ -47,14 +47,12 @@ export default defineComponent({
     },
     methods: {
         detectUrl(inputUrl : string) {
-
             const vidRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?v=([^&\s]+).*)|(?:v\/(.*))))?)|(?:youtu\.be\/(.*)?))/i
             const plRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:playlist\?.*?list=([^&\s]+).*)))?)|(?:youtu\.be\/(.*)?))/i
             const vidIdMatch = inputUrl.match(vidRegex)
             const plIdMatch = inputUrl.match(plRegex)
             let vidId, plId
             this.setSearchError('')
-
 
             if (vidIdMatch) {
                 if (vidIdMatch[1]) {
@@ -73,39 +71,39 @@ export default defineComponent({
             console.log(vidId, plId)
 
             if (plId || (vidId && vidId.length === 11)) {
-                const routeName = this.$route.name
-                this.$emit('setSearchStatus', 102)
-
-                // Home
-                if (routeName === 'Home') {
-                    this.$router.push({path:'search', query : {url: inputUrl}})
-
-                } else if (routeName === 'Search') {
-                    
-                    const queryUrl = (this.$route.query?.url)?.toString()
-
-                    // New Search on Search page => update path
-                    if (queryUrl !== inputUrl) {
-                        console.log('New Search page')
-                        this.$router.push({path:'search', query : {url: inputUrl}})
-                        return
-                    }
-
-                    // Reset Video details and process
-                    this.$emit('resetVidDetails')
-                    if (plId) {
-                        this.$emit('setMode', 'playlist')
-                        this.$emit('processPlaylist', plId)
-                    } else {
-                        this.$emit('setMode', 'video')
-                        this.$emit('processVideo', vidId)
-                    }
-                }
-
+                this.processPlaylistOrVideo(plId, vidId, inputUrl)
             }
              else {
                 this.setSearchError('Could not detect Video or Playlist URL')
+            }
+        },
 
+        processPlaylistOrVideo(plId : string | undefined , vidId : string | undefined, inputUrl : string) {
+            const routeName = this.$route.name
+            this.$emit('setSearchStatus', 102)
+            this.$emit('resetSearchResults')
+
+            // If Search on Home Page
+            if (routeName === 'Home') {
+                this.$router.push({path:'search', query : {url: inputUrl}})
+
+            } else if (routeName === 'Search') {               
+                const queryUrl = (this.$route.query?.url)?.toString()
+
+                // New Search on Search page => update path
+                if (queryUrl !== inputUrl) {
+                    console.log('New Search page')
+                    this.$router.push({path:'search', query : {url: inputUrl}})
+                    return
+                }
+
+                if (plId) {
+                    this.$emit('setMode', 'playlist')
+                    this.$emit('processPlaylist', plId)
+                } else {
+                    this.$emit('setMode', 'video')
+                    this.$emit('processVideo', vidId)
+                }
             }
         },
 

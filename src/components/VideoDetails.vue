@@ -1,13 +1,18 @@
 <template>
     <div id="vidDetail" v-show="isVisible" class="relative h-auto w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
 
-        <span v-if="vidDetail.playlistPosition" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
-            {{vidDetail.playlistPosition}}
+        <span v-if="searchMode === 'playlist'" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
+            {{playlistPos}}
         </span>
 
         <!-- Number of Snapshots found (Dev only) -->
         <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 -right-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{vidDetail.snapshots}}
+        </span>
+
+        <!-- Number of Snapshots Parsed (Dev only) -->
+        <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 right-6 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
+            {{vidDetail.snapshotsParsed}}
         </span>
 
         <div class="h-full" v-if="vidDetail.searchStatus">
@@ -94,8 +99,8 @@
                     </div>
                     <div class="flex flex-col w-3/5 justify-evenly">
                         <div>
-                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Need to do some more digging to find it...</p>
-                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Gotta dig more...</p>
+                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Try digging some more to find it...</p>
+                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Try digging more...</p>
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
@@ -122,13 +127,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
     name: 'VideoDetails',
     props: {
         vidDetail: {
-            type: Object as PropType<VideoDetails>,
+            type: Object,
             required: true,
         },
         activeViewMode: {
@@ -138,6 +143,9 @@ export default defineComponent({
         searchMode: {
             type: String,
             required: true
+        },
+        playlistPos: {
+            type: Number,
         }
     },
     methods: {

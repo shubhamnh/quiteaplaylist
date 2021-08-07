@@ -1,5 +1,9 @@
+interface Video {
+  [vidId:string] : VideoDetails
+}
+
 interface VideoDetails {
-  readonly id: number
+  readonly id: string
   searchStatus: 0 | 102 | 200 | 204 | 206 | 404 | 500 | 503
   // 204 Deleted Snapshot
   url: string
@@ -14,4 +18,5 @@ interface VideoDetails {
   snapshotTime?: string
   playlistPosition?: number
   snapshots?: number
+  snapshotsParsed?: number
 }

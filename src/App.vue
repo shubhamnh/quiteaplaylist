@@ -2,7 +2,7 @@
     <div class="flex flex-col min-h-screen bg-blue-gray-050 text-gray-800">
         <div class="flex flex-row items-center">
             <ul class="flex flex-row flex-grow justify-between items-center mx-5 my-3">
-                <li><router-link to="/">WhatVideo?</router-link></li>
+                <li><router-link to="/">WhatVideo? (Test)</router-link></li>
                 <li><router-link to="/about">About</router-link></li>
             </ul>
         </div>
