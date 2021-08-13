@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col flex-grow items-center">
+    <div class="flex flex-col flex-grow justify-center items-center">
         <p>
             The page you're looking for seems to be missing...
         </p>

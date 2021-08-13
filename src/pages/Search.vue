@@ -13,6 +13,9 @@
                 <div></div>
                 <div></div>
             </div>
+            <div>
+                <p class="text-sm text-gray-500">Getting playlist details..</p>
+            </div>
         </div>
         <div v-else-if="searchStatus === 204" class="flex flex-col flex-grow items-center justify-center">
             <p>Looks like you're having a lucky day!<br>All your playlist videos are visible!</p>
@@ -27,17 +30,17 @@
             <p>Error getting playlist details :(<br> Reach out to me on <a href="https://twitter.com/shubham_nh">Twitter</a> if this persists!</p>
         </div>
 
-        <div v-if="searchStatus === 200 && searchMode === 'playlist'" class="flex flex-row justify-between items-center pt-2 pb-4">
+        <div v-if="searchStatus === 200 && searchMode === 'playlist'" class="flex flex-row items-end pt-4 pb-3 lg:pb-2">
 
             <div class="w-2/3 text-left">
-                <p class="text-base lg:text-lg line-clamp-2"> {{playlistName}} </p>
+                <p class="text-base lg:text-lg font-bold line-clamp-2"> {{currentPlaylist.snippet.title}} </p>
                 <p class="text-sm lg:text-base">Found {{foundCount}} of {{absentVideos.length}}</p>
             </div>
 
             <!-- Filter Menu -->
-            <div class="w-1/3 place-self-end">
+            <div class="flex w-1/3 justify-end">
                 <div class="relative inline-block text-left">
-                    <div>
+                    <div >
                         <button type="button" @click="toggleMenu()" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-magenta-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
                         {{ viewModes[activeViewMode] }}
                         <!-- Heroicon name: solid/chevron-down -->
@@ -47,7 +50,7 @@
                         </button>
 
                         <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                            <div v-show="menuMode" ref="dropdown" @blur="menuMode = false" class="origin-top-right absolute right-0 mt-2 w-28 lg:w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+                            <div v-if="menuMode" v-click-outside="closeMenu" ref="dropdown" class="origin-top-right absolute right-0 mt-2 w-28 lg:w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
                                 <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
                                 <div v-for="(viewMode, index) in viewModes" :key="index" class="py-1">
                                     <button @click="activeViewMode = index; menuMode = false" class="w-full text-gray-700 block px-4 py-2 text-left text-sm hover:bg-gray-100">
@@ -73,6 +76,7 @@
 import { defineComponent } from 'vue'
 import SearchBar from "@/components/SearchBar.vue"
 import VideoDetails from "@/components/VideoDetails.vue"
+import vClickOutside from '../v-click-outside';
 
 interface absentVideo {
     pos?: number,
@@ -82,19 +86,22 @@ interface absentVideo {
 export default defineComponent({
     name: 'Search',
     components: { SearchBar, VideoDetails },
+    directives: {
+        clickOutside: vClickOutside,
+    },
     props: {
         url : String
     },
     data () {
         return {
             vidDetails : new Object as Video,
-            playlistName : '',
+            currentPlaylist : new Object as Playlist,
             searchUrl : '',
             activeViewMode : 0,
             // 0 - All
             // 1 - Found Videos
             // 2 - Not Found Videos
-            viewModes: ['All','Found','Gems 💎'],
+            viewModes: ['All','Found','Dig More..'],
             absentVideos : new Array<absentVideo>(),
             foundCount : 0,
             searchMode: '',
@@ -114,7 +121,7 @@ export default defineComponent({
             // Help : https://en.wikipedia.org/wiki/Help:Using_the_Wayback_Machine
             waybackPrefix: 'https://web.archive.org/web/',
             waybackOpt: 'id_/', // id_ (original links) or if_ (wayback archive links)
-            wbCorsProxy: 'https://wb-dev.shubhamnh.workers.dev/?',
+            wbCorsProxy: 'https://wb.shubhamnh.workers.dev/?',
 
             ytPApi: 'https://youtube.googleapis.com/youtube/v3/playlists?',
             ytPApiPart: 'part=snippet%2CcontentDetails%2Cstatus',
@@ -126,7 +133,7 @@ export default defineComponent({
             ytPIApiId:'&playlistId=',
             ytPIApiPg: '&pageToken=',
             ytApiKey: '&key=',
-            ytCorsProxy: 'https://yt-recover.shubhamnh.workers.dev/?',
+            ytCorsProxy: 'https://yt.shubhamnh.workers.dev/?',
         }
     },
     created () {
@@ -168,20 +175,31 @@ export default defineComponent({
                     return
                 }
             }
+            
+            let localPlaylist : any = localStorage.getItem(this.currentPlaylist.id)
+            localPlaylist = localPlaylist ? JSON.parse(localPlaylist) : undefined
+            if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.absentPlaylistItems) || !localPlaylist) {
 
+                // Get all playlist items
+                do {
+                    let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
+                    if (playlistItems === undefined) {
+                        return
+                    }
+                    plItems.push(...playlistItems)
+                    nextPageToken = nPageToken
+                } while (nextPageToken)
 
-            // Get all playlist items
-            do {
-                let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
-                if (playlistItems === undefined) {
-                    return
-                }
-                plItems.push(...playlistItems)
-                nextPageToken = nPageToken
-            } while (nextPageToken)
+                localStorage.setItem(this.currentPlaylist.id , JSON.stringify({
+                    'playlist' : this.currentPlaylist,
+                    'absentPlaylistItems' : plItems
+                }))
+            } else {
+                plItems = localPlaylist?.absentPlaylistItems
+                console.log(plItems)
+            }
 
             this.setSearchStatus(200)
-            // console.log(plItems)
 
             if (plItems.length) {
 
@@ -310,7 +328,7 @@ export default defineComponent({
 
         resetSearchResults() {
             this.vidDetails = {}
-            this.playlistName = ''
+            this.currentPlaylist = new Object as Playlist
             this.absentVideos = []
             this.foundCount = 0
             this.activeViewMode = 0
@@ -327,7 +345,7 @@ export default defineComponent({
             });
         },
         setPlaylist (playlist: Playlist) {
-            this.playlistName = playlist.snippet.title
+            this.currentPlaylist = playlist
         },
         setSearchStatus (status : number) {
             this.searchStatus = status
@@ -336,11 +354,11 @@ export default defineComponent({
             this.searchMode = mode
         },
         toggleMenu () {
-            // if(!this.menuMode) {
-            //     this.$refs.dropdown.focus()
-            // }
             this.menuMode = !this.menuMode
         },
+        closeMenu () {
+            this.menuMode = false
+        }
         // vidDetail(vidId: string) {
             // return this.vidDetails[vidId]
         // }

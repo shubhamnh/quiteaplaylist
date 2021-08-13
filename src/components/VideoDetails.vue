@@ -1,5 +1,5 @@
 <template>
-    <div id="vidDetail" v-show="isVisible" class="relative h-auto w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
+    <div id="vidDetail" v-show="isVisible" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
 
         <span v-if="searchMode === 'playlist'" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{playlistPos}}
@@ -28,7 +28,7 @@
                 <!-- <div> -->
                     <div class="flex flex-row">
                         <a :href="vidDetail.url" target="_blank" title="YouTube Video">
-                            <h2 class="line-clamp-2 text-gray-800 font-bold" v-html="vidDetail.title"></h2>
+                            <p class="line-clamp-2 text-gray-800 font-bold" v-html="vidDetail.title"></p>
                         </a>
                     </div>
 
@@ -99,16 +99,16 @@
                     </div>
                     <div class="flex flex-col w-3/5 justify-evenly">
                         <div>
-                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Try digging some more to find it...</p>
+                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Try digging some more...</p>
                             <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Try digging more...</p>
                         </div>
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
-                                <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
-                            </a>
                             <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
                                 <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
+                            </a>
+                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
+                                <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
                             </a>
                         </div>
                     </div>
