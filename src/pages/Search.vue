@@ -121,7 +121,7 @@ export default defineComponent({
             // Help : https://en.wikipedia.org/wiki/Help:Using_the_Wayback_Machine
             waybackPrefix: 'https://web.archive.org/web/',
             waybackOpt: 'id_/', // id_ (original links) or if_ (wayback archive links)
-            wbCorsProxy: 'https://wb.shubhamnh.workers.dev/?',
+            wbCorsProxy: import.meta.env.VITE_WB_PROXY,
 
             ytPApi: 'https://youtube.googleapis.com/youtube/v3/playlists?',
             ytPApiPart: 'part=snippet%2CcontentDetails%2Cstatus',

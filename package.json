@@ -3,6 +3,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
+    "deploystage" : "firebase deploy --only hosting:stage",
+    "deployprod" : "firebase deploy --only hosting:prod",
     "serve": "vite preview",
     "build:server": "vite build --ssr src/entry-server.js --outDir dist/server",
     "generate": "vite build --ssrManifest --outDir dist/static && npm run build:server && node prerender"
