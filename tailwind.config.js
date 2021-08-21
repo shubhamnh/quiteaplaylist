@@ -1,3 +1,5 @@
+const { fontFamily } = require('tailwindcss/defaultTheme')
+
 module.exports = {
   mode: 'jit',
   purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
@@ -79,13 +81,52 @@ module.exports = {
           'green-vivid-900': '#014807',
       },
       fontFamily: {
-        sans: ['Nunito', 'sans-serif'],
-      }
+        ...fontFamily,
+        sans: ['Nunito', 'sans'],
+      },
+      keyframes: {
+        glitch: {
+          '0%': { 
+            transform: 'translate3d(-10px,0px,0px) scale3d(-1,-1,1)',
+            'clip-path': 'polygon(0 20%, 100% 20%, 100% 21%, 0 21%)'
+          },
+          '2%': {
+              'clip-path': 'polygon(0 33%, 100% 33%, 100% 33%, 0 33%)'
+          },
+          '4%': {
+              'clip-path': 'polygon(0 44%, 100% 44%, 100% 44%, 0 44%)'
+          },
+          '5%': {
+              'clip-path': 'polygon(0 50%, 100% 50%, 100% 20%, 0 20%)'
+          },
+          '6%': {
+              'clip-path': 'polygon(0 70%, 100% 70%, 100% 70%, 0 70%)'
+          },
+          '7%': {
+              'clip-path': 'polygon(0 80%, 100% 80%, 100% 80%, 0 80%)'
+          },
+          '8%': {
+              'clip-path': 'polygon(0 50%, 100% 50%, 100% 55%, 0 55%)'
+          },
+          '9.9%': {
+              transform: 'translate3d(-10px,0px,0px) scale3d(-1,-1,1)',
+              'clip-path': 'polygon(0 70%, 100% 70%, 100% 80%, 0 80%)'
+          },
+          '10%, 100%': {
+              transform: 'translate3d(0,0,0) scale3d(1,1,1)',
+              'clip-path': 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)'
+          }
+        }
+      },
+      animation: {
+        'glitch': 'glitch 1s',
+        'glitch-reverse' : 'glitch 3s reverse'
+       }
     },
   },
   variants: {
     extend: {
-      // backgroudColor: ["active"],
+      // backgroundColor: ['active'],
     },
   },
   plugins: [

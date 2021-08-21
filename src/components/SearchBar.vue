@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="w-full">
         <div class="flex flex-col place-content-center my-2">
             <div class="flex flex-row place-content-center">
                 <div class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200
@@ -22,9 +22,12 @@
                     </span> -->
                 </div>
                 <button class="rounded-full h-10 w-10 
-                    bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
-                    @click="detectUrl(inputUrl)" title="Search">
-                        <img src="@/assets/icons/arrow-right.svg" alt="Submit">
+                    bg-white border border-gray-300 hover: focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
+                    @click="detectUrl(inputUrl)" title="Search" alt="Submit">
+                        <!-- <img src="@/assets/icons/arrow-right.svg" > -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                        </svg>
                 </button>
             </div>
             
@@ -33,15 +36,18 @@
             </div> -->
         </div>
 
-        <div v-if="searchError" class="my-2">
-            <p class="inline text-sm"> Could not detect Playlist or Video URL. </p>
-            <a href="/help" title="Help">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </a>
+        <div v-if="searchError" class="flex flex-row justify-center items-center gap-1 my-3">
+            <div>
+                <p class="inline text-sm"> Could not detect Playlist or Video URL. </p>
+            </div>
+            <div>
+                <router-link to="/help/#url-accepted" title="Help">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                </router-link>
+            </div>
         </div>
-
     </div>
 </template>
 
@@ -120,7 +126,8 @@ export default defineComponent({
     data () {
         return {
             inputUrl: '',
-            searchError: false,  
+            searchError: false,
+            // searchErrorLinkTitle: 'Eg: https://youtube.com/playlist?list=....'
         }
     },
 
