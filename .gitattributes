@@ -1,1 +1,2 @@
 .env merge=ours
+firebase.json merge=ours

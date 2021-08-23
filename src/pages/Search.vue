@@ -53,7 +53,7 @@
                             <div v-if="menuMode" v-click-outside="closeMenu" ref="dropdown" class="origin-top-right absolute right-0 mt-2 w-28 lg:w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
                                 <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
                                 <div v-for="(viewMode, index) in viewModes" :key="index" class="py-1">
-                                    <button @click="activeViewMode = index; menuMode = false" class="w-full text-gray-700 block px-4 py-2 text-left text-sm hover:bg-gray-100">
+                                    <button @click="activeViewMode = index; menuMode = false" class="w-full text-gray-700 block px-4 py-2 text-left text-sm hover:bg-gray-300">
                                         {{ viewMode }}
                                     </button>
                                 </div>
@@ -178,6 +178,8 @@ export default defineComponent({
             
             let localPlaylist : any = localStorage.getItem(this.currentPlaylist.id)
             localPlaylist = localPlaylist ? JSON.parse(localPlaylist) : undefined
+
+            // Check (etag does not match && has absent playlist items) or localplaylist undefined
             if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.absentPlaylistItems) || !localPlaylist) {
 
                 // Get all playlist items
@@ -205,6 +207,7 @@ export default defineComponent({
 
                 // get deleted/private videos
                 for (const playlistItem of plItems) {
+                    vidId = playlistItem.contentDetails.videoId
 
                     // Skip Public and Unlisted Videos
                     if (playlistItem.status.privacyStatus === 'public' || playlistItem.status.privacyStatus === 'unlisted') {
@@ -213,7 +216,6 @@ export default defineComponent({
 
                     // Consider 'private' and 'privacyStatusUnspecified' (deleted) videos
                     // Create sequential empty video details
-                    vidId = playlistItem.contentDetails.videoId
                     url = this.ytVidPrefix + vidId
                     status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
                     this.addToVidDetails(vidId, this.VideoDetails(vidId, 0, url, status))
@@ -230,7 +232,12 @@ export default defineComponent({
 
                     // Get and process Snapshots of Videos
                     for (const [index, absentVideo] of this.absentVideos.entries()) {
-                        if (i < 3 && (index !== (this.absentVideos.length-1))) {
+                        let localVideo : any = localStorage.getItem(absentVideo.vidId)
+                        localVideo = localVideo ? JSON.parse(localVideo) : undefined
+                        if (localVideo) {
+                            Object.assign( this.vidDetails[absentVideo.vidId], localVideo)
+                            this.foundCount++
+                        } else if (i < 3 && (index !== (this.absentVideos.length-1))) {
                             absentVideoBatch.push(absentVideo.vidId)
                             i++
                         } else {
@@ -289,6 +296,14 @@ export default defineComponent({
 
             const vidUrl = this.ytVidPrefix + vidId
             this.addToVidDetails(vidId, this.VideoDetails(vidId, 0, vidUrl))
+
+            let localVideo : any = localStorage.getItem(vidId)
+            localVideo = localVideo ? JSON.parse(localVideo) : undefined
+            if (localVideo) {
+                Object.assign( this.vidDetails[vidId], localVideo)
+                return
+            }
+
             const res = await fetch(this.wbCorsProxy + 'v=' + vidId)
 
             if (res.status === 200) {
@@ -340,9 +355,14 @@ export default defineComponent({
             console.log(resData)
             resData.forEach((res: { vidId: string; detail: any }) => {
                 Object.assign( this.vidDetails[res.vidId], res.detail)
-                if (res.detail.searchStatus === 200)
+                if (res.detail.searchStatus === 200) {
+                    this.setLocalVid(res.vidId, res.detail)
                     this.foundCount++
+                }
             });
+        },
+        setLocalVid (vidId: string, vidDetail: VideoDetails) {
+            localStorage.setItem(vidId , JSON.stringify(vidDetail))
         },
         setPlaylist (playlist: Playlist) {
             this.currentPlaylist = playlist

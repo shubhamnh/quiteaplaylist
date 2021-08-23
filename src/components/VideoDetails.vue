@@ -1,5 +1,5 @@
 <template>
-    <div id="vidDetail" v-show="isVisible" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-lg border-2 border-gray-200">
+    <div id="vidDetail" v-show="isVisible" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-md border-2 border-gray-200">
 
         <span v-if="searchMode === 'playlist'" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{playlistPos}}
@@ -61,14 +61,14 @@
 
                 <!-- <div class="flex flex-row flex-nowrap items-center justify-end gap-2"> -->
                     <!-- <p class="text-sm">Find Similar :</p> -->
-                    <a :href="ytTitleSearch" target="_blank" class="absolute bottom-5 right-5 mx-1 rounded-full p-2 hover:bg-gray-300" title="YouTube Search">
+                    <a :href="ytTitleSearch" target="_blank" class="absolute bottom-5 right-5 mx-1 rounded-full p-2 shadow-xl border-2 hover:bg-gray-200" title="YouTube Search">
                         <img class="h-5 sm:h-auto" src="@/assets/icons/youtube.svg" alt="YouTube Logo">
                     </a>
                 <!-- </div> -->
             </div>
 
             <!-- Server Error -->
-            <div v-else-if="vidDetail.searchStatus === 503 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
+            <div v-else-if="vidDetail.searchStatus === 503 || vidDetail.searchStatus === 502 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
                 <div class="flex flex-row flex-grow">
                     <div class="flex flex-col w-full justify-evenly">
                         <div>
@@ -78,10 +78,10 @@
 
                         <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
                             <!-- <span class="text-sm">Search On :</span> -->
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
+                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
                                 <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
                             </a>
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
+                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
                                 <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
                             </a>
                             <!-- <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
@@ -111,10 +111,10 @@
                             <!-- <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
                                 <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
                             </a> -->
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
+                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
                                 <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
                             </a>
-                            <a class="rounded-full p-1.5 hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
+                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
                                 <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
                             </a>
                         </div>

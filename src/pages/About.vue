@@ -12,7 +12,17 @@
              <br>
              <p>Hope you find this site helpful!</p>
              <br>
-             <p>Peace out ✌️,<br>Shubham</p>
+             <p>Have any feedback or questions?</p>
+             <p>Reach out to me on <a href="https://twitter.com/shubham_nh" target="_blank" title="Twitter"><img class="inline h-4" src="@/assets/icons/twitter.svg" alt="Twitter"></a></p>
+             <br>
+             <p>Peace out ✌️,<br>Shubham Jain</p>
+            <br>
+            <br>
+             <h2 class="text-lg font-semibold">Attributions</h2>
+             <p>Homepage Illustration by <a class="italic hover:underline" href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6" target="_blank">Icons 8</a> from <a class="italic hover:underline" href="https://icons8.com/illustrations" target="_blank">Ouch!</a></p>
+             <p>Diamond Icon by <a class="italic hover:underline" href="https://www.freepik.com"  target="_blank" title="Freepik">Freepik</a> from <a class="italic hover:underline" href="https://www.flaticon.com/" target="_blank" title="Flaticon">flaticon.com</a></p>
+             <p>Other icons by <a class="italic hover:underline" href="https://heroicons.com/" target="_blank">Heroicons</a>, <a class="italic hover:underline" href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a> and <a class="italic hover:underline" href="https://iconify.design/" target="_blank">Iconify Design</a></p>
+
         </div>
 
     </div>
@@ -23,5 +33,11 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
     name: 'About',
+    // metaInfo: {
+    //   title: 'About',
+    //   htmlAttrs: {
+    //     lang: 'en',
+    //   }
+    // }
 })
 </script>

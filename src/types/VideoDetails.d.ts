@@ -4,7 +4,8 @@ interface Video {
 
 interface VideoDetails {
   readonly id: string
-  searchStatus: 0 | 102 | 200 | 204 | 206 | 404 | 500 | 503
+  // searchStatus: 0 | 102 | 200 | 204 | 206 | 404 | 500 | 503
+  searchStatus: Response["status"]
   // 204 Deleted Snapshot
   url: string
   title: string

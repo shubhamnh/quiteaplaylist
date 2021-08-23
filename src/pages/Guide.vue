@@ -71,6 +71,12 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-    name:'Help'
+    name:'Guide',
+    // metaInfo: {
+    //   title: 'Finding Deleted or Private YouTube video details from Playlists Guide',
+    //   htmlAttrs: {
+    //     lang: 'en',
+    //   }
+    // }
 })
 </script>
