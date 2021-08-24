@@ -10,10 +10,10 @@
             <ol class="list-decimal list-outside space-y-3 pl-6">
                 <li>Open the playlist on YouTube which has deleted videos.</li>
 
-                <li>Make sure the Playlist is either Public <img class="inline align-top h-5 w-5" src="@/assets/icons/globe.svg" alt="Public"> or Unlisted <img class="inline align-top h-5 w-5" src="@/assets/icons/unlisted.svg" alt="Unlisted"> if it's your own playlist. You can find this by looking at the icon next to your playlist name. Please note that this method won't work for the "Liked" Playlist which has all your Liked Videos as well as for the "Watch Later" playlist. More info <a href="#liked-watch-later" class="italic hover:underline">here</a>.
+                <li>Make sure the Playlist is either Public <img class="inline align-text-top h-5 w-5" src="@/assets/icons/globe.svg" alt="Public"> or Unlisted <img class="inline align-text-top h-5 w-5" src="@/assets/icons/unlisted.svg" alt="Unlisted"> if it's your own playlist. You can find this by looking at the icon next to your playlist name. Please note that this method won't work for the "Liked" Playlist which has all your Liked Videos as well as for the "Watch Later" playlist. More info <a href="#liked-watch-later" class="italic hover:underline">here</a>.
                     <br><br>
-                    If your playlist is Private <img class="inline align-top h-5 w-5" src="@/assets/icons/lock-closed.svg" alt="Private">, you can change the privacy settings of the playlist using the Edit
-                        <img class="inline align-top h-5 w-5" src="@/assets/icons/pencil.svg" alt="Edit"> 
+                    If your playlist is Private <img class="inline align-text-top h-5 w-5" src="@/assets/icons/lock-closed.svg" alt="Private">, you can change the privacy settings of the playlist using the Edit
+                        <img class="inline align-text-top h-5 w-5" src="@/assets/icons/pencil.svg" alt="Edit"> 
                         icon.
                     <br>
                     <img class="w-3/4 max-w-sm h-auto mx-auto my-5 sm:my-8 rounded-md shadow-lg" src="@/assets/images/playlist-privacy.jpg" alt="Set Playlist Privacy">

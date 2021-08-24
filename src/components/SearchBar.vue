@@ -81,9 +81,9 @@ export default defineComponent({
                 plId = plIdMatch[1]
             }
 
-            console.log(vidIdMatch)
-            console.log(plIdMatch)
-            console.log(vidId, plId)
+            // console.log(vidIdMatch)
+            // console.log(plIdMatch)
+            // console.log(vidId, plId)
 
             if (plId || (vidId && vidId.length === 11)) {
                 this.processPlaylistOrVideo(plId, vidId, inputUrl)
@@ -107,7 +107,6 @@ export default defineComponent({
 
                 // New Search on Search page => update path
                 if (queryUrl !== inputUrl) {
-                    console.log('New Search page')
                     this.$router.push({path:'search', query : {url: inputUrl}})
                     return
                 }
@@ -133,7 +132,7 @@ export default defineComponent({
 
     // From Home / First Created
     created () {
-        console.log(this.searchUrl)
+        // console.log(this.searchUrl)
         if (this.searchUrl) {
             this.inputUrl = this.searchUrl
             this.detectUrl(this.inputUrl)
@@ -143,7 +142,7 @@ export default defineComponent({
     // Any change on Search Page Url
     watch: {
         searchUrl(newUrl, oldUrl) {
-            console.log(newUrl)
+            // console.log(newUrl)
             if (newUrl) {
                 this.inputUrl = newUrl
                 this.detectUrl(newUrl)
