@@ -139,7 +139,7 @@ export default defineComponent({
     created () {
         // From Home / Created first time
         if(this.$route.query.url) {
-            console.log('Created: '+this.$route.query.url)
+            // console.log('Created: '+this.$route.query.url)
             this.searchUrl = (this.$route.query?.url)?.toString() || ''
         }
     },
@@ -207,7 +207,7 @@ export default defineComponent({
                 }
             } else {
                 plItems = localPlaylist?.absentPlaylistItems
-                console.log(plItems)
+                // console.log(plItems)
             }
 
             this.setSearchStatus(200)
@@ -234,7 +234,7 @@ export default defineComponent({
                         } as absentVideo )
                 }
 
-                console.log(this.absentVideos)
+                // console.log(this.absentVideos)
 
                 if (this.absentVideos.length) {
                     let i = 0, absentVideoBatch : string[]= []
@@ -251,13 +251,15 @@ export default defineComponent({
 
                         if (localVideo) {
                             Object.assign( this.vidDetails[absentVideo.vidId], localVideo)
-                            this.foundCount++
+                            if (localVideo.searchStatus === 200)
+                                this.foundCount++
+                            i++
                         } else if (i < 3 && (index !== (this.absentVideos.length-1))) {
                             absentVideoBatch.push(absentVideo.vidId)
                             i++
                         } else {
                             absentVideoBatch.push(absentVideo.vidId)
-                            this.getAndProcessPlaylistSnapshots(absentVideoBatch)
+                            this.processBatchVideos(absentVideoBatch)
                             absentVideoBatch = []
                             i = 0
                         }
@@ -298,7 +300,7 @@ export default defineComponent({
             return { playlistItems, nPageToken }
         },
 
-        async getAndProcessPlaylistSnapshots (absentVideoBatch : string[]) {
+        async processBatchVideos (absentVideoBatch : string[]) {
             const res = await fetch(this.wbCorsProxy + 'v=' + absentVideoBatch.join('&v='))
             if (res.status === 200) {
                 this.assignToVidDetails(await res.json())
@@ -367,12 +369,14 @@ export default defineComponent({
             this.vidDetails[vidId] = vidDetail
         },
         assignToVidDetails (resData: any) {
-            console.log(resData)
+            // console.log(resData)
             resData.forEach((res: { vidId: string; detail: any }) => {
                 Object.assign( this.vidDetails[res.vidId], res.detail)
-                if (res.detail.searchStatus === 200) {
+                if (res.detail.searchStatus === 200 || res.detail.searchStatus === 206 || res.detail.searchStatus === 404) {
                     this.setLocalVid(res.vidId, res.detail)
-                    this.foundCount++
+
+                    if (res.detail.searchStatus === 200)
+                        this.foundCount++
                 }
             });
         },
