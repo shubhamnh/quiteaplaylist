@@ -152,7 +152,7 @@ export default defineComponent({
     methods: {
 
         async processPlaylist(plId: string) {
-            let playlistres, nextPageToken = ''
+            let playlistres, nextPageToken = '', localPlaylist : any, localVideo : any
             let plItems = []
             let url, vidId, status : VideoDetails["status"]
 
@@ -175,9 +175,14 @@ export default defineComponent({
                     return
                 }
             }
-            
-            let localPlaylist : any = localStorage.getItem(this.currentPlaylist.id)
-            localPlaylist = localPlaylist ? JSON.parse(localPlaylist) : undefined
+
+
+            try {
+                localPlaylist = localStorage.getItem(this.currentPlaylist.id)
+                localPlaylist = localPlaylist ? JSON.parse(localPlaylist) : undefined
+            } catch (e) {
+                console.log(e)
+            }
 
             // Check (etag does not match && has absent playlist items) or localplaylist undefined
             if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.absentPlaylistItems) || !localPlaylist) {
@@ -192,10 +197,14 @@ export default defineComponent({
                     nextPageToken = nPageToken
                 } while (nextPageToken)
 
-                localStorage.setItem(this.currentPlaylist.id , JSON.stringify({
-                    'playlist' : this.currentPlaylist,
-                    'absentPlaylistItems' : plItems
-                }))
+                try {
+                    localStorage.setItem(this.currentPlaylist.id , JSON.stringify({
+                        'playlist' : this.currentPlaylist,
+                        'absentPlaylistItems' : plItems
+                    }))
+                } catch (e) {
+                    console.log(e)
+                }
             } else {
                 plItems = localPlaylist?.absentPlaylistItems
                 console.log(plItems)
@@ -232,8 +241,14 @@ export default defineComponent({
 
                     // Get and process Snapshots of Videos
                     for (const [index, absentVideo] of this.absentVideos.entries()) {
-                        let localVideo : any = localStorage.getItem(absentVideo.vidId)
-                        localVideo = localVideo ? JSON.parse(localVideo) : undefined
+                        
+                        try {
+                            localVideo = localStorage.getItem(absentVideo.vidId)
+                            localVideo = localVideo ? JSON.parse(localVideo) : undefined
+                        } catch (e) {
+                            console.log(e)
+                        }
+
                         if (localVideo) {
                             Object.assign( this.vidDetails[absentVideo.vidId], localVideo)
                             this.foundCount++
@@ -362,7 +377,11 @@ export default defineComponent({
             });
         },
         setLocalVid (vidId: string, vidDetail: VideoDetails) {
-            localStorage.setItem(vidId , JSON.stringify(vidDetail))
+            try {
+                localStorage.setItem(vidId , JSON.stringify(vidDetail))
+            } catch (e) {
+                console.log(e)
+            }
         },
         setPlaylist (playlist: Playlist) {
             this.currentPlaylist = playlist
