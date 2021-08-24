@@ -68,7 +68,7 @@
             </div>
 
             <!-- Server Error -->
-            <div v-else-if="vidDetail.searchStatus === 503 || vidDetail.searchStatus === 502 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
+            <div v-else-if="vidDetail.searchStatus === 521 || vidDetail.searchStatus === 503 || vidDetail.searchStatus === 502 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
                 <div class="flex flex-row flex-grow">
                     <div class="flex flex-col w-full justify-evenly">
                         <div>
