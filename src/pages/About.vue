@@ -2,6 +2,9 @@
     <div class="flex flex-col flex-grow justify-center items-center px-4 md:px-8 py-5 text-left">
 
         <div class="max-w-2xl px-3 py-8">
+
+            <h1 class="text-xl md:text-2xl font-semibold my-3 md:my-5">How this App came to be..</h1>
+
             <p>Hello, fellow beings 👋</p>
             <br>
             <p>I often found videos in some of my YouTube playlists that are made private or get deleted. Many of these videos get taken down by YouTube on copyright grounds or if they have something controversial. Sometimes the uploader themselves decide to make it private or remove it.</p>
@@ -15,10 +18,10 @@
              <p>Have any feedback or questions?</p>
              <p>Reach out to me on <a href="https://twitter.com/shubham_nh" target="_blank" title="Twitter"><img class="inline h-4" src="@/assets/icons/twitter.svg" alt="Twitter"></a></p>
              <br>
-             <p>Peace out ✌️,<br>Shubham Jain</p>
+             <p>Peace out ✌️,<br>Shubham</p>
             <br>
             <br>
-             <h2 class="text-lg font-semibold">Attributions</h2>
+             <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3" id="attributions">Attributions</h2>
              <p>Homepage Illustration by <a class="italic hover:underline" href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6" target="_blank">Icons 8</a> from <a class="italic hover:underline" href="https://icons8.com/illustrations" target="_blank">Ouch!</a></p>
              <p>Diamond Icon by <a class="italic hover:underline" href="https://www.freepik.com"  target="_blank" title="Freepik">Freepik</a> from <a class="italic hover:underline" href="https://www.flaticon.com/" target="_blank" title="Flaticon">flaticon.com</a></p>
              <p>Other icons by <a class="italic hover:underline" href="https://heroicons.com/" target="_blank">Heroicons</a>, <a class="italic hover:underline" href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a> and <a class="italic hover:underline" href="https://iconify.design/" target="_blank">Iconify Design</a></p>

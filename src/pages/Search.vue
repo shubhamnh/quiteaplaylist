@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col flex-grow px-4 md:px-8 py-5 text-center">
+    <div class="flex flex-col flex-grow px-4 md:px-8 py-5 text-center bg-gray-50">
         <SearchBar ref="search" class="flex flex-col"
             @processPlaylist="processPlaylist($event)"
             @processVideo="processVideo($event)"
@@ -34,7 +34,7 @@
 
             <div class="w-2/3 text-left">
                 <p class="text-base lg:text-lg font-bold line-clamp-2"> {{currentPlaylist.snippet.title}} </p>
-                <p class="text-sm lg:text-base">Found {{foundCount}} of {{absentVideos.length}}</p>
+                <p class="text-sm lg:text-base">Found {{foundCount}} of {{absentVideos.length}} hidden</p>
             </div>
 
             <!-- Filter Menu -->

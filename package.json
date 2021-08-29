@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -7,12 +7,13 @@
     "deployprod": "firebase deploy --only hosting:prod",
     "serve": "vite preview",
     "build:server": "vite build --ssr src/entry-server.js --outDir dist/server",
-    "generate": "vite build --ssrManifest --outDir dist/static && npm run build:server && node prerender"
+    "generate": "vue-tsc --noEmit && vite build --ssrManifest --outDir dist/static && npm run build:server && node prerender"
   },
   "dependencies": {
     "vue": "^3.0.5"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.2.1",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@types/node": "^16.4.1",
     "@vitejs/plugin-vue": "^1.2.3",

@@ -19,7 +19,7 @@
         margin: 2rem;
     }
 
-     .multi-ripple > div {
+    .multi-ripple > div {
         position: absolute;
         width: inherit;
         height: inherit;
@@ -146,4 +146,5 @@
         animation: 4s glitch-anim-text infinite;
         animation-delay: 0.9s;
     } */
+
 }
