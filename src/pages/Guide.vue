@@ -1,9 +1,9 @@
 <template>
-    <div class="flex flex-col flex-grow justify-center items-center px-4 md:px-8 py-5 text-left">
+    <div class="flex flex-col flex-grow justify-center items-center px-4 md:px-8 py-3 text-left">
         
         <div class="max-w-2xl px-3 py-4 sm:py-8 space-y-2">
         
-            <h1 class="text-xl font-semibold my-2">Finding Deleted or Private YouTube video details from Playlists</h1>
+            <h1 class="text-xl md:text-2xl font-semibold my-3 md:my-5">Find Deleted & Private YouTube videos from Playlists</h1>
 
             <p>If you make playlists on YouTube to save your favorite music or cat videos or for learning stuff, there must have been a time when you find that a video from playlist goes missing. It gets deleted or is made private. Many of these videos get taken down by YouTube on copyright grounds or if they have something controversial. Sometimes the uploader themselves decide to make it private or remove it.</p>
             <p>The following guide shows how to recover / find details of these videos. </p>
@@ -36,32 +36,32 @@
             <p>You can get the playlist URL in a similar way if you're using a browser, or just copy the link from the URL/address bar.</p>
             <br>
 
-            <h2 class="text-lg font-semibold">Something to keep in mind...</h2>
-            <p>The data shown is mostly from the internet archive snapshots and it's not necessarily the data which it was when the video was made private or deleted. This site tries to get data from the earliest snapshots possible and it is possible that the video details like title and description have been changed since the snapshot.</p>
+            <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3">Something to keep in mind...</h2>
+            <p>The data shown is mostly from the Internet Archive snapshots and it's not necessarily the same as when the video was made private or deleted. This site tries to get data from the earliest snapshots possible and it is possible that the video details like title and description have been changed since the snapshot was taken.</p>
 
-            <p>The motive behind this site is to get an idea of which video is hidden and try to find similar videos.</p>
+            <p>The motive behind this site is to get an idea of which video was and try to find similar videos.</p>
             <br>
-            <h2 class="text-lg font-semibold" id="url-accepted">Links (URLs) accepted</h2>
+            <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3" id="url-accepted">Links (URLs) accepted</h2>
             <p>The app accepts links of Playlists as well as Videos. Below is a non exhaustive list of examples.</p>
 
             <p>
                 Playlist links:
                 <br>
-                <ul class="list-disc list-outside space-y-1 pl-6">
-                    <li>https://youtube.com/playlist?list=<i>playlistId</i></li>
-                    <li>https://m.youtube.com/playlist?list=<i>playlistId</i></li>
+                <ul class="list-disc list-outside space-y-1 pl-6 text-sm sm:text-base">
+                    <li>https://youtube.com/playlist?list=<span class="italic font-semibold">playlistId</span></li>
+                    <li>https://m.youtube.com/playlist?list=<span class="italic font-semibold">playlistId</span></li>
                 </ul>
             </p>
             <p>
                 Video links:
-                <ul class="list-disc list-outside space-y-1 pl-6">
-                    <li>https://youtube.com/watch?v=<i>videoId</i></li>
-                    <li>https://youtu.be/<i>videoId</i></li>
-                    <li>https://youtu.be/<i>videoId</i>?list=playlistId  (will be treated as video link)</li>
+                <ul class="list-disc list-outside space-y-1 pl-6 text-sm sm:text-base">
+                    <li>https://youtube.com/watch?v=<span class="italic font-semibold">videoId</span></li>
+                    <li>https://youtu.be/<span class="italic font-semibold">videoId</span></li>
+                    <li>https://youtu.be/<span class="italic font-semibold">videoId</span>?list=playlistId (will be treated as video link)</li>
                 </ul>
             </p>
             <br>
-            <h2 class="text-lg font-semibold active:bg-orange-vivid-300" id="liked-watch-later">Liked & Watch Later Playlists</h2>
+            <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3 active:bg-orange-vivid-300" id="liked-watch-later">Liked & Watch Later Playlists</h2>
             <p>Liked and Watch Later Playlists are private by default and cannot be made public. If you have any videos you want to search for in those, you can manually copy the Video URL by opening it in the browser (mobile app doesn't give us this option) and search on this site.</p>
         </div>
     </div>

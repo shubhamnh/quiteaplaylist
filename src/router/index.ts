@@ -72,23 +72,23 @@ const routes = [
     },
   },
   {
-    path: '/guide',
+    path: '/find-watch-deleted-private-youtube-video-playlist',
     name: 'Guide',
     component: () => import('../pages/Guide.vue'),
     meta: {
-      title: 'How to Find Deleted or Private YouTube video details from Playlists - quite a playlist',
+      title: 'How to Watch Deleted or Private YouTube videos from Playlists - quite a playlist',
       metaTags: [
         {
           name: 'title',
-          content: 'How to Find Deleted or Private YouTube video details from Playlists - quite a playlist'
+          content: 'How to Watch Deleted or Private YouTube videos from Playlists - quite a playlist'
         },
         {
           name: 'description',
-          content: 'Tutorial on how to find deleted or private video details quickly.'
+          content: 'Guide on how to find and watch deleted or private YouTube videos from playlists easily.'
         },
         {
           property: 'og:description',
-          content: 'Tutorial on how to find deleted or private video details quickly.'
+          content: 'Guide on how to find and watch deleted or private YouTube videos from playlists easily.'
         }
       ]
     },
@@ -135,6 +135,7 @@ const router = createRouter({
   },
   routes
 })
+
 
 router.beforeEach((to, from, next) => {
   // This goes through the matched routes from last to first, finding the closest route with a title.

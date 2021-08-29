@@ -75,19 +75,7 @@
                             <p v-html="vidDetail.title"></p>
                             <p>Meanwhile, try searching here:</p>
                         </div>
-
-                        <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
-                            <!-- <span class="text-sm">Search On :</span> -->
-                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
-                                <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
-                            </a>
-                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
-                                <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
-                            </a>
-                            <!-- <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
-                                <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
-                            </a> -->
-                        </div>
+                        <UrlSearch :vidUrl="vidDetail.url"/>
                     </div>
                 </div>
             </div>
@@ -106,18 +94,7 @@
                             <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Try digging some more...</p>
                             <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Try digging more...</p>
                         </div>
-                        <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
-                            <!-- <span class="text-sm">Search On :</span> -->
-                            <!-- <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
-                                <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
-                            </a> -->
-                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
-                                <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
-                            </a>
-                            <a class="rounded-full p-1.5 shadow-xl border-2 hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
-                                <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
-                            </a>
-                        </div>
+                        <UrlSearch :vidUrl="vidDetail.url"/>
                     </div>
                 </div>
             </div>
@@ -135,9 +112,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import UrlSearch from './UrlSearch.vue'
 
 export default defineComponent({
     name: 'VideoDetails',
+    components: { UrlSearch },
     props: {
         vidDetail: {
             type: Object,
@@ -155,16 +134,7 @@ export default defineComponent({
             type: Number,
         }
     },
-    methods: {
-        googleUrlSearch () :string {
-            return "https://www.google.com/search?q=" + this.vidDetail.url
-        },
-        braveUrlSearch () :string {
-            return "https://search.brave.com/search?q=" + this.vidDetail.url.replace('https://www.','')
-        },
-        twitterUrlSearch () :string {
-            return "https://twitter.com/search?q=" + this.vidDetail.url
-        },
+   methods: {
         checkDev () {
             return import.meta.env.DEV
         },
