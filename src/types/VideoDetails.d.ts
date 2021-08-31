@@ -4,20 +4,21 @@ interface Video {
 
 interface VideoDetails {
   readonly id: string
+  workerVersion : number
   // searchStatus: 0 | 102 | 200 | 204 | 206 | 404 | 500 | 503
-  searchStatus: Response["status"]
+  searchStatus: number
+  source: 'cdx' | 'se' | 'wayback'
   // 204 Deleted Snapshot
-  url: string
-  title: string
-  channelName: string
-  channelUrl: string
-  description: string
-  published: string
+  url?: string
+  title?: string
+  channelName?: string
+  channelUrl?: string
+  description?: string
+  published?: string
   duration?: string
   status?: 'Deleted' | 'Private' | 'Unlisted' | 'Public'
-  waybackUrl: string
+  waybackUrl?: string
   snapshotTime?: string
-  playlistPosition?: number
   snapshots?: number
   snapshotsParsed?: number
 }
