@@ -176,6 +176,7 @@ export default defineComponent({
                 return
             }
 
+            // Set currentPlaylist
             if (playlistres.status !== 200) {
                 this.setSearchStatus(500)
                 return
@@ -189,41 +190,43 @@ export default defineComponent({
                     return
                 }
             }
-
+            
+            // Check if playlist stored in IndexedDb
             try {
                 localPlaylist = await playlistdb.getItem(this.currentPlaylist.id)
             } catch (e) {
                 console.log(e)
             }
 
-            // Check (etag does not match && has absent playlist items) or localplaylist undefined
-            if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.absentPlaylistItems) || !localPlaylist) {
+            // Get Playlist items if playlist is updated/undefined else get playlist items from localPlaylist
+            // (etag does not match && has playlistItems) or (localplaylist undefined OR playlistItems undefined OR playlist undefined)
+            if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.playlistItems) || (!localPlaylist || !localPlaylist?.playlistItems || !localPlaylist?.playlist)) {
 
-                // Get all playlist items
+                // Get all playlist items and put in plItems[]
                 do {
-                    let { playlistItems, nPageToken } = await this.getPlPageItems(plId, nextPageToken)
-                    if (playlistItems === undefined) {
+                    let { playlistPageItems, nPageToken } = await this.getPlaylistPageItems(plId, nextPageToken)
+                    if (playlistPageItems === undefined) {
                         return
                     }
-                    plItems.push(...playlistItems)
+                    plItems.push(...playlistPageItems)
                     nextPageToken = nPageToken
                 } while (nextPageToken)
 
                 try {
-                    await playlistdb.setItem(this.currentPlaylist.id, { 'playlist' : playlistList.items[0], 'absentPlaylistItems' : plItems })
+                    await playlistdb.setItem(this.currentPlaylist.id, { 'playlist' : playlistList.items[0], 'playlistItems' : plItems })
                 } catch (e) {
                     console.log(e)
                 }
             } else {
-                plItems = localPlaylist?.absentPlaylistItems
-                // console.log(plItems)
+                plItems = localPlaylist?.playlistItems
             }
 
             this.setSearchStatus(200)
 
+            // TODO : Store Fetched Playlist Items in OriginalVideos db - prevent loss of video info incase video gets removed later on
             if (plItems.length) {
 
-                // get deleted/private videos
+                // Get deleted/private videos 
                 for (const playlistItem of plItems) {
                     vidId = playlistItem.contentDetails.videoId
 
@@ -236,6 +239,8 @@ export default defineComponent({
                     // Create sequential empty video details
                     url = this.ytVidPrefix + vidId
                     status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
+
+                    // Initialize Result Videos and Push to absentVideos[]
                     this.addToVidDetails(vidId, this.VideoDetails(vidId, 0, url, status))
                     this.absentVideos.push( {
                         pos:(playlistItem.snippet.position + 1), 
@@ -243,14 +248,10 @@ export default defineComponent({
                         } as absentVideo )
                 }
 
-                // console.log(this.absentVideos)
-
                 if (this.absentVideos.length) {
-                    let i = 0, absentVideoBatch : string[]= []
+                    let videoBatchToProcess : string[] = []
 
-                    // Get and process Snapshots of Videos
-                    for (const [index, absentVideo] of this.absentVideos.entries()) {
-                        
+                    await Promise.all(this.absentVideos.map(async (absentVideo) => {
                         try {
                             localVideo = await videodb.getItem(absentVideo.vidId)
                         } catch (e) {
@@ -258,20 +259,16 @@ export default defineComponent({
                         }
 
                         if (localVideo) {
-                            Object.assign( this.vidDetails[absentVideo.vidId], localVideo)
-                            if (localVideo.searchStatus === 200)
-                                this.foundCount++
-                            i++
-                        } else if (i < 3 && (index !== (this.absentVideos.length-1))) {
-                            absentVideoBatch.push(absentVideo.vidId)
-                            i++
+                            this.assignToVidDetails(localVideo)
                         } else {
-                            absentVideoBatch.push(absentVideo.vidId)
-                            this.processBatchVideos(videodb, absentVideoBatch)
-                            absentVideoBatch = []
-                            i = 0
+                            videoBatchToProcess.push(absentVideo.vidId)
                         }
+                    }))
+
+                    for (let i = 0; i < videoBatchToProcess.length ; i=i+4) {
+                        this.processBatchVideos(videodb, videoBatchToProcess.slice(i,i+4))
                     }
+
                 } else {
                     this.setSearchStatus(204)
                 }
@@ -281,7 +278,7 @@ export default defineComponent({
             }
         },
 
-        async getPlPageItems (plId: string, nextPageToken ?: string) {
+        async getPlaylistPageItems (plId: string, nextPageToken ?: string) {
             let res
             const nextPageUrl = this.ytPIApi + this.ytPIApiPart + this.ytPIApiMax + this.ytPIApiId + plId + this.ytPIApiPg + nextPageToken
 
@@ -302,10 +299,10 @@ export default defineComponent({
             }
             
             const resjson = await res.json()
-            const playlistItems : PlaylistItem[] = resjson.items
+            const playlistPageItems : PlaylistItem[] = resjson.items
             const nPageToken = resjson.nextPageToken
 
-            return { playlistItems, nPageToken }
+            return { playlistPageItems, nPageToken }
         },
 
         async processVideo (vidId: string) {
@@ -325,13 +322,24 @@ export default defineComponent({
             }
         },
 
-        async processBatchVideos (videodb: LocalForage, absentVideoBatch : string[]) {
-            const res = await fetch(this.wbCorsProxy + 'v=' + absentVideoBatch.join('&v='))
+        async processBatchVideos (videodb: LocalForage, videoBatchToProcess : string[]) {
+            const res = await fetch(this.wbCorsProxy + 'v=' + videoBatchToProcess.join('&v='))
             if (res.status === 200) {
-                this.assignToVidDetails(videodb, await res.json())
+
+                const resData = await res.json()
+                resData.forEach((res : VideoDetails) => {
+                    this.assignToVidDetails(res, videodb)   
+                });
+
+            } else if (res.status === 500) {
+                // TODO: Stop processing video - custom error code for get 500
+                videoBatchToProcess.forEach(viId => {
+                    this.assignToVidDetails({ id: viId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Too many requests at once. Try refreshing again!'})
+                });
             } else {
-                // TODO: Stop processing video - custom error code
-                console.log(res.status + ':' + res.statusText)
+                videoBatchToProcess.forEach(viId => {
+                    this.assignToVidDetails({ id: viId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Oops..something went wrong.. Try refreshing?'})
+                });
             }
         },
 
@@ -392,21 +400,26 @@ export default defineComponent({
         addToVidDetails (vidId: string, vidDetail: VideoDetails) {
             this.vidDetails[vidId] = vidDetail
         },
-        assignToVidDetails (videodb: LocalForage, resData: any) {
+        async assignToVidDetails (vidDetail: VideoDetails, videodb?: LocalForage) {
             // console.log(resData)
-            resData.forEach((res: VideoDetails) => {
-                Object.assign( this.vidDetails[res.id], res)
+            Object.assign( this.vidDetails[vidDetail.id], vidDetail)
+
+            if (vidDetail.searchStatus === 200)
+                this.foundCount++
+            
+            // If localForage object passed, save in db
+            if (videodb) {
                 // If found OR (Not Found && number of snapshots is 0/1)
-                if (res.searchStatus === 200 || ((res.searchStatus === 206 || res.searchStatus === 404) && (res.snapshots && res.snapshots < 2))) {
+                if (vidDetail.searchStatus === 200 || ((vidDetail.searchStatus === 206 || vidDetail.searchStatus === 404) && (vidDetail.snapshots && vidDetail.snapshots < 2))) {
+
                     try {
-                        videodb.setItem(res.id , res)
+                        videodb.setItem(vidDetail.id , vidDetail)
                     } catch (e) {
                         console.log(e)
                     }
-                    if (res.searchStatus === 200)
-                        this.foundCount++
+                    
                 }
-            });
+            }
         },
         setSearchStatus (status : number) {
             this.searchStatus = status
