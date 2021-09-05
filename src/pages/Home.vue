@@ -30,7 +30,13 @@
             <div class="flex flex-col gap-3 md:gap-5">
                 <h1 class="text-center font-extrabold text-xl sm:text-2xl lg:text-3xl filter drop-shadow-sm">Demo using YouTube Mobile App</h1>
                 <div class="aspect-w-16 aspect-h-9 mx-2 my-3 lg:my-5">
-                    <iframe src="https://www.youtube.com/embed/kN1xwKxjS08?rel=0&iv_load_policy=3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/kN1xwKxjS08?rel=0&iv_load_policy=3" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/kN1xwKxjS08?autoplay=1><img src=https://img.youtube.com/vi/kN1xwKxjS08/maxresdefault.jpg alt='Find and Watch Deleted and Private Videos Easily! | quiteaplaylist.com'><span>▶</span></a>" 
+                        loading="lazy"
+                        title="Find and Watch Deleted and Private Videos Easily! | quiteaplaylist.com" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
         </section>
