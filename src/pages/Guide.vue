@@ -16,18 +16,27 @@
                         <img class="inline align-text-top h-5 w-5" src="@/assets/icons/pencil.svg" alt="Edit"> 
                         icon.
                     <br>
-                    <img class="w-3/4 max-w-sm h-auto mx-auto my-5 sm:my-8 rounded-md shadow-lg" src="@/assets/images/playlist-privacy.jpg" alt="Set Playlist Privacy">
+                    <div class="w-11/12 max-w-sm my-5 sm:my-8 mx-auto">
+                        <img loading="lazy" class="rounded-md shadow-lg" src="@/assets/images/playlist-privacy.jpg" alt="Set Playlist Privacy">
+                        <p class="text-sm text-center font-extralight italic pt-3">Set Playlist Privacy</p>
+                    </div>
                     <br>
                     This site doesn't log any info about your playlists. However, it does store your playlists info in your browser for better performance.
                 </li>
 
                 <li>Tap on the share icon as highlighted below..
                     <br>
-                    <img class="w-3/4 max-w-sm h-auto mx-auto my-5 sm:my-8 rounded-md shadow-lg" src="@/assets/images/share-playlist-url.jpg" alt="Share Playlist">
+                    <div class="w-11/12 max-w-sm my-5 sm:my-8 mx-auto">
+                        <img loading="lazy" class="rounded-md shadow-lg" src="@/assets/images/share-playlist-url.jpg" alt="Share Playlist">
+                        <p class="text-sm text-center font-extralight italic pt-3">Share Playlist</p>
+                    </div>
                 </li>
                 <li>Copy the link to the clipboard as highlighted. The option text and icon may be different depending on your device.
                     <br>
-                    <img class="w-3/4 max-w-sm h-auto mx-auto my-5 sm:my-8 rounded-md shadow-lg" src="@/assets/images/copy-link.jpg" alt="Copy to Clipboard">
+                    <div class="w-11/12 max-w-sm my-5 sm:my-8 mx-auto">
+                        <img loading="lazy" class="rounded-md shadow-lg" src="@/assets/images/copy-link.jpg" alt="Copy to Clipboard">
+                        <p class="text-sm text-center font-extralight italic pt-3">Copy to Clipboard</p>
+                    </div>
                 </li>
                 <li>Go to the <router-link to="/" title="Home" class="italic hover:underline">home</router-link> page, paste your URL and hit enter!
                 </li>
@@ -69,9 +78,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+// import ImageCaption from '../components/ImageCaption.vue'
 
 export default defineComponent({
-    name:'Guide',
+    name: 'Guide',
+    // components: { ImageCaption }
     // metaInfo: {
     //   title: 'Finding Deleted or Private YouTube video details from Playlists Guide',
     //   htmlAttrs: {

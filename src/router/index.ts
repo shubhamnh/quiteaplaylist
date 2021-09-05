@@ -1,5 +1,5 @@
 // import { createMemoryHistory, createRouter as _createRouter, createWebHistory } from 'vue-router'
-import {createRouter, createWebHistory, RouteRecordNormalized } from 'vue-router'
+import {createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
 import Search from '@/pages/Search.vue'
 
@@ -52,7 +52,10 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     // component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    component: () => import('../pages/About.vue'),
+    component: () => import('../pages/About.vue').catch( err => {
+      console.log(err)
+      window.location.assign(window.location.origin + '/about')
+    }),
     meta: {
       title: 'About - quite a playlist',
       metaTags: [
@@ -74,7 +77,10 @@ const routes = [
   {
     path: '/find-watch-deleted-private-youtube-video-playlist',
     name: 'Guide',
-    component: () => import('../pages/Guide.vue'),
+    component: () => import('../pages/Guide.vue').catch( err => {
+      console.log(err)
+      window.location.assign(window.location.origin + '/find-watch-deleted-private-youtube-video-playlist')
+    }),
     meta: {
       title: 'How to Watch Deleted or Private YouTube videos from Playlists - quite a playlist',
       metaTags: [

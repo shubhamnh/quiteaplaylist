@@ -26,13 +26,14 @@
                 </span> -->
 
                 <!-- <div> -->
-                    <a :href="vidDetail.url" target="_blank" class="pb-0.5" title="YouTube Video">
-                        <p class="line-clamp-2 break-words text-gray-800 font-bold" v-html="vidDetail.title"></p>
-                    </a>
+                    
+                        <p class="line-clamp-2 break-words text-gray-800 pb-1 font-bold">
+                            <a :href="vidDetail.url" class="hover:underline" target="_blank" v-html="vidDetail.title" :title="vidDetail.title"></a>
+                        </p>
 
                     <p class="text-sm" v-html="vidDetail.published"></p>
 
-                    <div v-if="vidDetail.channelName" class="my-1.5 w-10/12 sm:w-full">
+                    <div v-if="vidDetail.channelName" class="my-2 w-10/12 sm:w-full">
                         <div class="rounded-full w-max px-2 border hover:bg-gray-200">
                             <a :href="vidDetail.channelUrl" target="_blank" title="YouTube Channel">
                                 <img class="inline float-left py-1" src="@/assets/icons/user.svg" alt="User">
@@ -71,7 +72,7 @@
                     <div class="flex flex-col w-full justify-evenly">
                         <div>
                             <p v-html="vidDetail.title"></p>
-                            <p>Meanwhile, try searching here:</p>
+                            <p>Or try searching here:</p>
                         </div>
                         <UrlSearch :vidUrl="vidDetail.url"/>
                     </div>
@@ -82,7 +83,6 @@
             <div v-else class="flex flex-col h-full text-center">
                 <div class="flex flex-row flex-grow">
                     <div class="flex flex-col w-2/5 justify-center items-center">
-                        <!-- <h2 class="text-xl">Oops!</h2> -->
                         <div class="p-2">
                             <img class="max-h-16 md:max-h-20" src="@/assets/gem.png" alt="Gem of a Video!">
                         </div>

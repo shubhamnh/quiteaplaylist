@@ -1,6 +1,5 @@
 <template>
     <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
-        <!-- <span class="text-sm">Search On :</span> -->
         <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
             <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
         </a>
@@ -38,7 +37,3 @@ export default defineComponent({
 })
 
 </script>
-
-<style>
-
-</style>

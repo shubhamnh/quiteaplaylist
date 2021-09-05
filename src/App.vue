@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col min-h-screen bg-white text-blue-gray-900">
-        <div class="flex flex-row items-center bg-white border-2 shadow-sm">
+        <div class="flex flex-row items-center bg-white border-b-2 shadow-sm">
             <ul class="flex flex-row flex-grow justify-between items-center mx-5 my-3">
                 <li><router-link to="/" title="Home"><img class="inline w-28 h-auto" src="./assets/header-logo.svg" alt="quite a playlist"></router-link></li>
                 <div class="flex flex-row gap-2 sm:gap-5">
