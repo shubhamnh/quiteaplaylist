@@ -52,6 +52,41 @@ export default defineComponent({
     props: {
         searchUrl : String
     },
+    data () {
+        return {
+            inputUrl: '',
+            searchError: false,
+        }
+    },
+    
+    /**
+     * When Search Page is newly rendered it passes searchUrl prop
+     * to newly rendered SearchBar Component. If searchUrl is present,
+     * process it.
+    */
+    created () {
+        if (this.searchUrl) {
+            this.inputUrl = this.searchUrl
+            this.detectUrl(this.inputUrl)
+        }
+    },
+
+    watch: {
+        /** Watch for new query submitted on Search Page => route changes
+         *  Since new Component isn't created on route change once loaded.
+         */
+        $route(to) {
+            this.inputUrl = (to.query?.url)?.toString() || ''
+            if (this.inputUrl)
+                this.detectUrl(this.inputUrl)
+        },
+
+        /** For inputUrl change in Search Bar */
+        inputUrl () {
+            this.searchError = false
+        }
+    },
+
     methods: {
         detectUrl(inputUrl : string) {
             const vidRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?v=([^&\s]+).*)|(?:v\/(.*))))?)|(?:youtu\.be\/([^&?\s]+)?))/i
@@ -83,8 +118,8 @@ export default defineComponent({
 
         processPlaylistOrVideo(plId : string | undefined , vidId : string | undefined, inputUrl : string) {
             const routeName = this.$route.name
-            this.$emit('setSearchStatus', 102)
             this.$emit('resetSearchResults')
+            this.$emit('setSearchStatus', 102)
 
             // If Search on Home Page
             if (routeName === 'Home') {
@@ -93,50 +128,20 @@ export default defineComponent({
             } else if (routeName === 'Search') {               
                 const queryUrl = (this.$route.query?.url)?.toString()
 
-                // New Search on Search page => update path
+                // If New Search on Search page => update path
                 if (queryUrl !== inputUrl) {
                     this.$router.push({path:'search', query : {url: inputUrl}})
                     return
                 }
 
                 if (plId) {
-                    this.$emit('setMode', 'playlist')
                     this.$emit('processPlaylist', plId)
                 } else {
-                    this.$emit('setMode', 'video')
                     this.$emit('processVideo', vidId)
                 }
             }
         },
     },
-
-    data () {
-        return {
-            inputUrl: '',
-            searchError: false,
-        }
-    },
-
-    // From Home / First Created
-    created () {
-        if (this.searchUrl) {
-            this.inputUrl = this.searchUrl
-            this.detectUrl(this.inputUrl)
-        }
-    },
-
-    // Any change on Search Page Url
-    watch: {
-        searchUrl(newUrl, oldUrl) {
-            if (newUrl) {
-                this.inputUrl = newUrl
-                this.detectUrl(newUrl)
-            }
-        },
-        inputUrl () {
-            this.searchError = false
-        }
-    }
 
 });
 </script>

@@ -1,3 +1,8 @@
+interface absentVideo {
+  pos?: number,
+  vidId: string
+}
+
 interface Video {
   [vidId:string] : VideoDetails
 }

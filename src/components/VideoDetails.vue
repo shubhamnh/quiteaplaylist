@@ -1,7 +1,7 @@
 <template>
     <div id="vidDetail" v-show="isVisible" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white shadow-md border border-gray-200">
 
-        <span v-if="searchMode === 'playlist'" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
+        <span v-if="playlistPos" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{playlistPos}}
         </span>
 
@@ -89,8 +89,8 @@
                     </div>
                     <div class="flex flex-col w-3/5 justify-evenly">
                         <div>
-                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br>Try digging some more...</p>
-                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br>Try digging more...</p>
+                            <p class="hidden sm:block text-sm">Looks like we have a gem here!<br/>Try digging some more...</p>
+                            <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br/>Try digging more...</p>
                         </div>
                         <UrlSearch :vidUrl="vidDetail.url"/>
                     </div>
@@ -125,15 +125,11 @@ export default defineComponent({
             type: Number,
             required: true
         },
-        searchMode: {
-            type: String,
-            required: true
-        },
         playlistPos: {
             type: Number,
         }
     },
-   methods: {
+    methods: {
         checkDev () {
             return import.meta.env.DEV
         },
@@ -143,7 +139,7 @@ export default defineComponent({
             return "https://www.youtube.com/results?search_query=" + encodeURIComponent(this.vidDetail.title)
         },
         isVisible () {
-            if (this.searchMode === 'playlist') {
+            if (this.playlistPos) {
                 if (this.activeViewMode === 2) {
                     // Show Not Found
                     if (this.vidDetail.searchStatus === 200) {
