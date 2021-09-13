@@ -2,7 +2,7 @@
     <div class="w-full">
         <div class="flex flex-col place-content-center my-2">
             <div class="flex flex-row place-content-center">
-                <div class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200
+                <form @submit.prevent="detectUrl(inputUrl)" id="search-form" class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200
                     text-base text-gray-700 mx-2 leading-8 transition-colors duration-200 ease-in-out max-w-lg">
                     <input class="outline-none w-full mx-3"
                         @keyup.enter="detectUrl(inputUrl)"
@@ -17,8 +17,8 @@
                             </svg>
                         </button>
                     </span>
-                </div>
-                <button class="rounded-full h-10 w-10 
+                </form>
+                <button type="submit" form="search-form" class="rounded-full h-10 w-10 
                     bg-white border border-gray-300 hover: focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
                     @click="detectUrl(inputUrl)" title="Search" alt="Submit">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

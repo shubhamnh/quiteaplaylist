@@ -74,7 +74,7 @@
                             <p v-html="vidDetail.title"></p>
                             <p>Or try searching here:</p>
                         </div>
-                        <UrlSearch :vidUrl="vidDetail.url"/>
+                        <SearchResultUrlSearch :vidUrl="vidDetail.url"/>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                             <p class="hidden sm:block text-sm">Looks like we have a gem here!<br/>Try digging some more...</p>
                             <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br/>Try digging more...</p>
                         </div>
-                        <UrlSearch :vidUrl="vidDetail.url"/>
+                        <SearchResultUrlSearch :vidUrl="vidDetail.url"/>
                     </div>
                 </div>
             </div>
@@ -104,21 +104,21 @@
                 <div></div>
                 <div></div>
             </div>
-            <!-- <h3 class="justify-self center font-extrabold text-gray-800 animate-pulse">Loading...</h3> -->
+            <!-- <p class="justify-self center font-extrabold text-gray-800 animate-pulse">Loading...</p> -->
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import UrlSearch from './UrlSearch.vue'
+import { defineComponent, PropType } from 'vue'
+import SearchResultUrlSearch from './SearchResultUrlSearch.vue'
 
 export default defineComponent({
-    name: 'VideoDetails',
-    components: { UrlSearch },
+    name: 'SearchResult',
+    components: { SearchResultUrlSearch },
     props: {
         vidDetail: {
-            type: Object,
+            type: Object as PropType<VideoDetails>,
             required: true,
         },
         activeViewMode: {
@@ -136,7 +136,7 @@ export default defineComponent({
     },
     computed: {
         ytTitleSearch () :string {
-            return "https://www.youtube.com/results?search_query=" + encodeURIComponent(this.vidDetail.title)
+            return "https://www.youtube.com/results?search_query=" + encodeURIComponent(String(this.vidDetail.title))
         },
         isVisible () {
             if (this.playlistPos) {

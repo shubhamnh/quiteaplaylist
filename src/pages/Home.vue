@@ -21,7 +21,7 @@
             <!-- </div> -->
         
             <div class="flex flex-col w-full text-center my-5">
-                <p class="text-lg md:text-xl lg:text-2xl italic font-bold my-1 md:my-3">Let's find 'em!</p>
+                <h2 class="text-lg md:text-xl lg:text-2xl italic font-bold my-1 md:my-3">Let's find 'em!</h2>
                 <SearchBar/>
             </div>
         </section>
@@ -43,8 +43,8 @@
 
         <section class="flex flex-col relative bg-magenta-100 py-10 px-4">
             <div class="my-2 lg:my-4">
-                <h3 class="text-center font-extrabold text-xl lg:text-2xl filter drop-shadow-sm">Found this useful?
-                </h3>
+                <h2 class="text-center font-extrabold text-xl lg:text-2xl filter drop-shadow-sm">Found this useful?
+                </h2>
                 <p class="text-center text-base md:text-lg lg:text-xl italic my-1">Consider supporting!</p>
             </div>
             <div class="flex flex-row flex-wrap gap-5 lg:gap-10 place-content-center items-center my-5">

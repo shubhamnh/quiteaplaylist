@@ -21,7 +21,7 @@
              <p>Peace out ✌️,<br/>Shubham</p>
             <br/>
             <br/>
-             <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3" id="attributions">Attributions</h2>
+             <h2 id="attributions" class="text-lg font-semibold md:text-xl my-2 md:my-3">Attributions</h2>
              <p>Homepage Illustration by <a class="italic hover:underline" href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6" target="_blank">Icons 8</a> from <a class="italic hover:underline" href="https://icons8.com/illustrations" target="_blank">Ouch!</a></p>
              <p>Diamond Icon by <a class="italic hover:underline" href="https://www.freepik.com"  target="_blank" title="Freepik">Freepik</a> from <a class="italic hover:underline" href="https://www.flaticon.com/" target="_blank" title="Flaticon">flaticon.com</a></p>
              <p>Other icons by <a class="italic hover:underline" href="https://heroicons.com/" target="_blank">Heroicons</a>, <a class="italic hover:underline" href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a> and <a class="italic hover:underline" href="https://iconify.design/" target="_blank">Iconify Design</a></p>

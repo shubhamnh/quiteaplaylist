@@ -50,7 +50,7 @@
 
             <p>The motive behind this site is to get an idea of which video was and try to find similar videos.</p>
             <br/>
-            <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3" id="url-accepted">Links (URLs) accepted</h2>
+            <h2 id="url-accepted" class="text-lg font-semibold md:text-xl my-2 md:my-3">Links (URLs) accepted</h2>
             <p>The app accepts links of Playlists as well as Videos. Below is a non exhaustive list of examples.</p>
 
             <p>
@@ -70,7 +70,7 @@
                 </ul>
             </p>
             <br/>
-            <h2 class="text-lg font-semibold md:text-xl my-2 md:my-3 active:bg-orange-vivid-300" id="liked-watch-later">Liked & Watch Later Playlists</h2>
+            <h2 id="liked-watch-later" class="text-lg font-semibold md:text-xl my-2 md:my-3 active:bg-orange-vivid-300">Liked & Watch Later Playlists</h2>
             <p>Liked and Watch Later Playlists are private by default and cannot be made public. If you have any videos you want to search for in those, you can manually copy the Video URL by opening it in the browser (mobile app doesn't give us this option) and search on this site.</p>
         </div>
     </div>
@@ -81,7 +81,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
     name: 'Guide',
-    // components: { ImageCaption }
+    // components: { GuideImage }
     // metaInfo: {
     //   title: 'Finding Deleted or Private YouTube video details from Playlists Guide',
     //   htmlAttrs: {

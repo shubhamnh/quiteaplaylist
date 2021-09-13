@@ -14,7 +14,7 @@ interface VideoDetails {
   searchStatus: number
   source: 'worker' | 'cdx' | 'se' | 'wayback'
   // 204 Deleted Snapshot
-  url?: string
+  url : string
   title?: string
   channelName?: string
   channelUrl?: string

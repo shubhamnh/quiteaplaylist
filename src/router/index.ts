@@ -9,20 +9,28 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: 'quite a playlist - Find deleted or private YouTube videos from Playlists',
+      title: 'quite a playlist - Find deleted or private YouTube videos',
       metaTags: [
         {
           name: 'title',
-          content: 'quite a playlist - Find deleted or private YouTube videos from Playlists'
+          content: 'quite a playlist - Find deleted or private YouTube videos'
         },
         {
           name: 'description',
-          content: 'Find deleted or private YouTube videos in your playlists with ease!'
+          content: 'Easily find removed YouTube video details by searching using Playlist or Video URLs. Get video details and search for similar videos.'
+        },
+        {
+          property: 'og:title',
+          content: 'quite a playlist - Find deleted or private YouTube videos'
         },
         {
           property: 'og:description',
-          content: 'Find deleted or private YouTube videos in your playlists with ease!'
-        }
+          content: 'Easily find removed YouTube video details by searching using Playlist or Video URLs. Get video details and search for similar videos.'
+        },
+        {
+          property: 'og:image',
+          content: 'https://quiteaplaylist.com/quite-a-playlist-logo-large.png'
+        },
       ]
     },
   },
@@ -33,6 +41,14 @@ const routes = [
     meta: {
       title: 'Search - quite a playlist',
       metaTags: [
+        {
+          name: 'robots',
+          content: 'noindex'
+        },
+        {
+          name: 'title',
+          content: 'Search - quite a playlist'
+        },
         {
           name: 'description',
           content: 'Search YouTube video details using Playlist or Video URL'
@@ -76,20 +92,28 @@ const routes = [
       window.location.assign(window.location.origin + '/find-watch-deleted-private-youtube-video-playlist')
     }),
     meta: {
-      title: 'How to Watch Deleted or Private YouTube videos from Playlists - quite a playlist',
+      title: 'How to Find Deleted & Private YouTube videos from Playlists',
       metaTags: [
         {
           name: 'title',
-          content: 'How to Watch Deleted or Private YouTube videos from Playlists - quite a playlist'
+          content: 'How to Find Deleted & Private YouTube videos from Playlists'
         },
         {
           name: 'description',
-          content: 'Guide on how to find and watch deleted or private YouTube videos from playlists easily.'
+          content: 'A guide on how to find and watch deleted or private YouTube videos from playlists easily. Get the video title of removed videos and search for similar videos.'
+        },
+        {
+          property: 'og:title',
+          content: 'How to Find Deleted & Private YouTube videos from Playlists'
         },
         {
           property: 'og:description',
-          content: 'Guide on how to find and watch deleted or private YouTube videos from playlists easily.'
-        }
+          content: 'A guide on how to find and watch deleted or private YouTube videos from playlists easily. Get the video title of removed videos and search for similar videos.'
+        },
+        {
+          property: 'og:type',
+          content: 'article'
+        },
       ]
     },
   },
