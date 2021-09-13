@@ -67,7 +67,7 @@
 
         <!-- Video Details -->
         <div class="grid gap-5 grid-cols-1 py-3 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            <VideoDetails v-for="absentVideo in absentVideos" :vidDetail="vidDetails[absentVideo.vidId]" :activeViewMode="activeViewMode" :playlistPos="absentVideo.pos" :key="absentVideo.pos + absentVideo.vidId"/>
+            <SearchResult v-for="absentVideo in absentVideos" :vidDetail="vidDetails[absentVideo.vidId]" :activeViewMode="activeViewMode" :playlistPos="absentVideo.pos" :key="absentVideo.pos + absentVideo.vidId"/>
         </div>
     </div>
 </template>
@@ -75,13 +75,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import SearchBar from "@/components/SearchBar.vue"
-import VideoDetails from "@/components/VideoDetails.vue"
+import SearchResult from "@/components/SearchResult.vue"
 import vClickOutside from '../scripts/v-click-outside'
 import localforage from 'localforage'
 
 export default defineComponent({
     name: 'Search',
-    components: { SearchBar, VideoDetails },
+    components: { SearchBar, SearchResult },
     directives: {
         clickOutside: vClickOutside,
     },
@@ -347,13 +347,15 @@ export default defineComponent({
                         });
                     } else {
                         videoBatchToProcess.forEach(vidId => {
-                            this.assignToVidDetails({ id: vidId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Something went wrong. Status: ' + res.status})
+                            const url = this.ytVidPrefix + vidId
+                            this.assignToVidDetails({ id: vidId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Something went wrong. Status: ' + res.status, url: url})
                         });
                     }
                 }).catch( err => {
                         console.log(err)
                         videoBatchToProcess.forEach(vidId => {
-                            this.assignToVidDetails({ id: vidId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Too many requests. Try refreshing again?'})
+                            const url = this.ytVidPrefix + vidId
+                            this.assignToVidDetails({ id: vidId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Too many requests. Try refreshing again?', url: url})
                         });
                     }
                 );

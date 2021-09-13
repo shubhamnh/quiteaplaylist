@@ -4,7 +4,9 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "deploystage": "firebase deploy --only hosting:stage",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+    "format": "prettier . --write"
   },
   "dependencies": {
     "vue": "^3.0.5"

@@ -5,7 +5,7 @@
                 <li><router-link to="/" title="Home"><img class="inline w-28 h-auto" src="./assets/header-logo.svg" alt="quite a playlist"/></router-link></li>
                 <div class="flex flex-row gap-2 sm:gap-5">
                     <li class="relative group">
-                        <router-link to="/find-watch-deleted-private-youtube-video-playlist" v-slot="{ isActive }" class="px-1 sm:px-2 py-2 font-semibold" title="Guide">
+                        <router-link v-slot="{ isActive }" to="/find-watch-deleted-private-youtube-video-playlist" class="px-1 sm:px-2 py-2 font-semibold" title="Guide">
                             <svg xmlns="http://www.w3.org/2000/svg" class="inline align-text-top h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg> 
@@ -16,7 +16,7 @@
                         
                     </li>
                     <li class="relative group">
-                        <router-link to="/about" v-slot="{ isActive }" class="px-2 py-2 font-semibold" title="About">
+                        <router-link v-slot="{ isActive }" to="/about" class="px-2 py-2 font-semibold" title="About">
                             <svg xmlns="http://www.w3.org/2000/svg" class="inline align-text-top h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>

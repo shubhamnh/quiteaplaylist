@@ -9,7 +9,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-    name: 'ImageCaption',
+    name: 'GuideImage',
     props: {
         src : {
             type : String,
@@ -17,6 +17,7 @@ export default defineComponent({
         },
         caption: {
             type: String,
+            default: '',
             required : false
         }
     },
