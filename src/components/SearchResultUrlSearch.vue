@@ -1,9 +1,9 @@
 <template>
     <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
-        <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="twitterUrlSearch()" target="_blank" title="Twitter Search"> 
+        <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="twitterUrlSearch()" rel="noopener" target="_blank" title="Twitter Search"> 
             <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
         </a>
-        <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="braveUrlSearch()" target="_blank" title="Brave Search"> 
+        <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="braveUrlSearch()" rel="noopener" target="_blank" title="Brave Search"> 
             <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
         </a>
         <!-- <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">

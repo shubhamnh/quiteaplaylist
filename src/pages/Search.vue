@@ -76,7 +76,7 @@
 import { defineComponent } from 'vue'
 import SearchBar from "@/components/SearchBar.vue"
 import SearchResult from "@/components/SearchResult.vue"
-import vClickOutside from '../scripts/v-click-outside'
+import vClickOutside from '../helpers/v-click-outside'
 import localforage from 'localforage'
 
 export default defineComponent({
