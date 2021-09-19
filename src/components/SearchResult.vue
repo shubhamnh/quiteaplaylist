@@ -20,7 +20,7 @@
             <!-- Video Found -->
             <div v-if="vidDetail.searchStatus === 200" class="flex flex-col h-full text-left">
                 <!-- <span class="absolute bottom-0 left-0 rounded-tr-lg text-xs p-1.5 bg-gray-200">
-                    <a :href="vidDetail.waybackUrl" target="_blank" title="Internet Archive Snapshot">
+                    <a :href="vidDetail.waybackUrl" rel="noopener" target="_blank" title="Internet Archive Snapshot">
                         {{vidDetail.snapshotTime}}
                     </a>
                 </span> -->
@@ -28,14 +28,14 @@
                 <!-- <div> -->
                     
                         <p class="line-clamp-2 break-words text-gray-800 pb-1 font-bold">
-                            <a :href="vidDetail.url" class="hover:underline" target="_blank" v-html="vidDetail.title" :title="vidDetail.title"></a>
+                            <a :href="vidDetail.url" class="hover:underline" rel="noopener" target="_blank" v-html="vidDetail.title" :title="vidDetail.title"></a>
                         </p>
 
                     <p class="text-sm" v-html="vidDetail.published"></p>
 
                     <div v-if="vidDetail.channelName" class="my-2 w-10/12 sm:w-full">
                         <div class="rounded-full w-max px-2 border hover:bg-gray-200">
-                            <a :href="vidDetail.channelUrl" target="_blank" title="YouTube Channel">
+                            <a :href="vidDetail.channelUrl" rel="noopener" target="_blank" title="YouTube Channel">
                                 <img class="inline float-left py-1" src="@/assets/icons/user.svg" alt="User">
                                 <p class="inline pl-2 overflow-hidden"> {{ vidDetail.channelName }} </p>
                             </a>
@@ -43,7 +43,7 @@
                     </div>
                     
                     <!-- <div>
-                        <a :href="vidDetail.channelUrl" target="_blank">
+                        <a :href="vidDetail.channelUrl" rel="noopener" target="_blank">
                             <div class="flex flex-row flex-wrap items-center p-0.5 my-1.5 gap-2 text-base">
                                 <div>
                                     <img src="@/assets/icons/user.svg" alt="User">
@@ -60,7 +60,7 @@
 
                 <!-- <div class="flex flex-row flex-nowrap items-center justify-end gap-2"> -->
                     <!-- <p class="text-sm">Find Similar :</p> -->
-                    <a :href="ytTitleSearch" target="_blank" class="absolute bottom-5 right-5 mx-1 rounded-full p-2 shadow-xl border bg-white hover:bg-gray-200" title="YouTube Search">
+                    <a :href="ytTitleSearch" rel="noopener" target="_blank" class="absolute bottom-5 right-5 mx-1 rounded-full p-2 shadow-xl border bg-white hover:bg-gray-200" title="YouTube Search">
                         <img class="h-5 sm:h-auto" src="@/assets/icons/youtube.svg" alt="YouTube Logo">
                     </a>
                 <!-- </div> -->

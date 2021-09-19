@@ -1,9 +1,9 @@
 <template>
-    <div class="flex flex-col flex-grow justify-center items-center">
+    <main class="flex flex-col flex-grow justify-center items-center">
         <p>
             The page you're looking for seems to be missing...
         </p>
-    </div>
+    </main>
 </template>
 
 <script lang="ts">

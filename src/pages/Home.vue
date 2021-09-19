@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-grow">
+    <main class="flex-grow">
         <section class="flex flex-col relative bg-magenta-100 sm:gap-5 py-5 md:py-10 px-4">
             <!-- <div class="flex flex-row flex-wrap gap-5 lg:gap-10 place-content-center my-5"> -->
                 
@@ -23,6 +23,12 @@
             <div class="flex flex-col w-full text-center my-5">
                 <h2 class="text-lg md:text-xl lg:text-2xl italic font-bold my-1 md:my-3">Let's find 'em!</h2>
                 <SearchBar/>
+            </div>
+
+            <div class="flex flex-col w-full items-center my-5">
+                <a href="https://www.producthunt.com/posts/quite-a-playlist?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-quite-a-playlist" rel="noopener" target="_blank">
+                    <img loading="lazy" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=310776&theme=dark" alt="Quite a Playlist - Find deleted & private video details from YouTube playlists | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+                </a>
             </div>
         </section>
         
@@ -48,15 +54,15 @@
                 <p class="text-center text-base md:text-lg lg:text-xl italic my-1">Consider supporting!</p>
             </div>
             <div class="flex flex-row flex-wrap gap-5 lg:gap-10 place-content-center items-center my-5">
-                <a href="https://archive.org/donate" target="_blank">
+                <a href="https://archive.org/donate">
                     <img class="bg-white w-52 rounded-md shadow-md" src="../assets/internet-archive.png" alt="Donate to Internet Archive"/>
                 </a>
-                <a href="https://www.buymeacoffee.com/shubhamnh" target="_blank">
+                <a href="https://www.buymeacoffee.com/shubhamnh">
                     <img class="w-52 rounded-md shadow-md" src="../assets/bmc-yellow.png" alt="Buy me a Coffee"/>
                 </a>
             </div>
         </section>
-    </div>
+    </main>
 </template>
 
 <script lang="ts">
