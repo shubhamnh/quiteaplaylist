@@ -5,7 +5,7 @@
             @processVideo="processVideo($event)"
             @resetSearchResults="resetSearchResults()"
             @setSearchStatus="setSearchStatus($event)"
-            :searchUrl="searchUrl"
+            :parentInputUrl="queryUrl"
         />
         <div v-if="searchStatus === 102" class="flex flex-col flex-grow items-center justify-center">
             <div class="multi-ripple h-28 w-28">
@@ -95,7 +95,7 @@ export default defineComponent({
             absentVideos : new Array<absentVideo>(),
 
             // To pass to SearchBar.vue
-            searchUrl : '',
+            queryUrl : '',
             
             videosPerRequest : 5,
             reqPerSlot : 10,
@@ -147,7 +147,7 @@ export default defineComponent({
     /** When newly created (From Home / Directly opening search url) check query param & pass to SearchBar */
     created () {
         if(this.$route.query.url) {
-            this.searchUrl = (this.$route.query?.url)?.toString() || ''
+            this.queryUrl = (this.$route.query?.url)?.toString() || ''
         }
     },
 

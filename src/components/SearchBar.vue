@@ -41,6 +41,8 @@
                 </router-link>
             </div>
         </div>
+
+        <button v-if="$route.name === 'Home'" class="w-max hover:underline font-medium mt-5" @click="setInputUrl(testPlaylist)">Try sample playlist</button>
     </div>
 </template>
 
@@ -50,23 +52,28 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'SearchBar',
     props: {
-        searchUrl : String
+        parentInputUrl: {
+            type: String,
+            required: false,
+        }
     },
     data () {
         return {
             inputUrl: '',
             searchError: false,
+            vidRegex: /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?v=([^&\s]+).*)|(?:v\/(.*))))?)|(?:youtu\.be\/([^&?\s]+)?))/i,
+            plRegex: /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:playlist\?.*?list=([^&\s]+).*)))?)|(?:youtu\.be\/(.*)?))/i,
+            testPlaylist: "https://youtube.com/playlist?list=PL1YxUBRBoo8aZ90JJLvLCK4KaFMwRmvAo"
         }
     },
     
     /**
-     * When Search Page is newly rendered it passes searchUrl prop
-     * to newly rendered SearchBar Component. If searchUrl is present,
-     * process it.
+     * When Search Page is newly rendered it passes parentInputUrl prop to newly rendered SearchBar Component. 
+     * If parentInputUrl is present, process it.
     */
     created () {
-        if (this.searchUrl) {
-            this.inputUrl = this.searchUrl
+        if (this.parentInputUrl) {
+            this.inputUrl = this.parentInputUrl
             this.detectUrl(this.inputUrl)
         }
     },
@@ -89,10 +96,8 @@ export default defineComponent({
 
     methods: {
         detectUrl(inputUrl : string) {
-            const vidRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?v=([^&\s]+).*)|(?:v\/(.*))))?)|(?:youtu\.be\/([^&?\s]+)?))/i
-            const plRegex = /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:playlist\?.*?list=([^&\s]+).*)))?)|(?:youtu\.be\/(.*)?))/i
-            const vidIdMatch = inputUrl.match(vidRegex)
-            const plIdMatch = inputUrl.match(plRegex)
+            const vidIdMatch = inputUrl.match(this.vidRegex)
+            const plIdMatch = inputUrl.match(this.plRegex)
             let vidId, plId
             this.searchError = false
 
@@ -141,6 +146,10 @@ export default defineComponent({
                 }
             }
         },
+
+        setInputUrl(url: string) {
+            this.inputUrl = url
+        }
     },
 
 });

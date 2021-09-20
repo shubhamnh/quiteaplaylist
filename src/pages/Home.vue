@@ -20,7 +20,7 @@
                 </div>
             <!-- </div> -->
         
-            <div class="flex flex-col w-full text-center my-5">
+            <div class="flex flex-col w-full text-center items-center my-5">
                 <h2 class="text-lg md:text-xl lg:text-2xl italic font-bold my-1 md:my-3">Let's find 'em!</h2>
                 <SearchBar/>
             </div>
