@@ -127,6 +127,7 @@ export default defineComponent({
         },
         playlistPos: {
             type: Number,
+            required: false
         }
     },
     methods: {
