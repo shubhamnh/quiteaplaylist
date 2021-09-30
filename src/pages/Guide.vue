@@ -16,24 +16,18 @@
                             <img class="inline align-text-top h-5 w-5" src="@/assets/icons/pencil.svg" alt="Edit"/>
                             icon.
                     </p>
-                    <div class="w-11/12 max-w-sm py-5 sm:py-8 mx-auto">
-                        <img loading="lazy" class="rounded-md shadow-lg" src="@/assets/images/playlist-privacy.jpg" alt="Set Playlist Privacy"/>
-                        <p class="text-sm text-center font-extralight italic pt-3">Set Playlist Privacy</p>
-                    </div>
+
+                    <GuideImage :src="privacyImage" caption="Set Playlist Privacy"/>
+
                     <p>This site doesn't log any info about your playlists. However, it does store your playlists and video info in your browser for better performance.</p>
                 </li>
 
                 <li><p>Tap on the share icon as highlighted below..</p>
-                    <div class="w-11/12 max-w-sm py-5 sm:py-8 mx-auto">
-                        <img loading="lazy" class="rounded-md shadow-lg" src="@/assets/images/share-playlist-url.jpg" alt="Share Playlist"/>
-                        <p class="text-sm text-center font-extralight italic pt-3">Share Playlist</p>
-                    </div>
+                    <GuideImage :src="shareImage" caption="Share Playlist"/>
                 </li>
                 <li><p>Copy the link to the clipboard as highlighted. The option text and icon may be different depending on your device.</p>
-                    <div class="w-11/12 max-w-sm py-5 sm:py-8 mx-auto">
-                        <img loading="lazy" class="rounded-md shadow-lg" src="@/assets/images/copy-link.jpg" alt="Copy to Clipboard"/>
-                        <p class="text-sm text-center font-extralight italic pt-3">Copy to Clipboard</p>
-                    </div>
+
+                    <GuideImage :src="copyImage" caption="Copy to Clipboard"/>
                 </li>
                 <li><p>Go to the <router-link to="/" title="Home" class="italic hover:underline">home</router-link> page, paste your URL and hit enter!</p>
                 </li>
@@ -73,15 +67,26 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import GuideImage from "../components/GuideImage.vue";
+import privacyImage from '@/assets/images/playlist-privacy.jpg'
+import shareImage from '@/assets/images/share-playlist-url.jpg'
+import copyImage from '@/assets/images/copy-link.jpg'
 
 export default defineComponent({
     name: 'Guide',
-    // components: { GuideImage }
+    components: { GuideImage },
     // metaInfo: {
     //   title: 'Finding Deleted or Private YouTube video details from Playlists Guide',
     //   htmlAttrs: {
     //     lang: 'en',
     //   }
     // }
+    data () {
+        return {
+            privacyImage: privacyImage,
+            shareImage: shareImage,
+            copyImage: copyImage
+        }
+    }
 })
 </script>
