@@ -1,5 +1,5 @@
 <template>
-    <div class="w-11/12 max-w-sm my-5 sm:my-8 mx-auto">
+    <div class="w-11/12 max-w-sm py-5 sm:py-8 mx-auto">
         <img loading="lazy" class="rounded-md shadow-lg" :src="src" :alt="caption">
         <p v-if="caption" class="text-sm text-center font-extralight italic pt-3">{{ caption }}</p>
     </div>
