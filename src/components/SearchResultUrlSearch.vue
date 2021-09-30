@@ -1,27 +1,25 @@
 <template>
     <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-4">
-        <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="twitterUrlSearch()" rel="noopener" target="_blank" title="Twitter Search"> 
-            <img class="h-6 sm:h-7" src="@/assets/icons/twitter.svg" alt="Twitter Logo">
-        </a>
-        <a class="rounded-full p-1.5 shadow-md md:shadow-lg border hover:bg-gray-300" :href="braveUrlSearch()" rel="noopener" target="_blank" title="Brave Search"> 
-            <img class="h-6 sm:h-7" src="@/assets/icons/brave.svg" alt="Brave Logo">
-        </a>
-        <!-- <a class="rounded-full p-2 hover:bg-gray-300" :href="googleUrlSearch()" target="_blank" title="Google Search">
-            <img class="h-5 sm:h-6" src="@/assets/icons/google.svg" alt="Google Logo">
-        </a> -->
+        <SearchResultLinkButton :linkUrl="twitterUrlSearch()" linkTitle="Twitter Search" :imgSrc="twitterIcon" imgAlt="Twitter Logo"/>
+        <SearchResultLinkButton :linkUrl="braveUrlSearch()" linkTitle="Brave Search" :imgSrc="braveIcon" imgAlt="Brave Logo"/>
+        <!-- <SearchResultLinkButton :linkUrl="googleUrlSearch()" linkTitle="Google Search" :imgSrc="googleIcon" imgAlt="Google Logo"/> -->
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import SearchResultLinkButton from "./SearchResultLinkButton.vue"
+import twitterIcon from "@/assets/icons/twitter.svg"
+import braveIcon from "@/assets/icons/brave.svg"
  
 export default defineComponent({
     name: 'SearchResultUrlSearch',
+    components: { SearchResultLinkButton },
     props: {
         vidUrl : {
             type: String,
             required: true
-        }
+        },
     },
     methods: {
         googleUrlSearch () :string {
@@ -33,6 +31,12 @@ export default defineComponent({
         twitterUrlSearch () :string {
             return "https://twitter.com/search?q=" + this.vidUrl
         },
+    },
+    data() {
+        return {
+            twitterIcon: twitterIcon,
+            braveIcon: braveIcon
+        }
     },
 })
 

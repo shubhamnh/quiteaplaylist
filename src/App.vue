@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col min-h-screen bg-white text-blue-gray-900">
-        <header class="flex flex-row items-center bg-white border-b-2 shadow-sm">
+        <header class="flex flex-row items-center bg-white border-b shadow">
             <div class="flex flex-row flex-grow justify-between items-center mx-5 my-3">
                 <router-link to="/" title="Home">
                     <img class="inline w-28 h-auto" src="./assets/header-logo.svg" alt="quite a playlist"/>
@@ -41,10 +41,6 @@
                 <component :is="Component" :key="$route.path"/>
             </keep-alive>
         </router-view>
-
-        <!-- <keep-alive>
-            <router-view :key="$route.query.url"></router-view>
-        </keep-alive> -->
 
         <footer class="flex flex-row flex-wrap py-3 justify-center text-center text-sm text-gray-600 border-t-2">
                 <span class="text-sm px-2 py-1 sm:px-4">Powered by <a class="hover:underline font-semibold" href="https://archive.org/" title="Internet Archive">Internet Archive</a></span>

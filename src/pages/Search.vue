@@ -40,7 +40,7 @@
             <!-- Filter Menu -->
             <div class="flex w-1/3 justify-end">
                 <div class="relative inline-block text-left">
-                    <div >
+                    <div>
                         <button type="button" @click="toggleMenu()" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-magenta-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
                         {{ viewModes[activeViewMode] }}
                         <!-- Heroicon name: solid/chevron-down -->

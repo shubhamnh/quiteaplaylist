@@ -1,5 +1,5 @@
 <template>
-    <div id="vidDetail" v-show="isVisible" :class="vidDetail.searchStatus === 200 ? 'shadow-md cursor-pointer' : ''" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white border border-gray-200" @click="resultModalSwitch()">
+    <div id="vidDetail" v-show="isVisible" :class="vidDetail.searchStatus === 200 ? 'shadow cursor-pointer' : ''" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white border border-gray-200" @click="resultModalSwitch()">
 
         <span v-if="playlistPos" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900">
             {{playlistPos}}
@@ -30,9 +30,7 @@
 
                 <p class="hidden md:line-clamp-2 break-words w-10/12 my-2" v-html="vidDetail.description"></p>
 
-                <a :href="ytTitleSearch" rel="noopener" target="_blank" class="absolute bottom-5 right-5 mx-1 rounded-full p-2 shadow-xl border bg-white hover:bg-gray-200" title="YouTube Search" @click.stop>
-                    <img class="h-5 sm:h-auto" src="@/assets/icons/search.svg" alt="YouTube Search">
-                </a>
+                <SearchResultLinkButton class="absolute bottom-5 right-5 mx-1" :linkUrl="ytTitleSearch" linkTitle="YouTube Search" :imgSrc="searchIcon" imgAlt="Search"/>
             </div>
 
             <!-- Server Error -->
@@ -88,11 +86,13 @@
 import { defineComponent, PropType } from 'vue'
 import SearchResultUrlSearch from './SearchResultUrlSearch.vue'
 import SearchResultModal from './SearchResultModal.vue'
-import SearchResultChannel from "./SearchResultChannel.vue";
+import SearchResultChannel from "./SearchResultChannel.vue"
+import SearchResultLinkButton from "./SearchResultLinkButton.vue"
+import searchIcon from "../assets/icons/search.svg"
 
 export default defineComponent({
     name: 'SearchResult',
-    components: { SearchResultChannel, SearchResultUrlSearch, SearchResultModal },
+    components: { SearchResultChannel, SearchResultUrlSearch, SearchResultModal, SearchResultLinkButton },
     props: {
         vidDetail: {
             type: Object as PropType<VideoDetails>,
@@ -110,6 +110,7 @@ export default defineComponent({
     data () {
         return {
             showResultModal: false,
+            searchIcon: searchIcon
         }
     },
     methods: {
