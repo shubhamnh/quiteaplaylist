@@ -81,10 +81,10 @@ export default defineComponent({
             searchIcon: searchIcon
         }
     },
-    beforeRouteLeave() {
-        console.log('what is happening?')
-        this.$emit('resultModalSwitch')
-        return false
-    }
+    // beforeRouteLeave() {
+    //     console.log('what is happening?')
+    //     this.$emit('resultModalSwitch')
+    //     return false
+    // }
 })
 </script>
