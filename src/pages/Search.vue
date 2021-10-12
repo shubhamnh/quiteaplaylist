@@ -63,7 +63,7 @@
                 <p>Login to Twitter for better results when searching for missing.</p>
             </div> -->
 
-            <div v-if="currentPlaylist.contentDetails.itemCount === 0" class="flex flex-col flex-grow items-center justify-center">
+            <div v-if="currentPlaylist?.contentDetails?.itemCount === 0" class="flex flex-col flex-grow items-center justify-center">
                 <p class="text-7xl my-8">🧐</p>
                 <p>Looks like your playlist is empty!<br/>Coudn't find any videos in there!</p>
             </div>
