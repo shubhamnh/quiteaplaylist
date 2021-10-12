@@ -42,7 +42,7 @@
             </keep-alive>
         </router-view>
 
-        <footer class="flex flex-row flex-wrap py-3 justify-center text-center text-sm text-gray-600 border-t-2">
+        <footer class="flex flex-row flex-wrap py-3 justify-center text-center text-sm text-gray-600 border-t">
                 <span class="text-sm px-2 py-1 sm:px-4">Powered by <a class="hover:underline font-semibold" href="https://archive.org/" title="Internet Archive">Internet Archive</a></span>
                 <span class="text-sm px-2 py-1 sm:px-4">Made by <a class="hover:underline font-semibold" href="https://twitter.com/shubham_nh" title="Twitter">Shubham Jain</a></span>
                 <span class="text-sm px-2 py-1 sm:px-4 hover:underline font-semibold"><router-link to="/about/#attributions" title="Attributions">Attributions</router-link></span>

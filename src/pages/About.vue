@@ -16,7 +16,7 @@
              <p>Hope you find this site helpful!</p>
              
              <p>Have any feedback or questions?</p>
-             <p>Reach out to me on <a href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter"><img class="inline h-4" src="@/assets/icons/twitter.svg" alt="Twitter"/></a></p>
+             <p>Reach out to me on <a href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter">Twitter <img class="inline align-text-top h-4" src="@/assets/icons/twitter.svg" alt="Twitter"/></a></p>
              
              <p>Peace out ✌️,<br/>Shubham</p>
             

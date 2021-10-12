@@ -29,7 +29,27 @@
 
                     <GuideImage :src="copyImage" caption="Copy to Clipboard"/>
                 </li>
-                <li><p>Go to the <router-link to="/" title="Home" class="italic hover:underline">home</router-link> page, paste your URL and hit enter!</p>
+                <li><p>Go to the <router-link to="/" title="Home" class="italic hover:underline">home</router-link> page, paste the URL/link in the search box and hit enter!</p>
+
+                    <GuideImage class="max-w-xs" :src="homepagePaste" caption="Paste Link in Search bar"/>
+                </li>
+                <li class="space-y-3"><p>The site will get the video/playlist details. The probability of finding the video details usually depends on the popularity of the video. If it can’t find any details for a video, you can search for it on a search engine or social media like Twitter to find the name of the video.</p>
+
+                    <p>Only the videos which have been deleted or made private are shown in the results. You can see the position of the video in the playlist in the top left corner.</p>
+
+                    <!-- <GuideImage class="max-w-lg" :src="results" caption="Search results"/> -->
+                    <GuideImage class="max-w-xs" :src="results1" caption="Search results"/>
+                    <!-- <GuideImage :src="results2" caption="Search results"/> -->
+                </li>
+                <li><p>For videos which it can find, you can see video details like title, description, channel details, etc. You can then search for similar videos on YouTube by pressing the search button.</p>
+
+                    <GuideImage class="max-w-xs" :src="videoDetails" caption="Deleted video details"/>
+                </li>
+                <li><p>If the details has been sourced from archive.org / Wayback Machine like the one showed above, there is a chance that they have the video archived as well. You can click on the source link and see if that’s the case.</p>
+
+                    <p>The video which we found above has been stored and as we can see below, we're able to watch the deleted YouTube video on the archived page.</p>
+
+                    <GuideImage :src="watchVideo" caption="Watch deleted YouTube video"/>
                 </li>
             </ol>
 
@@ -71,6 +91,13 @@ import GuideImage from "../components/GuideImage.vue";
 import privacyImage from '@/assets/images/playlist-privacy.jpg'
 import shareImage from '@/assets/images/share-playlist-url.jpg'
 import copyImage from '@/assets/images/copy-link.jpg'
+import homepagePaste from '@/assets/images/paste-link-homepage.jpg'
+import results1 from '@/assets/images/youtube-playlist-deleted-videos.jpg'
+import results2 from '@/assets/images/youtube-playlist-private-videos.jpg'
+import results from '@/assets/images/youtube-playlist-deleted-private-videos.jpg'
+import videoDetails from '@/assets/images/deleted-video-details.jpg'
+import watchVideo from '@/assets/images/watch-deleted-video-wayback.jpg'
+
 
 export default defineComponent({
     name: 'Guide',
@@ -85,7 +112,13 @@ export default defineComponent({
         return {
             privacyImage: privacyImage,
             shareImage: shareImage,
-            copyImage: copyImage
+            copyImage: copyImage,
+            homepagePaste: homepagePaste,
+            results: results,
+            results1: results1,
+            results2: results2,
+            videoDetails: videoDetails,
+            watchVideo: watchVideo
         }
     }
 })

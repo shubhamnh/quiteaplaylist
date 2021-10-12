@@ -29,7 +29,7 @@ export default defineComponent({
             return "https://search.brave.com/search?q=" + this.vidUrl.replace('https://www.','')
         },
         twitterUrlSearch () :string {
-            return "https://twitter.com/search?q=" + this.vidUrl.replace('https://www.','')
+            return "https://twitter.com/search?q=" + this.vidUrl.replace('https://www.','') + "&src=typed_query&f=live"
         },
     },
     data() {

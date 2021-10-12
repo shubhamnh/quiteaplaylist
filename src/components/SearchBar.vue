@@ -98,33 +98,31 @@ export default defineComponent({
         detectUrl(inputUrl : string) {
             const vidIdMatch = inputUrl.match(this.vidRegex)
             const plIdMatch = inputUrl.match(this.plRegex)
-            let vidId, plId
+            let videoId, playlistId
             this.searchError = false
 
             if (vidIdMatch) {
                 if (vidIdMatch[1]) {
-                    vidId = vidIdMatch[1]
+                    videoId = vidIdMatch[1]
                 } else if (vidIdMatch[2]) {
-                    vidId = vidIdMatch[2]
-                } else vidId = vidIdMatch[3]
+                    videoId = vidIdMatch[2]
+                } else videoId = vidIdMatch[3]
             }
 
             if (plIdMatch && plIdMatch[1]) {
-                plId = plIdMatch[1]
+                playlistId = plIdMatch[1]
             }
 
-            if (plId || (vidId && vidId.length === 11)) {
-                this.processPlaylistOrVideo(plId, vidId, inputUrl)
+            if (playlistId || (videoId && videoId.length === 11)) {
+                this.processPlaylistOrVideo(playlistId, videoId, inputUrl)
             }
              else {
                 this.searchError = true
             }
         },
 
-        processPlaylistOrVideo(plId : string | undefined , vidId : string | undefined, inputUrl : string) {
+        processPlaylistOrVideo(playlistId : string | undefined , videoId : string | undefined, inputUrl : string) {
             const routeName = this.$route.name
-            this.$emit('resetSearchResults')
-            this.$emit('setSearchStatus', 102)
 
             // If Search on Home Page
             if (routeName === 'Home') {
@@ -139,10 +137,10 @@ export default defineComponent({
                     return
                 }
 
-                if (plId) {
-                    this.$emit('processPlaylist', plId)
+                if (playlistId) {
+                    this.$emit('processPlaylist', playlistId)
                 } else {
-                    this.$emit('processVideo', vidId)
+                    this.$emit('processVideo', videoId)
                 }
             }
         },

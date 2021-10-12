@@ -1,10 +1,10 @@
-interface absentVideo {
+interface AbsentVideo {
   pos?: number,
-  vidId: string
+  videoId: string
 }
 
 interface Video {
-  [vidId:string] : VideoDetails
+  [videoId:string] : VideoDetails
 }
 
 interface VideoDetails {
