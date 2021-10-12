@@ -3,10 +3,9 @@
         <SearchBar ref="search" class="flex flex-col"
             @processPlaylist="processPlaylist($event)"
             @processVideo="processVideo($event)"
-            @resetSearchResults="resetSearchResults()"
-            @setSearchStatus="setSearchStatus($event)"
             :parentInputUrl="queryUrl"
         />
+
         <div v-if="searchStatus === 102" class="flex flex-col flex-grow items-center justify-center">
             <div class="multi-ripple h-28 w-28">
                 <div></div>
@@ -16,59 +15,78 @@
                 <p class="text-sm text-gray-500">Getting playlist details..</p>
             </div>
         </div>
-        <div v-else-if="searchStatus === 204" class="flex flex-col flex-grow items-center justify-center">
-            <p>Looks like you're having a lucky day!<br/>All your playlist videos are visible!</p>
-        </div>
-        <div v-else-if="searchStatus === 206" class="flex flex-col flex-grow items-center justify-center">
-            <p>Looks like your playlist is empty!<br/>Coudn't find any videos in there!</p>
-        </div>
-        <div v-else-if="searchStatus === 404" class="flex flex-col flex-grow items-center justify-center">
-            <p>Could not find the Playlist mentioned.<br/>Make sure the playlist is public or unlisted and try again!</p>
-        </div>
-        <div v-else-if="searchStatus === 500" class="flex flex-col flex-grow items-center justify-center">
-            <p>Error getting playlist details :(<br/> Reach out to me on <a href="https://twitter.com/shubham_nh">Twitter</a> if this persists!</p>
-        </div>
+        
+        <div v-else-if="searchStatus === 200" class="flex flex-col flex-grow">
 
-        <!-- If Playlist is Searched-->
-        <div v-if="searchStatus === 200 && currentPlaylist.snippet" class="flex flex-row items-end pt-4 pb-3 lg:pb-2">
+            <!-- If Playlist is Searched-->
+            <div v-if="currentPlaylist.snippet" class="flex flex-row flex-wrap items-end pt-4 pb-2">
 
-            <div class="w-2/3 text-left">
-                <p class="text-base lg:text-lg font-bold line-clamp-2"> {{currentPlaylist.snippet.title}} </p>
-                <p class="text-sm lg:text-base">Found {{foundCount}} of {{absentVideos.length}} hidden</p>
-            </div>
-
-            <!-- Filter Menu -->
-            <div class="flex w-1/3 justify-end">
-                <div class="relative inline-block text-left">
-                    <div>
-                        <button type="button" @click="toggleMenu()" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-magenta-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
-                        {{ viewModes[activeViewMode] }}
-                        <!-- Heroicon name: solid/chevron-down -->
-                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
+                <div class="flex flex-row items-center w-full justify-between pb-5 sm:pb-0 sm:justify-start sm:w-2/3 ">
+                    <div class="text-left mr-7">
+                        <p class="text-base lg:text-lg font-bold line-clamp-2"> {{currentPlaylist.snippet.title}} </p>
+                        <p class="text-sm lg:text-base"> Found {{foundCount}} of {{absentVideos.length}} hidden</p>
+                    </div>
+                    <div class="">
+                        <button class="rounded-full p-1.5 border hover:bg-gray-200" @click="processPlaylist(currentPlaylist.id, true)" title="Refresh Playlist">
+                            <img src="@/assets/icons/refresh.svg" alt="Refresh Playlist">
                         </button>
+                    </div>
+                </div>
 
-                        <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                            <div v-if="menuMode" v-click-outside="closeMenu" ref="dropdown" class="origin-top-right absolute right-0 mt-2 w-28 lg:w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
-                                <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-                                <div v-for="(viewMode, index) in viewModes" :key="index" class="py-1">
-                                    <button @click="activeViewMode = index; menuMode = false" class="w-full text-gray-700 block px-4 py-2 text-left text-sm hover:bg-gray-300">
-                                        {{ viewMode }}
-                                    </button>
+                <!-- Filter Menu -->
+                <div class="flex w-full sm:w-1/3 justify-end">
+                    <div class="relative inline-block text-left">
+                        <div>
+                            <button type="button" @click="toggleMenu()" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-magenta-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                            {{ viewModes[activeViewMode] }}
+                            <!-- Heroicon name: solid/chevron-down -->
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            </button>
+                            <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                                <div v-if="menuMode" v-click-outside="closeMenu" ref="dropdown" class="origin-top-right absolute right-0 mt-2 w-28 lg:w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+                                    <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+                                    <div v-for="(viewMode, index) in viewModes" :key="index" class="py-1">
+                                        <button @click="activeViewMode = index; menuMode = false" class="w-full text-gray-700 block px-4 py-2 text-left text-sm hover:bg-gray-300">
+                                            {{ viewMode }}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </transition>
+                            </transition>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- <div class="flex flex-row">
+                <p>Login to Twitter for better results when searching for missing.</p>
+            </div> -->
+
+            <div v-if="currentPlaylist.contentDetails.itemCount === 0" class="flex flex-col flex-grow items-center justify-center">
+                <p class="text-7xl my-8">🧐</p>
+                <p>Looks like your playlist is empty!<br/>Coudn't find any videos in there!</p>
+            </div>
+            <div v-else-if="!absentVideos.length" class="flex flex-col flex-grow items-center justify-center">
+                <p class="text-7xl my-8">🥳</p>
+                <p>Looks like you're having a lucky day!<br/>All your playlist videos are visible!</p>
+            </div>
+            <!-- Video Details -->
+            <div v-else class="grid gap-5 grid-cols-1 py-3 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <SearchResult v-for="absentVideo in absentVideos" :vidDetail="videos[absentVideo.videoId]" :activeViewMode="activeViewMode" :playlistPos="absentVideo.pos" :key="absentVideo.pos + absentVideo.videoId"/>
+            </div>
+
         </div>
 
-        <!-- Video Details -->
-        <div class="grid gap-5 grid-cols-1 py-3 md:gap-8 md:py-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            <SearchResult v-for="absentVideo in absentVideos" :vidDetail="vidDetails[absentVideo.vidId]" :activeViewMode="activeViewMode" :playlistPos="absentVideo.pos" :key="absentVideo.pos + absentVideo.vidId"/>
+        <div v-else-if="searchStatus === 404" class="flex flex-col flex-grow items-center justify-center">
+            <p class="text-7xl my-8">🤔</p>
+            <p>Could not find the Playlist mentioned.<br/>Make sure the playlist is Public or Unlisted and try again!</p>
         </div>
+        <div v-else class="flex flex-col flex-grow items-center justify-center">
+            <p class="text-7xl my-8">☠️</p>
+            <p>Error getting playlist details :(<br/> Reach out to me on <a href="https://twitter.com/shubham_nh">Twitter</a> if this persists!</p>
+        </div>
+
     </div>
 </template>
 
@@ -90,9 +108,9 @@ export default defineComponent({
     },
     data () {
         return {
-            vidDetails : new Object as Video,
+            videos : new Object as Video,
             currentPlaylist : new Object as Playlist,
-            absentVideos : new Array<absentVideo>(),
+            absentVideos : new Array<AbsentVideo>(),
 
             // To pass to SearchBar.vue
             queryUrl : '',
@@ -153,11 +171,14 @@ export default defineComponent({
 
     methods: {
 
-        async processPlaylist(plId: string) {
+        async processPlaylist(playlistId: string, forceRefreshPlaylist = false ) {
             let playlistres, nextPageToken = '', localPlaylist : any, localVideo : any
             let plItems = []
-            let url, vidId, status : VideoDetails["status"]
+            let url, videoId, status : VideoDetails["status"]
             let playlistList : PlaylistList
+
+            this.resetSearchResults()
+            this.setSearchStatus(102)
 
             const dbName = this.initializeDb()
             const videodb = this.createVideoInstance(dbName)
@@ -166,9 +187,9 @@ export default defineComponent({
             // Get Playlist Name
             try {
                 if (import.meta.env.PROD) { 
-                    playlistres =  await fetch(this.ytCorsProxy + this.ytPlaylistApi + this.ytPlaylistApiPart + this.ytPlaylistApiId + plId)
+                    playlistres =  await fetch(this.ytCorsProxy + this.ytPlaylistApi + this.ytPlaylistApiPart + this.ytPlaylistApiId + playlistId)
                 } else {
-                    playlistres =  await fetch(this.ytPlaylistApi + this.ytPlaylistApiPart + this.ytPlaylistApiId + plId + this.ytApiKey + import.meta.env.VITE_YT_API_KEY)
+                    playlistres =  await fetch(this.ytPlaylistApi + this.ytPlaylistApiPart + this.ytPlaylistApiId + playlistId + this.ytApiKey + import.meta.env.VITE_YT_API_KEY)
                 } 
             } catch (e) {
                 console.log(e)
@@ -199,12 +220,14 @@ export default defineComponent({
             }
 
             // Get Playlist items if playlist is updated/undefined else get playlist items from localPlaylist
-            // (etag does not match && has playlistItems) or (localplaylist undefined OR playlistItems undefined OR playlist undefined)
-            if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.playlistItems) || (!localPlaylist || !localPlaylist?.playlistItems || !localPlaylist?.playlist)) {
+            // (etag does not match && has playlistItems) or (localplaylist undefined OR playlistItems undefined OR playlist undefined) or (forceRefreshPlaylist)
+            if (((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.playlistItems) || 
+                (!localPlaylist || !localPlaylist?.playlistItems || !localPlaylist?.playlist) ||
+                forceRefreshPlaylist ) {
 
                 // Get all playlist items and put in plItems[]
                 do {
-                    let pageItems = await this.getPlaylistPageItems(plId, nextPageToken)
+                    let pageItems = await this.getPlaylistPageItems(playlistId, nextPageToken)
                     if (pageItems === undefined) {
                         return
                     }
@@ -231,7 +254,7 @@ export default defineComponent({
 
                 // Get deleted/private videos 
                 for (const playlistItem of plItems) {
-                    vidId = playlistItem.contentDetails.videoId
+                    videoId = playlistItem.contentDetails.videoId
 
                     // Skip Public and Unlisted Videos
                     if (playlistItem.status.privacyStatus === 'public' || playlistItem.status.privacyStatus === 'unlisted') {
@@ -240,16 +263,16 @@ export default defineComponent({
 
                     // Consider 'private' and 'privacyStatusUnspecified' (deleted) videos
                     // Create sequential empty video details
-                    url = this.ytVidPrefix + vidId
+                    url = this.ytVidPrefix + videoId
                     status = playlistItem.status.privacyStatus === 'private' ? 'Private' : 'Deleted'
 
                     // Initialize Result Videos and Push to absentVideos[]
-                    this.addToVidDetails(vidId, {id: vidId, searchStatus: 0, url: url, status: status} as VideoDetails )
+                    this.addToVidDetails(videoId, {id: videoId, searchStatus: 0, url: url, status: status} as VideoDetails )
 
                     this.absentVideos.push( {
-                        pos:(playlistItem.snippet.position + 1), 
-                        vidId: vidId 
-                        } as absentVideo )
+                            pos:(playlistItem.snippet.position + 1), 
+                            videoId: videoId
+                        } as AbsentVideo )
                 }
 
                 if (this.absentVideos.length) {
@@ -258,7 +281,7 @@ export default defineComponent({
                     /** Check if video present locally, if not add to Array of videos to be processed */
                     await Promise.all(this.absentVideos.map(async (absentVideo) => {
                         try {
-                            localVideo = await videodb.getItem(absentVideo.vidId)
+                            localVideo = await videodb.getItem(absentVideo.videoId)
                         } catch (e) {
                             console.log(e)
                         }
@@ -266,7 +289,7 @@ export default defineComponent({
                         if (localVideo) {
                             this.assignToVidDetails(localVideo)
                         } else {
-                            videoBatchToProcess.push(absentVideo.vidId)
+                            videoBatchToProcess.push(absentVideo.videoId)
                         }
                     }))
 
@@ -283,19 +306,14 @@ export default defineComponent({
                         }
                     }
 
-                } else {
-                    this.setSearchStatus(204)
                 }
-
-            } else {
-                this.setSearchStatus(206)
             }
         },
 
-        async getPlaylistPageItems (plId: string, nextPageToken ?: string)
+        async getPlaylistPageItems (playlistId: string, nextPageToken ?: string)
              : Promise <{ playlistPageItems: PlaylistItem[]; nPageToken: string; } | undefined > {
             let res
-            const nextPageUrl = this.ytPlaylistItemsApi + this.ytPlaylistItemsApiPart + this.ytPlaylistItemsApiMax + this.ytPlaylistItemsApiId + plId + this.ytPlaylistItemsApiPg + nextPageToken
+            const nextPageUrl = this.ytPlaylistItemsApi + this.ytPlaylistItemsApiPart + this.ytPlaylistItemsApiMax + this.ytPlaylistItemsApiId + playlistId + this.ytPlaylistItemsApiPg + nextPageToken
 
             if (import.meta.env.PROD) {
                 res = await fetch(this.ytCorsProxy + nextPageUrl)
@@ -320,20 +338,21 @@ export default defineComponent({
             return { playlistPageItems, nPageToken }
         },
 
-        async processVideo (vidId: string) {
-            const vidUrl = this.ytVidPrefix + vidId
+        async processVideo (videoId: string) {
+            const vidUrl = this.ytVidPrefix + videoId
             const dbName = this.initializeDb()
             const videodb = this.createVideoInstance(dbName)
+            this.resetSearchResults()
 
             this.setSearchStatus(200)
-            this.absentVideos.push( {vidId: vidId} as absentVideo )
-            this.addToVidDetails(vidId, {id: vidId, searchStatus: 0, url: vidUrl} as VideoDetails)
+            this.absentVideos.push( {videoId: videoId} as AbsentVideo )
+            this.addToVidDetails(videoId, {id: videoId, searchStatus: 0, url: vidUrl} as VideoDetails)
 
-            let localVideo = await videodb.getItem(vidId)
+            let localVideo = await videodb.getItem(videoId)
             if (localVideo) {
-                Object.assign( this.vidDetails[vidId], localVideo)
+                Object.assign( this.videos[videoId], localVideo)
             } else {
-                this.processBatchVideos(videodb, [vidId])
+                this.processBatchVideos(videodb, [videoId])
             }
         },
 
@@ -346,23 +365,23 @@ export default defineComponent({
                             this.assignToVidDetails(res, videodb)   
                         });
                     } else {
-                        videoBatchToProcess.forEach(vidId => {
-                            const url = this.ytVidPrefix + vidId
-                            this.assignToVidDetails({ id: vidId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Something went wrong. Status: ' + res.status, url: url})
+                        videoBatchToProcess.forEach(videoId => {
+                            const url = this.ytVidPrefix + videoId
+                            this.assignToVidDetails({ id: videoId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Something went wrong. Status: ' + res.status, url: url})
                         });
                     }
                 }).catch( err => {
                         console.log(err)
-                        videoBatchToProcess.forEach(vidId => {
-                            const url = this.ytVidPrefix + vidId
-                            this.assignToVidDetails({ id: vidId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Too many requests. Try refreshing again?', url: url})
+                        videoBatchToProcess.forEach(videoId => {
+                            const url = this.ytVidPrefix + videoId
+                            this.assignToVidDetails({ id: videoId, workerVersion: 0, searchStatus: 500, source: 'worker', title: 'Too many requests. Try refreshing again?', url: url})
                         });
                     }
                 );
         },
 
         resetSearchResults() {
-            this.vidDetails = {}
+            this.videos = {}
             this.currentPlaylist = new Object as Playlist
             this.absentVideos = []
             this.foundCount = 0
@@ -386,12 +405,12 @@ export default defineComponent({
             });
         },
 
-        addToVidDetails (vidId: string, vidDetail: VideoDetails) {
-            this.vidDetails[vidId] = vidDetail
+        addToVidDetails (videoId: string, vidDetail: VideoDetails) {
+            this.videos[videoId] = vidDetail
         },
         async assignToVidDetails (vidDetail: VideoDetails, videodb?: LocalForage) {
             // console.log(resData)
-            Object.assign( this.vidDetails[vidDetail.id], vidDetail)
+            Object.assign( this.videos[vidDetail.id], vidDetail)
 
             if (vidDetail.searchStatus === 200)
                 this.foundCount++

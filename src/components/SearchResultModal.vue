@@ -1,6 +1,6 @@
 <template>
     <div @click.self="$emit('resultModalSwitch')" class="h-full w-full fixed top-0 left-0 bg-blue-gray-300 bg-opacity-60 sm:grid sm:place-items-center">
-        <div class="flex flex-col p-4 m-auto h-screen w-full max-h-screen sm:h-4/5 sm:w-8/12 sm:max-w-lg sm:rounded-lg bg-white">
+        <div class="flex flex-col p-4 m-auto h-screen w-full max-h-screen sm:h-4/5 sm:w-8/12 sm:max-w-3xl sm:rounded-lg bg-white">
 
             <div class="flex flex-row justify-between">
                 <div class="place-self-end text-sm">
@@ -24,7 +24,7 @@
             </div>
 
             <div class="flex flex-col flex-grow overflow-auto">
-                <p class="text-sm my-3 mx-2 break-words" v-html="vidDetail.description || '<i>No Description Available</i>'"></p>
+                <p class="text-sm my-3 mx-2 break-words whitespace-pre-line" v-html="vidDetail.description || '<i>No Description Available</i>'"></p>
             </div>
 
             <div class="justify-self-end flex flex-row items-center justify-between pt-4 border-t">
