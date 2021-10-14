@@ -67,10 +67,7 @@
         
         <!-- Loading -->
         <div v-else class="flex h-20 sm:h-40 w-auto items-center justify-center">
-            <div class="multi-ripple h-12 w-12">
-                <div></div>
-                <div></div>
-            </div>
+            <Loading class="h-12 w-12"/>
             <!-- <p class="justify-self center font-extrabold text-gray-800 animate-pulse">Loading...</p> -->
         </div>
 
@@ -84,6 +81,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import Loading from './Loading.vue'
 import SearchResultUrlSearch from './SearchResultUrlSearch.vue'
 import SearchResultModal from './SearchResultModal.vue'
 import SearchResultChannel from "./SearchResultChannel.vue"
@@ -92,7 +90,7 @@ import searchIcon from "../assets/icons/search.svg"
 
 export default defineComponent({
     name: 'SearchResult',
-    components: { SearchResultChannel, SearchResultUrlSearch, SearchResultModal, SearchResultLinkButton },
+    components: { SearchResultChannel, SearchResultUrlSearch, SearchResultModal, SearchResultLinkButton, Loading },
     props: {
         vidDetail: {
             type: Object as PropType<VideoDetails>,

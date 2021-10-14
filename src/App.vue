@@ -36,11 +36,22 @@
         
         <!-- https://next.router.vuejs.org/api/#router-view-s-v-slot -->
         <!-- Component: VNodes to be passed to a <component>'s is prop -->
+
         <router-view v-slot="{ Component }">
-            <keep-alive exclude="Search">
-                <component :is="Component" :key="$route.path"/>
-            </keep-alive>
+            <template v-if="Component">
+                <keep-alive exclude="Search">
+                    <suspense>
+                        <component :is="Component" :key="$route.path"/>
+                        <template #fallback>
+                            <div class="flex flex-col flex-grow items-center justify-center">
+                                <Loading class="h-28 w-28"/>
+                            </div>
+                        </template>
+                    </suspense>
+                </keep-alive>
+            </template>
         </router-view>
+
 
         <footer class="flex flex-row flex-wrap py-3 justify-center text-center text-sm text-gray-600 border-t">
                 <span class="text-sm px-2 py-1 sm:px-4">Powered by <a class="hover:underline font-semibold" href="https://archive.org/" title="Internet Archive">Internet Archive</a></span>
@@ -53,9 +64,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Loading from "./components/Loading.vue";
 
 export default defineComponent({
     name: 'App',
+    components: { Loading }
     // metaInfo: {
     //   // if no sub components specify a metaInfo.title, this title will be used
     //   title: 'quite a playlist',
