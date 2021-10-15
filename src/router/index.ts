@@ -61,6 +61,35 @@ const routes = [
     },
   },
   {
+    path: '/playlists',
+    name: 'Playlist',
+    component: () => import('../pages/Playlists.vue').catch( err => {
+      // TODO: Get version.json (not cached) and load new version 
+      window.location.assign(window.location.origin + '/playlists')
+    }),
+    meta: {
+      title: 'Playlists - quite a playlist',
+      metaTags: [
+        {
+          name: 'robots',
+          content: 'noindex'
+        },
+        {
+          name: 'title',
+          content: 'Playlists - quite a playlist'
+        },
+        {
+          name: 'description',
+          content: 'Saved Playlists from Search'
+        },
+        {
+          property: 'og:description',
+          content: 'Saved Playlists from Search'
+        }
+      ]
+    },
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('../pages/About.vue').catch( err => {
