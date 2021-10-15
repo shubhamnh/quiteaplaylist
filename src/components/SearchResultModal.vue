@@ -43,6 +43,10 @@
                             {{vidDetail.snapshotTime}}</p>
                     </div>
 
+                    <span v-else-if="vidDetail.source == 'yt'">
+                        Browser Cache
+                    </span>
+
                     <a v-else :href="'https://search.brave.com/search?q='+vidDetail.url" rel="noopener" target="_blank" class="inline rounded-full py-1 px-2 mx-2 border bg-white hover:bg-gray-200" title="Brave Search">
                         Brave Search
                     </a>
