@@ -24,7 +24,7 @@
                         <p class="text-sm lg:text-base"> Found {{foundCount}} of {{absentVideos.length}} hidden</p>
                     </div>
                     <div class="">
-                        <button class="rounded-full p-1.5 border hover:bg-gray-200" @click="processPlaylist(currentPlaylist.id, true)" title="Refresh Playlist">
+                        <button class="rounded-full p-1.5 border hover:bg-gray-200 w-9" @click="processPlaylist(currentPlaylist.id, true)" title="Refresh Playlist">
                             <img src="@/assets/icons/refresh.svg" alt="Refresh Playlist">
                         </button>
                     </div>
@@ -61,7 +61,7 @@
             </div> -->
 
             <div v-if="currentPlaylist?.contentDetails?.itemCount === 0" class="flex flex-col flex-grow items-center justify-center">
-                <p class="text-7xl my-8">🧐</p>
+                <p class="text-7xl my-8">🤔</p>
                 <p>Looks like your playlist is empty!<br/>Coudn't find any videos in there!</p>
             </div>
             <div v-else-if="!absentVideos.length" class="flex flex-col flex-grow items-center justify-center">
@@ -76,7 +76,7 @@
         </div>
 
         <div v-else-if="searchStatus === 404" class="flex flex-col flex-grow items-center justify-center">
-            <p class="text-7xl my-8">🤔</p>
+            <p class="text-7xl my-8">🧐</p>
             <p>Could not find the Playlist mentioned.<br/>Make sure the playlist is Public or Unlisted and try again!</p>
         </div>
         <div v-else class="flex flex-col flex-grow items-center justify-center">
@@ -149,6 +149,7 @@ export default defineComponent({
             searchStatus: 0,
 
             ytPrefix: 'https://www.youtube.com/',
+            ytChannelPrefix: 'https://www.youtube.com/channel/',
             ytVidPrefix: 'https://www.youtube.com/watch?v=',
             
             wbCorsProxy: import.meta.env.VITE_WB_PROXY,
@@ -164,10 +165,12 @@ export default defineComponent({
 
     methods: {
 
-        async processPlaylist(playlistId: string, forceRefreshPlaylist = false ) {
+        async processPlaylist(playlistId: string, refreshPlaylist = false ) {
+            const updatePlaylist = refreshPlaylist || this.$route.query?.refreshPlaylist
             let localPlaylist : any, localVideo : any, playlistItems : PlaylistItem[] | void = []
             let url, videoId, status : VideoDetails["status"]
             let playlist : Playlist | void
+            let playlistUpdated : boolean = false
 
             this.resetSearchResults()
             this.setSearchStatus(102)
@@ -200,23 +203,19 @@ export default defineComponent({
             }
 
             // Get Playlist items if playlist is updated/undefined else get playlist items from localPlaylist
-            // (etag does not match && has playlistItems) or (localplaylist undefined OR playlistItems undefined OR playlist undefined) or (forceRefreshPlaylist)
-            if (forceRefreshPlaylist ||
-                ((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.playlistItems) ||
-                (!localPlaylist || !localPlaylist?.playlistItems || !localPlaylist?.playlist)) {
+            // (etag does not match && has playlistItems) or (localplaylist undefined OR playlistItems undefined OR playlist undefined) or (updatePlaylist)
+            if (updatePlaylist ||
+                ((localPlaylist?.playlist.etag !== this.currentPlaylist.etag) && localPlaylist?.playlistItems) || 
+                 (!localPlaylist || !localPlaylist?.playlist || !localPlaylist?.playlistItems)) {
 
                 // Get all playlist items and put in playlistItems[]
                 playlistItems = await this.fetchPlaylistItems(playlistId).catch((err : Error) => {
                         this.setSearchStatus(500)
                         console.log(err.message)
+                        return
                     }
                 )
-
-                if (playlistItems) {
-                    await this.playlistDb.setItem(this.currentPlaylist.id, { 'playlist' : playlist, 'playlistItems' : playlistItems })
-                } else {
-                    return
-                }
+                playlistUpdated = true
                 
             } else {
                 playlistItems = localPlaylist?.playlistItems
@@ -226,7 +225,7 @@ export default defineComponent({
 
             // TODO : Store Fetched Playlist Items in OriginalVideos db - prevent loss of video info incase video gets removed later on
             if (playlistItems && playlistItems.length) {
-
+                
                 // Get deleted/private videos 
                 for (const playlistItem of playlistItems) {
                     videoId = playlistItem.contentDetails.videoId
@@ -266,6 +265,39 @@ export default defineComponent({
                             videoBatchToProcess.push(absentVideo.videoId)
                         }
                     }))
+                    
+                    if (playlistUpdated && localPlaylist?.playlistItems) {
+
+                        let localVideoCopyFound : number[] = []
+
+                        videoBatchToProcess.forEach((videoId, index) => {
+                            for(const localPlaylistItem of localPlaylist.playlistItems) {
+
+                                if(localPlaylistItem.contentDetails.videoId === videoId) {
+
+                                    this.assignToVidDetails({
+                                        id: videoId,
+                                        workerVersion : 999,
+                                        searchStatus: 200,
+                                        source: 'yt',
+                                        url: this.ytVidPrefix + videoId,
+                                        title: localPlaylistItem.snippet.title,
+                                        channelName: localPlaylistItem.snippet.channelTitle,
+                                        channelUrl: this.ytChannelPrefix + localPlaylistItem.snippet.channelId,
+                                        description: localPlaylistItem.snippet.description,
+                                        published: localPlaylistItem.contentDetails.videoPublishedAt.substring(0,10)
+                                    }, true)
+
+                                    localVideoCopyFound.push(index)
+                                    break
+                                }
+                            }
+                        })
+
+                        localVideoCopyFound.forEach(index => {
+                            videoBatchToProcess.splice(index,1)
+                        })
+                    }
 
                     for (let i = 0, slot = 1, step = 0; i < videoBatchToProcess.length ; i=i+this.videosPerRequest) {
                         
@@ -279,7 +311,10 @@ export default defineComponent({
                             this.processBatchVideos(videoBatchToProcess.slice(i,i+this.videosPerRequest))
                         }
                     }
+                }
 
+                if (playlistUpdated) {
+                    await this.playlistDb.setItem(this.currentPlaylist.id, { 'playlist' : playlist, 'playlistItems' : playlistItems })
                 }
             }
         },
@@ -306,7 +341,7 @@ export default defineComponent({
                     if (res.status === 200) {
                         const resData = await res.json()
                         resData.forEach((res : VideoDetails) => {
-                            this.assignToVidDetails(res, this.videoDb)   
+                            this.assignToVidDetails(res, true)   
                         });
                     } else {
                         videoBatchToProcess.forEach(videoId => {
@@ -335,20 +370,20 @@ export default defineComponent({
         addToVidDetails (videoId: string, vidDetail: VideoDetails) {
             this.videos[videoId] = vidDetail
         },
-        async assignToVidDetails (vidDetail: VideoDetails, videoDb?: LocalForage) {
+        async assignToVidDetails (vidDetail: VideoDetails, storeLocally = false) {
             // console.log(resData)
             Object.assign( this.videos[vidDetail.id], vidDetail)
 
             if (vidDetail.searchStatus === 200)
                 this.foundCount++
             
-            // If localForage object passed, save in db
-            if (videoDb) {
+            // If true, save in db
+            if (storeLocally) {
                 // If found OR (Not Found && (number of snapshots is defined && is 0/1) OR (Not Found in cdx)
                 if (vidDetail.searchStatus === 200 || ((vidDetail.searchStatus === 206 || vidDetail.searchStatus === 404) && (vidDetail.snapshots && vidDetail.snapshots < 2)) || (vidDetail.searchStatus === 404 && vidDetail.source === 'cdx')) {
 
                     try {
-                        videoDb.setItem(vidDetail.id , vidDetail)
+                        this.videoDb.setItem(vidDetail.id , vidDetail)
                     } catch (e) {
                         console.log(e)
                     }
