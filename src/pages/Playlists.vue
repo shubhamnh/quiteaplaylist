@@ -60,7 +60,7 @@ export default defineComponent({
             // TODO
         },
         async deletePlaylist (playlistId : string, index: number) {
-            let playlistData = await this.playlistDb.getItem(playlistId)
+            let playlistData : any = await this.playlistDb.getItem(playlistId)
 
             playlistData.playlistItems.forEach((playlistItem : PlaylistItem) => {
                 this.videoDb.removeItem(playlistItem.contentDetails.videoId)
