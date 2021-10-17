@@ -24,7 +24,7 @@
                         <p class="text-sm lg:text-base"> Found {{foundCount}} of {{absentVideos.length}} hidden</p>
                     </div>
                     <div class="">
-                        <button class="rounded-full p-1.5 border hover:bg-gray-200 w-9" @click="processPlaylist(currentPlaylist.id, true)" title="Refresh Playlist">
+                        <button class="rounded-full p-1.5 border hover:bg-gray-100 w-9" @click="processPlaylist(currentPlaylist.id, true)" title="Refresh Playlist">
                             <img src="@/assets/icons/refresh.svg" alt="Refresh Playlist">
                         </button>
                     </div>
@@ -121,12 +121,13 @@ export default defineComponent({
             videos : new Object as Video,
             currentPlaylist : new Object as Playlist,
             absentVideos : new Array<AbsentVideo>(),
+            latestWorkerVersion: 111,
 
             // To pass to SearchBar.vue
             queryUrl : '',
             
-            videosPerRequest : 5,
-            reqPerSlot : 10,
+            videosPerRequest : 10,
+            reqPerSlot : 7,
             slotDelaySeconds : 5,
             slotStepIncrease : 3,
             
@@ -259,7 +260,7 @@ export default defineComponent({
                             console.log(err.message)
                         })
 
-                        if (localVideo) {
+                        if (localVideo && localVideo.workerVersion >= this.latestWorkerVersion) {
                             this.assignToVidDetails(localVideo)
                         } else {
                             videoBatchToProcess.push(absentVideo.videoId)
@@ -271,9 +272,10 @@ export default defineComponent({
                         let localVideoCopyFound : number[] = []
 
                         videoBatchToProcess.forEach((videoId, index) => {
+
                             for(const localPlaylistItem of localPlaylist.playlistItems) {
 
-                                if(localPlaylistItem.contentDetails.videoId === videoId) {
+                                if(localPlaylistItem.contentDetails.videoId === videoId && (localPlaylistItem.status.privacyStatus === 'public' || localPlaylistItem.status.privacyStatus === 'unlisted')) {
 
                                     this.assignToVidDetails({
                                         id: videoId,
@@ -287,7 +289,7 @@ export default defineComponent({
                                         description: localPlaylistItem.snippet.description,
                                         published: localPlaylistItem.contentDetails.videoPublishedAt.substring(0,10)
                                     }, true)
-
+                                    
                                     localVideoCopyFound.push(index)
                                     break
                                 }

@@ -25,7 +25,7 @@
 
                 <p class="text-sm" v-html="vidDetail.published"></p>
 
-                <SearchResultChannel v-if="vidDetail.channelName" :channelName="vidDetail.channelName"
+                <SearchResultChannel v-if="vidDetail.channelName || vidDetail.channelUrl" :channelName="vidDetail.channelName"
                     :channelUrl="vidDetail.channelUrl" />
 
                 <p class="hidden md:line-clamp-2 break-words w-10/12 my-2" v-html="vidDetail.description"></p>
