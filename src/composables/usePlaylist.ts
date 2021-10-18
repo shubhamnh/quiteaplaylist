@@ -28,8 +28,7 @@ export async function fetchPlaylist (playlistId: string) : Promise<Playlist> {
 export async function fetchPlaylistItems (playlistId: string) : Promise<PlaylistItem[]> {
     let playlistItems : PlaylistItem[] = [], nextPageToken = ''
     do {
-        let pageItems = await getPlaylistPageItems(playlistId, nextPageToken)
-        let { playlistPageItems, nPageToken } = pageItems
+        let { playlistPageItems, nPageToken } = await getPlaylistPageItems(playlistId, nextPageToken)
 
         playlistItems.push(...playlistPageItems)
         nextPageToken = nPageToken

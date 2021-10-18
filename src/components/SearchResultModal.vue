@@ -4,12 +4,13 @@
 
             <div class="flex flex-row justify-between">
                 <div class="place-self-end text-sm">
-                    <span v-if="playlistPos">Playlist Position: {{playlistPos}}
+                    <span v-if="playlistPos">Position - {{playlistPos}}
                     </span>
-                    <img v-if="vidDetail.status === 'Deleted'" class="inline h-4 align-text-top mx-2" src="@/assets/icons/trash-solid.svg" alt="Deleted">
-                    <img v-if="vidDetail.status === 'Private'" class="inline h-4 align-text-top mx-2" src="@/assets/icons/lock-closed-solid.svg" alt="Private">
+                    <span class="mx-2">·</span>
+                    <img v-if="vidDetail.status === 'Deleted'" class="inline h-4 align-text-top" src="@/assets/icons/trash-solid.svg" alt="Deleted">
+                    <img v-if="vidDetail.status === 'Private'" class="inline h-4 align-text-top" src="@/assets/icons/lock-closed-solid.svg" alt="Private">
                 </div>
-                <button class="p-3 my-2 border rounded-full hover:bg-gray-200 shadow-xl" @click="$emit('resultModalSwitch')">
+                <button class="p-3 my-2 border rounded-full hover:bg-gray-100 shadow-xl" @click="$emit('resultModalSwitch')">
                     <img src="@/assets/icons/x.svg" alt="Close">
                 </button>
             </div>
@@ -19,7 +20,7 @@
                 <a :href="vidDetail.url" class="text-lg break-words text-gray-800 mb-1 font-bold hover:underline" rel="noopener" target="_blank" v-html="vidDetail.title" :title="vidDetail.title"></a>
                 <p v-html="vidDetail.published"></p>
 
-                <SearchResultChannel v-if="vidDetail.channelName" :channelName="vidDetail.channelName"
+                <SearchResultChannel v-if="vidDetail.channelName || vidDetail.channelUrl" :channelName="vidDetail.channelName"
                     :channelUrl="vidDetail.channelUrl" />
             </div>
 
@@ -35,7 +36,7 @@
                         v-if="vidDetail.source == 'wayback'">
                         <a :href="(vidDetail.waybackUrl)?.replace('id_/','if_/')"
                             rel="noopener" target="_blank"
-                            class="inline rounded-full py-1 pl-1 pr-2 mx-2 border bg-white hover:bg-gray-200"
+                            class="inline rounded-full py-1 pl-1 pr-2 mx-2 border bg-white hover:bg-gray-100"
                             title="WayBack Snapshot">
                             Wayback Machine
                         </a>
@@ -47,7 +48,11 @@
                         Browser Cache
                     </span>
 
-                    <a v-else :href="'https://search.brave.com/search?q='+vidDetail.url" rel="noopener" target="_blank" class="inline rounded-full py-1 px-2 mx-2 border bg-white hover:bg-gray-200" title="Brave Search">
+                    <a v-else-if="vidDetail.source == 'filmot'" href="https://filmot.com/" rel="noopener" target="_blank" class="inline rounded-full py-1 px-2 mx-2 border bg-white hover:bg-gray-100" title="Filmot.com">
+                        Filmot.com
+                    </a>
+
+                    <a v-else-if="vidDetail.source == 'se'" :href="'https://search.brave.com/search?q='+vidDetail.url" rel="noopener" target="_blank" class="inline rounded-full py-1 px-2 mx-2 border bg-white hover:bg-gray-100" title="Brave Search">
                         Brave Search
                     </a>
                 </div>

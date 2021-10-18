@@ -12,7 +12,7 @@ interface VideoDetails {
   workerVersion : number
   // searchStatus: 0 | 102 | 200 | 204 | 206 | 404 | 500 | 503
   searchStatus: number
-  source: 'worker' | 'cdx' | 'se' | 'wayback' | 'yt'
+  source: 'worker' | 'cdx' | 'se' | 'wayback' | 'yt' | 'filmot'
   // 204 Deleted Snapshot
   url : string
   title?: string
