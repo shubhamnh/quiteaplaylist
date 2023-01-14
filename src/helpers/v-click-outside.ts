@@ -11,7 +11,7 @@
  const IS_TOUCH =
    HAS_WINDOWS &&
    ('ontouchstart' in window ||
-     (HAS_NAVIGATOR && navigator.msMaxTouchPoints > 0));
+     (HAS_NAVIGATOR && navigator.maxTouchPoints > 0));
  const EVENTS = IS_TOUCH ? ['touchstart'] : ['click'];
  
  interface ClickOutsideElement extends HTMLElement {

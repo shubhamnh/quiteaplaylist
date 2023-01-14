@@ -199,7 +199,7 @@ export default defineComponent({
             // Check if playlist stored in IndexedDb
             try {
                 localPlaylist = await this.playlistDb.getItem(this.currentPlaylist.id)
-            } catch (e) {
+            } catch (e:any) {
                 console.log(e.message)
             }
 
