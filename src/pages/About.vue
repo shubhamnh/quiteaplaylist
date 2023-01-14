@@ -18,7 +18,7 @@
              <p>Hope you find this site helpful!</p>
              
              <p>Have any feedback or questions?</p>
-             <p>Reach out to me on <a href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter">Twitter <img class="inline align-text-top h-4" src="@/assets/icons/twitter.svg" alt="Twitter"/></a></p>
+             <p>Reach out to me via <a class="hover:underline font-semibold" href="mailto:human@quiteaplaylist.com" title="Contact E-mail" target="_blank">Email</a> or <a class="hover:underline font-semibold" href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter">Twitter</a>!</p>
              
              <p>Peace out ✌️,<br/>Shubham</p>
             

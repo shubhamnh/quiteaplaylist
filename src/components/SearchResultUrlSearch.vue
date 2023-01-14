@@ -11,6 +11,7 @@ import { defineComponent } from 'vue'
 import SearchResultLinkButton from "./SearchResultLinkButton.vue"
 import twitterIcon from "@/assets/icons/twitter.svg"
 import braveIcon from "@/assets/icons/brave.svg"
+import googleIcon from "@/assets/icons/google.svg"
  
 export default defineComponent({
     name: 'SearchResultUrlSearch',
@@ -35,7 +36,8 @@ export default defineComponent({
     data() {
         return {
             twitterIcon: twitterIcon,
-            braveIcon: braveIcon
+            braveIcon: braveIcon,
+            googleIcon: googleIcon,
         }
     },
 })

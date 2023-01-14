@@ -61,11 +61,11 @@
             </div> -->
 
             <div v-if="currentPlaylist?.contentDetails?.itemCount === 0" class="flex flex-col flex-grow items-center justify-center">
-                <p class="text-7xl my-8">🤔</p>
+                <span class="text-7xl my-8">🤔</span>
                 <p>Looks like your playlist is empty!<br/>Coudn't find any videos in there!</p>
             </div>
             <div v-else-if="!absentVideos.length" class="flex flex-col flex-grow items-center justify-center">
-                <p class="text-7xl my-8">🥳</p>
+                <span class="text-7xl my-8">🥳</span>
                 <p>Looks like you're having a lucky day!<br/>All your playlist videos are visible!</p>
             </div>
             <!-- Video Details -->
@@ -76,11 +76,11 @@
         </div>
 
         <div v-else-if="searchStatus === 404" class="flex flex-col flex-grow items-center justify-center">
-            <p class="text-7xl my-8">🧐</p>
+            <span class="text-7xl my-8">🧐</span>
             <p>Could not find the Playlist mentioned.<br/>Make sure the playlist is Public or Unlisted and try again!</p>
         </div>
         <div v-else class="flex flex-col flex-grow items-center justify-center">
-            <p class="text-7xl my-8">☠️</p>
+            <span class="text-7xl my-8">☠️</span>
             <p>Could not get playlist details :(<br/> Reach out to me on <a href="https://twitter.com/shubham_nh">Twitter</a> if this persists!</p>
         </div>
 
@@ -199,7 +199,7 @@ export default defineComponent({
             // Check if playlist stored in IndexedDb
             try {
                 localPlaylist = await this.playlistDb.getItem(this.currentPlaylist.id)
-            } catch (e) {
+            } catch (e:any) {
                 console.log(e.message)
             }
 
@@ -284,8 +284,8 @@ export default defineComponent({
                                         source: 'yt',
                                         url: this.ytVidPrefix + videoId,
                                         title: localPlaylistItem.snippet.title,
-                                        channelName: localPlaylistItem.snippet.channelTitle,
-                                        channelUrl: this.ytChannelPrefix + localPlaylistItem.snippet.channelId,
+                                        channelName: localPlaylistItem.snippet.videoOwnerChannelTitle,
+                                        channelUrl: this.ytChannelPrefix + localPlaylistItem.snippet.videoOwnerChannelId,
                                         description: localPlaylistItem.snippet.description,
                                         published: localPlaylistItem.contentDetails.videoPublishedAt.substring(0,10)
                                     }, true)
