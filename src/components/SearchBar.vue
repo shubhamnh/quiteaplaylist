@@ -5,17 +5,17 @@
                 <form @submit.prevent="detectUrl(inputUrl)" id="search-form" class="flex flex-row flex-grow items-center justify-between rounded-full bg-white border border-gray-300 focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200
                     text-base text-gray-700 mx-2 leading-8 transition-colors duration-200 ease-in-out max-w-lg">
                     <input class="outline-none w-full mx-3"
-                        @keyup.enter="detectUrl(inputUrl)"
                         v-model="inputUrl"
                         type="text"
                         placeholder="YouTube Playlist or Video URL"
+                        autofocus
                     />
                     <span v-if="inputUrl" class="flex items-center rounded-full p-1 mr-1 bg-white">
-                        <button class="rounded-full bg-gray-200 p-1 focus:outline-none focus:shadow-outline" @click="inputUrl = ''" title="Clear Search">
+                        <div class="rounded-full bg-gray-200 p-1 focus:ring-1 focus:shadow-outline" @keyup.enter="inputUrl = ''" @click="inputUrl = ''" title="Clear Search" aria-label="Clear" role="button" tabindex="0" aria-pressed="false">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
-                        </button>
+                        </div>
                     </span>
                 </form>
                 <button type="submit" form="search-form" class="rounded-full h-10 w-10 

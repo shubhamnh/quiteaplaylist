@@ -54,10 +54,10 @@
                 <p class="text-center text-base md:text-lg lg:text-xl italic my-1">Consider supporting!</p>
             </div>
             <div class="flex flex-row flex-wrap gap-5 lg:gap-10 place-content-center items-center my-5">
-                <a href="https://archive.org/donate">
+                <a href="https://archive.org/donate" target="_blank">
                     <img class="bg-white w-52 rounded-md shadow-md" src="../assets/internet-archive.png" alt="Donate to Internet Archive"/>
                 </a>
-                <a href="https://www.buymeacoffee.com/shubhamnh">
+                <a href="https://www.buymeacoffee.com/shubhamnh" target="_blank">
                     <img class="w-52 rounded-md shadow-md" src="../assets/bmc-yellow.png" alt="Buy me a Coffee"/>
                 </a>
             </div>
