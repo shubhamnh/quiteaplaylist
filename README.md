@@ -1,0 +1,1 @@
+Create .env.development.local and set VITE_YT_API_KEY for YouTube requests

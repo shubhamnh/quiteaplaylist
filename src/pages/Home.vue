@@ -1,6 +1,6 @@
 <template>
     <main class="flex-grow">
-        <section class="flex flex-col relative bg-magenta-100 sm:gap-5 py-5 md:py-10 px-4">
+        <section class="flex flex-col relative bg-magenta-100 text-blue-gray-900 sm:gap-5 py-5 md:py-10 px-4">
             <!-- <div class="flex flex-row flex-wrap gap-5 lg:gap-10 place-content-center my-5"> -->
                 
                 <div class="px-5 my-2 sm:my-5 sm:flex sm:flex-row gap-5 lg:gap-10 place-content-center">
@@ -47,7 +47,7 @@
             </div>
         </section>
 
-        <section class="flex flex-col relative bg-magenta-100 py-10 px-4">
+        <section class="flex flex-col relative bg-magenta-100 text-blue-gray-900 py-10 px-4">
             <div class="my-2 lg:my-4">
                 <h2 class="text-center font-extrabold text-xl lg:text-2xl filter drop-shadow-sm">Found this useful?
                 </h2>

@@ -10,10 +10,10 @@
             <ol class="list-decimal list-outside space-y-3 pl-6">
                 <li><p>Open the playlist on YouTube which has deleted videos.</p></li>
 
-                <li class="space-y-3"><p>Make sure the Playlist is either Public <img class="inline align-text-top h-5 w-5" src="@/assets/icons/globe.svg" alt="Public"/> or Unlisted <img class="inline align-text-top h-5 w-5" src="@/assets/icons/unlisted.svg" alt="Unlisted"/> if it's your own playlist. You can find this by looking at the icon next to your playlist name. Please note that this method won't work for the "Liked" Playlist which has all your Liked Videos as well as for the "Watch Later" playlist. More info <a href="#liked-watch-later" class="italic hover:underline">here</a>.</p>
+                <li class="space-y-3"><p>Make sure the Playlist is either Public <icon class="inline align-text-top h-5 w-5" name="globe" alt="Public"/> or Unlisted <icon class="inline align-text-top h-5 w-5" name="unlisted" alt="Unlisted"/> if it's your own playlist. You can find this by looking at the icon next to your playlist name. Please note that this method won't work for the "Liked" Playlist which has all your Liked Videos as well as for the "Watch Later" playlist. More info <a href="#liked-watch-later" class="italic hover:underline">here</a>.</p>
 
-                    <p>If your playlist is Private <img class="inline align-text-top h-5 w-5" src="@/assets/icons/lock-closed-outline.svg" alt="Private"/>, you can change the privacy settings of the playlist using the Edit
-                            <img class="inline align-text-top h-5 w-5" src="@/assets/icons/pencil.svg" alt="Edit"/>
+                    <p>If your playlist is Private <icon class="inline align-text-top h-5 w-5" name="lock-closed-outline" alt="Private"/>, you can change the privacy settings of the playlist using the Edit
+                            <icon class="inline align-text-top h-5 w-5" name="pencil" alt="Edit"/>
                             icon.
                     </p>
 
@@ -56,10 +56,7 @@
             <p>You can get the playlist URL in a similar way if you're using a browser, or just copy the link from the URL/address bar.</p>
 
             <h2 class="text-lg font-semibold md:text-xl pt-5 md:pt-7">Something to keep in mind...</h2>
-            <p>The data shown is mostly from the Internet Archive snapshots and it's not necessarily the same as when the video was made private or deleted. This site tries to get data from the earliest snapshots possible and it is possible that the video details like title and description have been changed since the snapshot was taken.</p>
-
-            <p>The motive behind this site is to get an idea of which video was and try to find similar videos.</p>
-
+            <p>The data shown from Internet Archive snapshots will not necessarily be the same as when the video was made private or deleted. This site tries to get data from the earliest snapshots possible and there is a chance that the video details like title and description have been changed since the snapshot was taken.</p>
 
             <h2 id="url-accepted" class="text-lg font-semibold md:text-xl pt-5 md:pt-7">Links (URLs) accepted</h2>
             <p>The app accepts links of Playlists as well as Videos. Below is a non exhaustive list of examples.</p>
@@ -87,7 +84,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import GuideImage from "../components/GuideImage.vue";
+import GuideImage from "../components/GuideImage.vue"
 import privacyImage from '@/assets/images/playlist-privacy.jpg'
 import shareImage from '@/assets/images/share-playlist-url.jpg'
 import copyImage from '@/assets/images/copy-link.jpg'
@@ -97,7 +94,6 @@ import results2 from '@/assets/images/youtube-playlist-private-videos.jpg'
 import results from '@/assets/images/youtube-playlist-deleted-private-videos.jpg'
 import videoDetails from '@/assets/images/deleted-video-details.jpg'
 import watchVideo from '@/assets/images/watch-deleted-video-wayback.jpg'
-
 
 export default defineComponent({
     name: 'Guide',
