@@ -115,6 +115,31 @@ const routes = [
     },
   },
   {
+    path: '/privacy-policy',
+    name: 'PrivacyPolicy',
+    component: () => import('../pages/PrivacyPolicy.vue').catch( err => {
+      // TODO: Get version.json (not cached) and load new version 
+      window.location.assign(window.location.origin + '/privacy-policy')
+    }),
+    meta: {
+      title: 'Privacy Policy - quite a playlist',
+      metaTags: [
+        {
+          name: 'title',
+          content: 'Privacy Policy - quite a playlist'
+        },
+        {
+          name: 'description',
+          content: 'Privacy Policy'
+        },
+        {
+          property: 'og:description',
+          content: 'Privacy Policy'
+        }
+      ]
+    },
+  },
+  {
     path: '/find-watch-deleted-private-youtube-video-playlist',
     name: 'Guide',
     component: () => import('../pages/Guide.vue').catch( err => {

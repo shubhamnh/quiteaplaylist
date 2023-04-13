@@ -12,18 +12,14 @@
                     />
                     <span v-if="inputUrl" class="flex items-center rounded-full p-1 mr-1 bg-white">
                         <div class="rounded-full bg-gray-200 p-1 focus:ring-1 focus:shadow-outline" @keyup.enter="inputUrl = ''" @click="inputUrl = ''" title="Clear Search" aria-label="Clear" role="button" tabindex="0" aria-pressed="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                            </svg>
+                            <icon name="x" alt="Cancel Icon"/>
                         </div>
                     </span>
                 </form>
                 <button type="submit" form="search-form" class="rounded-full h-10 w-10 
-                    bg-white border border-gray-300 hover: focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
+                    bg-white dark:text-blue-gray-900 border border-gray-300 hover: focus:border-magenta-050 focus:ring-2 focus:ring-indigo-200" 
                      title="Search" alt="Submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
-                        </svg>
+                        <icon name="arrow-right" alt="Right Arrow Icon"/>
                 </button>
             </div>
             
@@ -35,9 +31,7 @@
             </div>
             <div>
                 <router-link to="/find-watch-deleted-private-youtube-video-playlist/#url-accepted" title="Guide">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                    </svg>
+                    <icon name="solid-question-mark-circle" alt="Question Mark Icon"/>
                 </router-link>
             </div>
         </div>
