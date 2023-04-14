@@ -6,10 +6,10 @@
         <p><i>Get in touch!</i></p>
         <div class="pt-5 space-y-1">
             <div>
-                <icon class="inline align-text-top h-5 w-5" name="at-symbol" alt="Email Icon"/> <a :href="`mailto:`+email">{{ email }}</a>
+                <icon class="inline align-text-top h-5 w-5" name="at-symbol" alt="Email Icon"/> <a class="hover:underline" :href="`mailto:`+email">{{ email }}</a>
             </div>
             <div>
-                <icon class="inline align-text-top h-5 w-5 mr-1.5" name="twitter-outline" alt="Twitter Icon"/><a :href="twitterUrl" target="_blank" rel="noopener">{{ twitterHandle }}</a>
+                <icon class="inline align-text-top h-5 w-5 mr-1.5" name="twitter-outline" alt="Twitter Icon"/><a class="hover:underline" :href="twitterUrl" target="_blank" rel="noopener">{{ twitterHandle }}</a>
             </div>
         </div>
     </div>

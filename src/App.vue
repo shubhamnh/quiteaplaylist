@@ -76,8 +76,8 @@
                 <!-- <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="mailto:human@quiteaplaylist.com" title="Contact E-mail" target="_blank">Contact 📧</a></span> -->
                 <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/contact" title="Contact">Contact</router-link></span>
                 <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="https://www.buymeacoffee.com/shubhamnh" target="_blank">Buy me a ☕</a></span>
-                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/privacy-policy" title="Privacy Policy">Privacy Policy</router-link></span>
-                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/terms-and-conditions" title="Terms and Conditions">Terms & Conditions</router-link></span>
+                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/privacy-policy" title="Privacy Policy">Privacy</router-link></span>
+                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/terms-and-conditions" title="Terms and Conditions">Terms</router-link></span>
                 <!-- <span class="text-sm px-2 py-1 sm:px-4 hover:underline font-semibold"><router-link to="/about/#attributions" title="Attributions">Attributions</router-link></span> -->
                 <!-- <span><a href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter"><icon class="inline h-4" name="twitter" alt="Twitter"></a></span> -->
         </footer>
