@@ -58,7 +58,7 @@
             <template v-if="Component">
                 <keep-alive exclude="Search,Playlists">
                     <suspense>
-                        <component :is="Component" :key="$route.path" class="bg-gray-50 dark:bg-gray-700"/>
+                        <component :is="Component" :key="$route.path" class="bg-gray-100 dark:bg-gray-700"/>
                         <template #fallback>
                             <div class="flex flex-col flex-grow items-center justify-center">
                                 <Loading class="h-28 w-28"/>
@@ -72,10 +72,12 @@
 
         <footer class="flex flex-row flex-wrap py-3 justify-center text-center text-sm text-gray-600 dark:text-gray-100 border-t dark:border-0">
                 <span class="text-sm px-2 py-1 sm:px-4">Powered by <a class="hover:underline font-semibold" href="https://filmot.com/" title="Filmot.com" rel="noopener" target="_blank">Filmot.com</a> &amp; <a class="hover:underline font-semibold" href="https://archive.org/" title="Internet Archive" rel="noopener" target="_blank">Internet Archive</a></span>
-                <span class="text-sm px-2 py-1 sm:px-4">Made by <a class="hover:underline font-semibold" href="https://twitter.com/shubham_nh" title="Twitter" rel="noopener" target="_blank">Shubham Jain</a></span>
-                <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="mailto:human@quiteaplaylist.com" title="Contact E-mail" target="_blank">Contact 📧</a></span>
+                <!-- <span class="text-sm px-2 py-1 sm:px-4">Made by <a class="hover:underline font-semibold" href="https://twitter.com/shubham_nh" title="Twitter" rel="noopener" target="_blank">Shubham Jain</a></span> -->
+                <!-- <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="mailto:human@quiteaplaylist.com" title="Contact E-mail" target="_blank">Contact 📧</a></span> -->
+                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/contact" title="Contact">Contact</router-link></span>
                 <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="https://www.buymeacoffee.com/shubhamnh" target="_blank">Buy me a ☕</a></span>
                 <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/privacy-policy" title="Privacy Policy">Privacy Policy</router-link></span>
+                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/terms-and-conditions" title="Terms and Conditions">Terms & Conditions</router-link></span>
                 <!-- <span class="text-sm px-2 py-1 sm:px-4 hover:underline font-semibold"><router-link to="/about/#attributions" title="Attributions">Attributions</router-link></span> -->
                 <!-- <span><a href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter"><icon class="inline h-4" name="twitter" alt="Twitter"></a></span> -->
         </footer>

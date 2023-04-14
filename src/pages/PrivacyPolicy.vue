@@ -5,7 +5,7 @@
 
         <h1 class="text-xl md:text-2xl font-semibold my-3 md:my-5">Privacy Policy</h1>
 
-        <p class="text-sm">Effective Date: {{ date }}</p>
+        <p class="text-sm">Last Changes: {{ date }}</p>
 
         <p>We respect your privacy and are committed to protecting your personal information. This privacy policy explains how we collect, use, and disclose information about you when you use our website {{ websiteUrl }}. By using our website, you consent to the collection, use, and disclosure of your information as described in this policy.</p>
 
@@ -39,7 +39,7 @@
     name: 'PrivacyPolicy',
     data() {
       return {
-        date: '8th April, 2023',
+        date: '13th April, 2023',
         websiteUrl: 'quiteaplaylist.com',
         contactInformation: 'human@quiteaplaylist.com',
       };

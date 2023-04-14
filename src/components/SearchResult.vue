@@ -1,17 +1,17 @@
 <template>
     <div id="vidDetail" v-show="isVisible" :class="vidDetail.searchStatus === 200 ? 'shadow cursor-pointer' : ''" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-600" @click="resultModalSwitch()">
 
-        <span v-if="playlistPos" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-900 dark:text-white">
+        <span v-if="playlistPos" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-800 dark:text-gray-200">
             {{playlistPos}}
         </span>
 
         <!-- Number of Snapshots found (Dev only) -->
-        <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 -right-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-900 dark:text-white">
+        <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 -right-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-800 dark:text-gray-200">
             {{vidDetail.snapshots}}
         </span>
 
         <!-- Number of Snapshots Parsed (Dev only) -->
-        <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 right-6 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-900 dark:text-white">
+        <span v-if="checkDev()" class="absolute flex items-center justify-center -top-3 right-6 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-800 dark:text-gray-200">
             {{vidDetail.snapshotsParsed}}
         </span>
 
