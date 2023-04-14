@@ -38,11 +38,11 @@
                         </li>
 
                         <li class="relative group">
-                            <div role="button" class="inline px-2 py-2 font-semibold hover:text-yellow-300" v-if="darkMode" @click="themeSwitch()" title="Light Mode" aria-label="Light Mode">
-                                <icon class="inline align-text-top h-5 w-5" name="sun" alt="Sun Icon"/>
+                            <div v-if="darkMode" role="button" class="inline px-2 py-2 font-semibold" @click="themeSwitch()" title="Light Mode" aria-label="Light Mode">
+                                <icon class="inline align-text-top h-5 w-5 group-hover:text-yellow-300" name="sun" alt="Sun Icon"/>
                             </div>
-                            <div role="button" class="inline px-2 py-2 font-semibold" v-else @click="themeSwitch()" title="Night Mode" aria-label="Night Mode">
-                                <icon class="inline align-text-top h-5 w-5" name="moon" alt="Moon Icon"/>
+                            <div v-else role="button" class="inline px-2 py-2 font-semibold" @click="themeSwitch()" title="Night Mode" aria-label="Night Mode">
+                                <icon class="inline align-text-top h-5 w-5 group-hover:fill-current" name="moon" alt="Moon Icon"/>
                             </div>
                         </li>
                         
