@@ -140,6 +140,56 @@ const routes = [
     },
   },
   {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('../pages/Contact.vue').catch( err => {
+      // TODO: Get version.json (not cached) and load new version 
+      window.location.assign(window.location.origin + '/contact')
+    }),
+    meta: {
+      title: 'Contact - quite a playlist',
+      metaTags: [
+        {
+          name: 'title',
+          content: 'Contact - quite a playlist'
+        },
+        {
+          name: 'description',
+          content: 'Contact'
+        },
+        {
+          property: 'og:description',
+          content: 'Contact'
+        }
+      ]
+    },
+  },
+  {
+    path: '/terms-and-conditions',
+    name: 'Terms',
+    component: () => import('../pages/Terms.vue').catch( err => {
+      // TODO: Get version.json (not cached) and load new version 
+      window.location.assign(window.location.origin + '/terms-and-conditions')
+    }),
+    meta: {
+      title: 'Terms and Conditions - quite a playlist',
+      metaTags: [
+        {
+          name: 'title',
+          content: 'Terms and Conditions - quite a playlist'
+        },
+        {
+          name: 'description',
+          content: 'Terms and Conditions'
+        },
+        {
+          property: 'og:description',
+          content: 'Terms and Conditions'
+        }
+      ]
+    },
+  },
+  {
     path: '/find-watch-deleted-private-youtube-video-playlist',
     name: 'Guide',
     component: () => import('../pages/Guide.vue').catch( err => {
