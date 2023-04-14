@@ -20,8 +20,9 @@
 
                 <div class="flex flex-row items-center w-full justify-between pb-5 sm:pb-0 sm:justify-start sm:w-2/3 ">
                     <div class="text-left mr-7">
-                        <p class="text-base lg:text-lg font-bold line-clamp-2"> {{currentPlaylist.snippet.title}} </p>
-                        <p class="text-sm lg:text-base"> Found {{foundCount}} of {{absentVideos.length}} hidden</p>
+                        <p class="text-base lg:text-lg font-bold line-clamp-2"><a class="hover:underline" :href="`https://www.youtube.com/playlist?list=`+currentPlaylist.id" target="_blank"> {{currentPlaylist.snippet.title}} </a></p>
+                        <p class="text-sm">{{currentPlaylist.contentDetails.itemCount}} videos</p>
+                        <p class="text-sm"> Found {{foundCount}} of {{absentVideos.length}} hidden</p>
                     </div>
                     <div class="">
                         <button class="rounded-full p-1.5 border hover:bg-gray-100 dark:hover:bg-gray-800 w-9" @click="processPlaylist(currentPlaylist.id, true)" title="Refresh Playlist">

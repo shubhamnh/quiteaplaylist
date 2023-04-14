@@ -38,11 +38,11 @@
                         </li>
 
                         <li class="relative group">
-                            <div role="button" class="inline px-2 py-2 font-semibold hover:text-yellow-300" v-if="darkMode" @click="themeSwitch()" title="Light Mode" aria-label="Light Mode">
-                                <icon class="inline align-text-top h-5 w-5" name="sun" alt="Sun Icon"/>
+                            <div v-if="darkMode" role="button" class="inline px-2 py-2 font-semibold" @click="themeSwitch()" title="Light Mode" aria-label="Light Mode">
+                                <icon class="inline align-text-top h-5 w-5 group-hover:text-yellow-300" name="sun" alt="Sun Icon"/>
                             </div>
-                            <div role="button" class="inline px-2 py-2 font-semibold" v-else @click="themeSwitch()" title="Night Mode" aria-label="Night Mode">
-                                <icon class="inline align-text-top h-5 w-5" name="moon" alt="Moon Icon"/>
+                            <div v-else role="button" class="inline px-2 py-2 font-semibold" @click="themeSwitch()" title="Night Mode" aria-label="Night Mode">
+                                <icon class="inline align-text-top h-5 w-5 group-hover:fill-current" name="moon" alt="Moon Icon"/>
                             </div>
                         </li>
                         
@@ -76,8 +76,8 @@
                 <!-- <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="mailto:human@quiteaplaylist.com" title="Contact E-mail" target="_blank">Contact 📧</a></span> -->
                 <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/contact" title="Contact">Contact</router-link></span>
                 <span class="text-sm px-2 py-1 sm:px-4"><a class="hover:underline font-semibold" href="https://www.buymeacoffee.com/shubhamnh" target="_blank">Buy me a ☕</a></span>
-                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/privacy-policy" title="Privacy Policy">Privacy Policy</router-link></span>
-                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/terms-and-conditions" title="Terms and Conditions">Terms & Conditions</router-link></span>
+                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/privacy-policy" title="Privacy Policy">Privacy</router-link></span>
+                <span class="text-sm px-2 py-1 sm:px-4"><router-link class="hover:underline font-semibold" to="/terms-and-conditions" title="Terms and Conditions">Terms</router-link></span>
                 <!-- <span class="text-sm px-2 py-1 sm:px-4 hover:underline font-semibold"><router-link to="/about/#attributions" title="Attributions">Attributions</router-link></span> -->
                 <!-- <span><a href="https://twitter.com/shubham_nh" rel="noopener" target="_blank" title="Twitter"><icon class="inline h-4" name="twitter" alt="Twitter"></a></span> -->
         </footer>
