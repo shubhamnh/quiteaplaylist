@@ -30,6 +30,16 @@
                     <img loading="lazy" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=310776&theme=dark" alt="Quite a Playlist - Find deleted & private video details from YouTube playlists | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
                 </a>
             </div>
+
+            <!-- horizontal -->
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-4352821663935105"
+                data-ad-slot="4146390579"
+                data-ad-format="auto"
+                data-full-width-responsive="true">
+            </ins>
+
         </section>
         
         <section class="flex flex-col relative max-w-3xl md:mx-auto py-10 md:py-16 px-4">
@@ -45,6 +55,15 @@
                     </iframe>
                 </div>
             </div>
+
+            <!-- horizontal -->
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-4352821663935105"
+                data-ad-slot="4146390579"
+                data-ad-format="auto"
+                data-full-width-responsive="true">
+            </ins>
         </section>
 
         <section class="flex flex-col relative bg-magenta-100 text-blue-gray-900 py-10 px-4">

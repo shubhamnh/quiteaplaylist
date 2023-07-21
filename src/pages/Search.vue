@@ -336,7 +336,7 @@ export default defineComponent({
         },
 
         async processBatchVideos (videoBatchToProcess : string[]) {
-            await fetch(this.wbCorsProxy + 'v=' + videoBatchToProcess.join('&v='))
+            await fetch(this.wbCorsProxy + 'v=' + videoBatchToProcess.join(','))
                 .then(async res => {
                     if (res.status === 200) {
                         const resData = await res.json()
