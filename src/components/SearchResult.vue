@@ -1,5 +1,5 @@
 <template>
-    <div id="vidDetail" v-show="isVisible" :class="vidDetail.searchStatus === 200 ? 'shadow cursor-pointer' : ''" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-600" @click="resultModalSwitch()">
+    <div id="vidDetail" v-show="isVisible" :class="vidDetail.searchStatus === 200 ? 'shadow cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900' : ''" class="relative h-auto min-h-[7rem] w-full p-3.5 sm:p-5 rounded-lg bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-600" @click="resultModalSwitch()">
 
         <span v-if="playlistPos" class="absolute flex items-center justify-center -top-3 -left-3 rounded-full w-7 h-7 sm:w-8 sm:h-8 text-xs bg-blue-gray-100 text-gray-900 dark:bg-blue-gray-800 dark:text-gray-200">
             {{playlistPos}}
@@ -23,7 +23,14 @@
                 <p class="line-clamp-2 break-words text-gray-800 dark:text-gray-100 pb-1 font-bold" v-html="vidDetail.title">
                 </p>
 
-                <p class="text-sm" v-html="vidDetail.published"></p>
+                <div>
+                    <span class="text-sm mr-2" v-html="vidDetail.published"></span>
+
+                    <span>
+                        <icon v-if="vidDetail.status === 'Deleted'" class="inline h-4 mb-1" name="trash-solid" title="Deleted" alt="Deleted"/>
+                        <icon v-if="vidDetail.status === 'Private'" class="inline h-4 mb-1" name="lock-closed-solid" title="Private" alt="Private"/>
+                    </span>
+                </div>
 
                 <SearchResultChannel v-if="vidDetail.channelName || vidDetail.channelUrl" :channelName="vidDetail.channelName"
                     :channelUrl="vidDetail.channelUrl" />
@@ -60,7 +67,19 @@
                             <p class="sm:hidden text-sm px-2">Looks like it's a gem!<br/>Try digging more...</p>
                         </div>
                         <SearchResultUrlSearch :vidUrl="vidDetail.url"/>
+
                     </div>
+                </div>
+                <div class="rounded-2xl py-2 w-full bg-gray-100 dark:bg-gray-900">
+                    <a :href="vidDetail.url"
+                        rel="noopener" target="_blank"
+                        title="YouTube Video URL" class="hover:underline">
+                        <span class="inline pl-1 overflow-hidden">
+                            {{ vidDetail.url.replace('https://www.youtube.com/watch?v=','https://youtu.be/') }} </span>
+                    </a>
+                    <button type="button" @click="copyToClipboard(vidDetail.url)">
+                        <icon class="inline rounded-md align-text-bottom h-6 w-6 mx-2 p-1 hover:bg-white dark:hover:bg-gray-800" name="copy" alt="Copy"/>
+                    </button>
                 </div>
             </div>
         </div>
@@ -73,7 +92,7 @@
 
         <Teleport to="body">
             <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                <SearchResultModal v-if="showResultModal" :vidDetail="vidDetail" :playlistPos="playlistPos" :ytTitleSearch="ytTitleSearch" @resultModalSwitch="resultModalSwitch()"/>
+                <SearchResultModal v-if="showResultModal" :vidDetail="vidDetail" :playlistPos="playlistPos" :ytTitleSearch="ytTitleSearch" :webArchiveSearch="webArchiveSearch" @resultModalSwitch="resultModalSwitch()"/>
             </transition>
         </Teleport>
     </div>
@@ -116,11 +135,17 @@ export default defineComponent({
         resultModalSwitch() {
             if (this.vidDetail.searchStatus === 200)
                 this.showResultModal = !this.showResultModal
+        },
+        copyToClipboard(url: string) {
+            navigator.clipboard.writeText(url);
         }
     },
     computed: {
         ytTitleSearch () :string {
             return "https://www.youtube.com/results?search_query=" + encodeURIComponent(String(this.vidDetail.title))
+        },
+        webArchiveSearch () :string {
+            return "https://web.archive.org/web/" + this.vidDetail.url
         },
         isVisible () :boolean {
             if (this.playlistPos) {

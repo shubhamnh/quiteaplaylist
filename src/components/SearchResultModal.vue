@@ -4,11 +4,9 @@
 
             <div class="flex flex-row justify-between">
                 <div class="place-self-end text-sm">
-                    <span v-if="playlistPos">Position - {{playlistPos}}
+                    <span v-if="playlistPos">Playlist Position: {{playlistPos}}
                     </span>
-                    <span class="mx-2">·</span>
-                    <icon v-if="vidDetail.status === 'Deleted'" class="inline h-4 align-text-top" name="trash-solid" alt="Deleted"/>
-                    <icon v-if="vidDetail.status === 'Private'" class="inline h-4 align-text-top" name="lock-closed-solid" alt="Private"/>
+                    <!-- <span class="mx-2">·</span> -->
                 </div>
                 <button class="p-3 my-2 border rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 shadow-xl" @click="$emit('resultModalSwitch')">
                     <icon name="x" alt="Close"/>
@@ -18,7 +16,15 @@
             <div class="flex flex-col py-1 border-b">
 
                 <a :href="vidDetail.url" class="text-lg break-words text-gray-800 dark:text-gray-100 mb-1 font-bold hover:underline" rel="noopener" target="_blank" v-html="vidDetail.title" :title="vidDetail.title"></a>
-                <p v-html="vidDetail.published"></p>
+
+                <div>
+                    <span class="mr-4" v-html="vidDetail.published"></span>
+
+                    <span>
+                        <icon v-if="vidDetail.status === 'Deleted'" class="inline h-4 mb-1" name="trash-solid" title="Deleted" alt="Deleted"/>
+                        <icon v-if="vidDetail.status === 'Private'" class="inline h-4 mb-1" name="lock-closed-solid" title="Private" alt="Private"/>
+                    </span>
+                </div>
 
                 <SearchResultChannel v-if="vidDetail.channelName || vidDetail.channelUrl" :channelName="vidDetail.channelName"
                     :channelUrl="vidDetail.channelUrl" />
@@ -56,7 +62,10 @@
                         Brave Search
                     </a>
                 </div>
-                <SearchResultLinkButton class="mx-1 shadow-xl" :linkUrl="ytTitleSearch" linkTitle="YouTube Search" iconFile="search" imgAlt="Search"/>
+                <div class="flex flex-row">
+                    <SearchResultLinkButton class="mx-2 shadow-xl" :linkUrl="webArchiveSearch" linkTitle="Web Archive Search" iconFile="internetarchive" imgAlt="Web Archive Search"/>
+                    <SearchResultLinkButton class="mx-1 shadow-xl" :linkUrl="ytTitleSearch" linkTitle="YouTube Title Search" iconFile="search" imgAlt="Youtube Title Search"/>
+                </div>
             </div>
         </div>
     </div>
@@ -80,6 +89,10 @@ export default defineComponent({
             required: false
         },
         ytTitleSearch: {
+            type: String,
+            required: true
+        },
+        webArchiveSearch: {
             type: String,
             required: true
         }
