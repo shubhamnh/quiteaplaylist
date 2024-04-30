@@ -70,16 +70,19 @@
 
                     </div>
                 </div>
-                <div class="rounded-2xl py-2 w-full bg-gray-100 dark:bg-gray-900">
+                <div class="rounded-2xl py-2 my-1 sm:my-0 w-full bg-gray-100 dark:bg-gray-900">
                     <a :href="vidDetail.url"
                         rel="noopener" target="_blank"
                         title="YouTube Video URL" class="hover:underline">
                         <span class="inline pl-1 overflow-hidden">
                             {{ vidDetail.url.replace('https://www.youtube.com/watch?v=','https://youtu.be/') }} </span>
                     </a>
-                    <button type="button" @click="copyToClipboard(vidDetail.url)">
+                    <button type="button" @click="copyToClipboard(vidDetail.url)" title="Copy Link">
                         <icon class="inline rounded-md align-text-bottom h-6 w-6 mx-2 p-1 hover:bg-white dark:hover:bg-gray-800" name="copy" alt="Copy"/>
                     </button>
+                    <Transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                        <span v-if="copied"  class="absolute rounded text-xs shadow-lg p-1 bg-gray-300 dark:bg-gray-900">Copied Link!</span>
+                    </Transition>
                 </div>
             </div>
         </div>
@@ -126,6 +129,7 @@ export default defineComponent({
     data () {
         return {
             showResultModal: false,
+            copied: false,
         }
     },
     methods: {
@@ -138,6 +142,10 @@ export default defineComponent({
         },
         copyToClipboard(url: string) {
             navigator.clipboard.writeText(url);
+            this.copied = true;
+            setTimeout(() => {
+                this.copied = false;
+            }, 2000);
         }
     },
     computed: {

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row items-center my-2 sm:my-4 justify-center gap-3">
+    <div class="flex flex-row items-center my-3 sm:my-4 justify-center gap-3">
         <SearchResultLinkButton :linkUrl="twitterUrlSearch()" linkTitle="X Twitter Search" iconFile="twitter-x" imgAlt="X Twitter Logo"/>
         <SearchResultLinkButton :linkUrl="archiveUrlSearch()" linkTitle="Internet Archive Search" iconFile="internetarchive" imgAlt="Internet Archive Logo"/>
         <SearchResultLinkButton :linkUrl="braveUrlSearch()" linkTitle="Brave Search" iconFile="brave" imgAlt="Brave Logo"/>
