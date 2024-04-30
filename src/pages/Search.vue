@@ -78,8 +78,8 @@
             <p>Could not find the Playlist mentioned.<br/>Make sure the playlist is Public or Unlisted and try again!</p>
         </div>
         <div v-else class="flex flex-col flex-grow items-center justify-center">
-            <span class="text-7xl my-8">☠️</span>
-            <p>Could not get playlist details :(<br/> Reach out to me on <a href="https://twitter.com/shubham_nh">Twitter</a> if this persists!</p>
+            <span class="text-7xl my-8">⚠️</span>
+            <p>Could not get playlist details :(</p>
         </div>
 
     </div>
