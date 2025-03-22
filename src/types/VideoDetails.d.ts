@@ -26,4 +26,7 @@ interface VideoDetails {
   snapshotTime?: string
   snapshots?: number
   snapshotsParsed?: number
+  thumbnail?: string
+  waybackVideo?: string
+  thumbnailBase64?: string
 }

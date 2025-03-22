@@ -20,25 +20,43 @@
             <!-- Video Found -->
             <div v-if="vidDetail.searchStatus === 200" class="flex flex-col h-full text-left">
 
-                <p class="line-clamp-2 break-words text-gray-800 dark:text-gray-100 pb-1 font-bold" v-html="vidDetail.title">
-                </p>
+                <div class="mt-2 mb-3">
+                     
+                    <div v-if="vidDetail.thumbnail" class="relative w-full pb-[75%] rounded-lg shadow-sm overflow-hidden">
+                        <img v-if="vidDetail.thumbnailBase64" :src="vidDetail.thumbnailBase64" :alt="vidDetail.title" class="absolute inset-0 w-full h-full object-contain">
+                        <img v-else :src="vidDetail.thumbnail" :alt="vidDetail.title" class="absolute inset-0 w-full h-full object-contain">
+                    </div>
 
-                <div>
-                    <span class="text-sm mr-2" v-html="vidDetail.published"></span>
+                    <div v-else class="relative h-full w-full pb-[75%] rounded-lg shadow-sm overflow-hidden">
+                        <img :src="qapLogo" alt="Thumbnail not found" class="absolute inset-0 w-full h-36 m-auto opacity-40 object-contain object-center">
+                    </div>
 
-                    <span>
-                        <icon v-if="vidDetail.status === 'Deleted'" class="inline h-4 mb-1" name="trash-solid" title="Deleted" alt="Deleted"/>
-                        <icon v-if="vidDetail.status === 'Private'" class="inline h-4 mb-1" name="lock-closed-solid" title="Private" alt="Private"/>
-                    </span>
                 </div>
 
-                <SearchResultChannel v-if="vidDetail.channelName || vidDetail.channelUrl" :channelName="vidDetail.channelName"
-                    :channelUrl="vidDetail.channelUrl" />
+                <!-- <div> -->
+                    <p class="line-clamp-2 break-words text-gray-800 dark:text-gray-100 pb-1 font-bold" v-html="vidDetail.title">
+                    </p>
 
-                <p class="hidden md:line-clamp-2 break-words w-10/12 my-2" v-html="vidDetail.description"></p>
+                    <div>
+                        <span class="text-sm mr-2" v-html="vidDetail.published"></span>
 
-                <SearchResultLinkButton class="absolute bottom-5 right-5 mx-1" :linkUrl="ytTitleSearch" linkTitle="YouTube Search" iconFile="search" imgAlt="Search"/>
-            </div>
+                        <span>
+                            <icon v-if="vidDetail.status === 'Deleted'" class="inline h-4 mb-1" name="trash-solid" title="Deleted" alt="Deleted"/>
+                            <icon v-if="vidDetail.status === 'Private'" class="inline h-4 mb-1" name="lock-closed-solid" title="Private" alt="Private"/>
+                        </span>
+                    </div>
+
+                    <SearchResultChannel v-if="vidDetail.channelName || vidDetail.channelUrl" :channelName="vidDetail.channelName"
+                        :channelUrl="vidDetail.channelUrl" />
+
+                    <!-- <p class="hidden md:line-clamp-2 break-words w-10/12 my-2" v-html="vidDetail.description"></p> -->
+
+                    <SearchResultLinkButton v-if="vidDetail.waybackVideo" class="absolute bottom-5 right-16 mx-2.5" :linkUrl="vidDetail.waybackVideo" linkTitle="Play Video" iconFile="play" imgAlt="Play"/>
+
+                    <SearchResultLinkButton class="absolute bottom-5 right-5 mx-1" :linkUrl="ytTitleSearch" linkTitle="YouTube Search" iconFile="search" imgAlt="Search"/>
+                </div>
+
+            <!-- </div> -->
 
             <!-- Server Error -->
             <div v-else-if="vidDetail.searchStatus === 521 || vidDetail.searchStatus === 503 || vidDetail.searchStatus === 502 || vidDetail.searchStatus === 500" class="flex flex-col h-full text-center">
@@ -108,6 +126,7 @@ import SearchResultUrlSearch from './SearchResultUrlSearch.vue'
 import SearchResultModal from './SearchResultModal.vue'
 import SearchResultChannel from "./SearchResultChannel.vue"
 import SearchResultLinkButton from "./SearchResultLinkButton.vue"
+import qapLogo from '@/assets/qap.png'
 
 export default defineComponent({
     name: 'SearchResult',
@@ -130,6 +149,7 @@ export default defineComponent({
         return {
             showResultModal: false,
             copied: false,
+            qapLogo: qapLogo,
         }
     },
     methods: {
