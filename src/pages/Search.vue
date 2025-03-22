@@ -119,7 +119,7 @@ export default defineComponent({
             videos : new Object as Video,
             currentPlaylist : new Object as Playlist,
             absentVideos : new Array<AbsentVideo>(),
-            latestWorkerVersion: 111,
+            latestWorkerVersion: 200,
 
             // To pass to SearchBar.vue
             queryUrl : '',

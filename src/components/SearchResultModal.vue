@@ -63,7 +63,10 @@
                     </a>
                 </div>
                 <div class="flex flex-row">
-                    <SearchResultLinkButton class="mx-2 shadow-xl" :linkUrl="webArchiveSearch" linkTitle="Web Archive Search" iconFile="internetarchive" imgAlt="Web Archive Search"/>
+                    <SearchResultLinkButton class="mx-1 shadow-xl" :linkUrl="webArchiveSearch" linkTitle="Web Archive Search" iconFile="internetarchive" imgAlt="Web Archive Search"/>
+
+                    <SearchResultLinkButton v-if="vidDetail.waybackVideo" class="mx-2 shadow-xl" :linkUrl="vidDetail.waybackVideo" linkTitle="Play Video" iconFile="play" imgAlt="Play"/>
+
                     <SearchResultLinkButton class="mx-1 shadow-xl" :linkUrl="ytTitleSearch" linkTitle="YouTube Title Search" iconFile="search" imgAlt="Youtube Title Search"/>
                 </div>
             </div>
