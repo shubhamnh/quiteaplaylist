@@ -124,7 +124,7 @@ export default defineComponent({
             // To pass to SearchBar.vue
             queryUrl : '',
             
-            videosPerRequest : 10,
+            videosPerRequest : 6,
             reqPerSlot : 7,
             slotDelaySeconds : 5,
             slotStepIncrease : 3,
